@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# Install applications
+sudo pacman -Syu firefox thunderbird neofetch dhcpd iwd vim yay picom polybar redshift dunst rxvt-unicode 
+
+# Remove original files and folders
+[ -e $HOME/.vim ] && rm -r $HOME/.vim
+[ -f $HOME/.vimrc ] && rm $HOME/.vimrc
+
+#[ ! -d $HOME/.config/alacritty ] && mkdir $HOME/.config/alacritty
+#ln -s $HOME/git/mydotfiles/alacritty.yml $HOME/.config/alacritty/alacritty.yml
+
+# TODO: Replace with GNU stow
+ln -s $HOME/.dotfiles/dot-vim $HOME/.vim
+ln -s $HOME/.dotfiles/vim/dot-vimrc $HOME/.vimrc

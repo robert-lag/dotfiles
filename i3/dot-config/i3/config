@@ -1,0 +1,404 @@
+#  _ _____                  __ _
+# (_)___ /  ___ ___  _ __  / _(_) __ _
+# | | |_ \ / __/ _ \| '_ \| |_| |/ _` |
+# | |___) | (__ (_) | | | |  _| | (_| |
+# |_|____/ \___\___/|_| |_|_| |_|\__, |
+#                                |___/
+#
+# i3 config file (v4)
+#
+# Run i3-config-wizard to auto-generate this file
+# Please see https://i3wm.org/docs/userguide.html for a complete reference!
+
+# ----------------------------------------------------------------------------
+# variables
+# ----------------------------------------------------------------------------
+
+# general
+set $mod Mod4
+set $term urxvt
+
+# gaps
+set $outer-gaps 6
+set $inner-gaps 6
+
+# screenshot
+set $scrnshot-name '%Y-%m-%d-%H%M%S-$wx$h-scrot.png'
+set $scrnshot-directory '~/Pictures/screenshots/'
+
+# workspaces
+set $ws1 "1"
+set $ws2 "2"
+set $ws3 "3"
+set $ws4 "4"
+set $ws5 "5"
+set $ws6 "6"
+set $ws7 "7"
+set $ws8 "8"
+set $ws9 "9"
+set $ws10 "10"
+
+# colors
+#set $bg-color			#2f343f
+#set $inactive-bg-color		#2f343f
+#set $text-color			#f3f4f5
+#set $inactive-text-color	#676E7D
+#set $urgent-bg-color		#E53935
+#set $indicator-color		#147dad
+#set $window-background-color	#cccccc
+
+#set $bg-color			#454545
+set_from_resource $bg-color				i3wm.background		#2f343f
+set_from_resource $inactive-bg-color			i3wm.background		#2f343f
+set_from_resource $text-color				i3wm.foreground		#f3f4f5
+set_from_resource $inactive-text-color			i3wm.foreground		#676E7D
+set_from_resource $urgent-bg-color			i3wm.color1		#E53935
+set_from_resource $indicator-color			i3wm.color4		#147dad
+set_from_resource $window-bg-color			i3wm.background		#cccccc
+
+# ----------------------------------------------------------------------------
+# general settings
+# ----------------------------------------------------------------------------
+
+# Use Mouse+$mod to drag floating windows to their wanted position
+floating_modifier $mod
+
+font pango:Ubuntu 12
+#font pango:DejaVu Sans Mono 10
+
+# border
+default_border pixel 3
+default_floating_border normal
+#smart_borders on
+#hide_edge_borders smart_no_gaps
+hide_edge_borders both
+
+# gaps
+gaps outer $outer-gaps
+gaps inner $inner-gaps
+#smart_gaps inverse_outer
+smart_gaps on
+
+force_display_urgency_hint 500 ms
+
+# ----------------------------------------------------------------------------
+# key bindings
+# ----------------------------------------------------------------------------
+
+# reload the configuration file
+bindsym $mod+Shift+c reload
+# restart i3 inplace (preserves your layout/session, can be used to upgrade i3)
+bindsym $mod+Shift+r restart
+
+# lock screen
+#bindsym $mod+Shift+x exec i3lock --color "$bg-color"
+bindsym $mod+Shift+x exec betterlockscreen -l
+
+# start a term
+bindsym $mod+Return exec $term
+
+# start rofi (a program launcher)
+bindsym $mod+d exec rofi -modi drun#run -show drun
+
+bindsym $mod+u [instance="dropdown-general"] scratchpad show, move position center
+bindsym $mod+z [instance="dropdown-math"] scratchpad show, move position center
+
+# toggle gaps
+bindsym $mod+g gaps outer current toggle $outer-gaps; gaps inner current toggle $inner-gaps
+bindsym $mod+Shift+g gaps outer all toggle $outer-gaps; gaps inner all toggle $inner-gaps
+
+# kill focused window
+bindsym $mod+q kill
+
+# kill picom (to fix screen freeze)
+bindsym $mod+p exec killall picom
+
+# toggle split in vertical / horizontal orientation
+bindsym $mod+v split toggle
+
+# enter fullscreen mode for the focused container
+bindsym $mod+f fullscreen toggle
+
+# change container layout
+bindsym $mod+s layout stacking
+bindsym $mod+w layout tabbed
+bindsym $mod+e layout toggle split
+
+# change focus between tiling / floating windows
+bindsym $mod+space focus mode_toggle
+
+# toggle tiling / floating
+bindsym $mod+Shift+space floating toggle
+
+# focus the parent / child container
+bindsym $mod+a focus parent
+bindsym $mod+Shift+a focus child
+
+# flash focused window
+bindsym Super_L --release exec --no-startup-id flash_window
+bindsym Super_R --release exec --no-startup-id flash_window
+
+# screenshot
+bindsym $mod+Print --release \
+	exec --no-startup-id "scrot $scrnshot-name -e 'mv $f $scrnshot-directory'", \
+	exec "notify-send -u normal -t 2000 'Screenshot taken' 'Saved in $scrnshot-directory'
+bindsym $mod+Shift+Print --release \
+	exec --no-startup-id "scrot --select --freeze $scrnshot-name -e 'mv $f $scrnshot-directory'", \
+	exec "notify-send -u normal -t 2000 'Screenshot taken' 'Saved in $scrnshot-directory'
+
+# ----- special keys ----- #
+# ------------------------ #
+
+# adjust volume in PulseAudio
+set $refresh_i3status killall -SIGUSR1 i3status
+#bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ +5% && \
+#	pactl set-sink-mute @DEFAULT_SINK@ 0 && \
+#	$refresh_i3status; \
+#	exec --no-startup-id notify-send "Message"
+bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ +5% && \
+	pactl set-sink-mute @DEFAULT_SINK@ 0 && \
+	$refresh_i3status
+bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ -5% && \
+	pactl set-sink-mute @DEFAULT_SINK@ 0 && \
+	$refresh_i3status
+bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute @DEFAULT_SINK@ toggle && \
+	$refresh_i3status
+bindsym XF86AudioMicMute exec --no-startup-id pactl set-source-mute @DEFAULT_SOURCE@ toggle && \
+	$refresh_i3status
+#bindsym --release XF86AudioRaiseVolume exec amixer -q set Master 5%+ unmute
+#bindsym --release XF86AudioLowerVolume exec amixer -q set Master 5%- unmute
+#bindsym --release XF86AudioMute exec amixer -q set Master toggle
+
+# sreen brightness controls
+bindsym XF86MonBrightnessUp exec xbacklight -inc 10 # increase screen brightness
+bindsym XF86MonBrightnessDown exec xbacklight -dec 10 # decrease screen brightness
+
+# media player controls
+# on some pcs the play button is used to toggle 
+bindsym XF86AudioPlay exec playerctl play-pause
+bindsym XF86AudioNext exec playerctl next
+bindsym XF86AudioPrev exec playerctl previous
+
+# ----- window navigation ----- #
+# ----------------------------- #
+
+# change focus
+bindsym $mod+h focus left
+bindsym $mod+j focus down
+bindsym $mod+k focus up
+bindsym $mod+l focus right
+bindsym $mod+Left focus left
+bindsym $mod+Down focus down
+bindsym $mod+Up focus up
+bindsym $mod+Right focus right
+
+# move focused window
+bindsym $mod+Shift+h move left
+bindsym $mod+Shift+j move down
+bindsym $mod+Shift+k move up
+bindsym $mod+Shift+l move right
+bindsym $mod+Shift+Left move left
+bindsym $mod+Shift+Down move down
+bindsym $mod+Shift+Up move up
+bindsym $mod+Shift+Right move right
+
+# ----- workspaces ----- #
+# ---------------------- #
+
+# switch to workspace
+bindsym $mod+1 workspace number $ws1
+bindsym $mod+2 workspace number $ws2
+bindsym $mod+3 workspace number $ws3
+bindsym $mod+4 workspace number $ws4
+bindsym $mod+5 workspace number $ws5
+bindsym $mod+6 workspace number $ws6
+bindsym $mod+7 workspace number $ws7
+bindsym $mod+8 workspace number $ws8
+bindsym $mod+9 workspace number $ws9
+bindsym $mod+0 workspace number $ws10
+# with numpad keys
+bindcode $mod+Mod2+87 workspace number $ws1
+bindcode $mod+Mod2+88 workspace number $ws2
+bindcode $mod+Mod2+89 workspace number $ws3
+bindcode $mod+Mod2+83 workspace number $ws4
+bindcode $mod+Mod2+84 workspace number $ws5
+bindcode $mod+Mod2+85 workspace number $ws6
+bindcode $mod+Mod2+79 workspace number $ws7
+bindcode $mod+Mod2+80 workspace number $ws8
+bindcode $mod+Mod2+81 workspace number $ws9
+bindcode $mod+Mod2+90 workspace number $ws10
+
+# move focused container to workspace
+bindsym $mod+Shift+1 move container to workspace number $ws1
+bindsym $mod+Shift+2 move container to workspace number $ws2
+bindsym $mod+Shift+3 move container to workspace number $ws3
+bindsym $mod+Shift+4 move container to workspace number $ws4
+bindsym $mod+Shift+5 move container to workspace number $ws5
+bindsym $mod+Shift+6 move container to workspace number $ws6
+bindsym $mod+Shift+7 move container to workspace number $ws7
+bindsym $mod+Shift+8 move container to workspace number $ws8
+bindsym $mod+Shift+9 move container to workspace number $ws9
+bindsym $mod+Shift+0 move container to workspace number $ws10
+# with numpad keys
+bindcode $mod+Mod2+Shift+87 move container to workspace number $ws1
+bindcode $mod+Mod2+Shift+88 move container to workspace number $ws2
+bindcode $mod+Mod2+Shift+89 move container to workspace number $ws3
+bindcode $mod+Mod2+Shift+83 move container to workspace number $ws4
+bindcode $mod+Mod2+Shift+84 move container to workspace number $ws5
+bindcode $mod+Mod2+Shift+85 move container to workspace number $ws6
+bindcode $mod+Mod2+Shift+79 move container to workspace number $ws7
+bindcode $mod+Mod2+Shift+80 move container to workspace number $ws8
+bindcode $mod+Mod2+Shift+81 move container to workspace number $ws9
+bindcode $mod+Mod2+Shift+90 move container to workspace number $ws10
+
+# move focused workspace between monitors
+bindsym $mod+Ctrl+greater move workspace to output right
+bindsym $mod+Ctrl+less move workspace to output left
+
+# ----- modes ----- #
+# ----------------- #
+
+# Set shut down, restart and locking features
+bindsym $mod+Shift+q mode "$mode_system"
+set $mode_system (l)ock, (e)xit_session, (s)uspend, (h)ibernate, (r)eboot, (Shift+s)hutdown
+mode "$mode_system" {
+    bindsym l exec --no-startup-id betterlockscreen -l, mode "default"
+    bindsym s exec --no-startup-id systemctl suspend, mode "default"
+    bindsym e exec --no-startup-id i3-msg exit, mode "default"
+    bindsym h exec --no-startup-id systemctl hibernate, mode "default"
+    bindsym r exec --no-startup-id systemctl reboot, mode "default"
+    bindsym Shift+s exec --no-startup-id systemctl poweroff -i, mode "default"
+
+    # exit system mode: "Enter" or "Escape"
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+
+bindsym $mod+o mode "$mode_launcher"
+set $mode_launcher Launch: (f)irefox (t)hunderbird (r)anger (v)scodium (s)potify 
+mode "$mode_launcher" {
+    bindsym f exec firefox, mode "default"
+    bindsym t exec thunderbird, mode "default"
+    bindsym r exec --no-startup-id urxvt -e ranger, mode "default"
+    bindsym v exec --no-startup-id vscodium, mode "default"
+    bindsym s exec --no-startup-id spotify, mode "default"
+
+    # exit system mode: "Enter" or "Escape"
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+
+# resize window (you can also use the mouse for that)
+set $mode_resize Resize
+bindsym $mod+r mode "$mode_resize"
+mode "$mode_resize" {
+        bindsym h resize shrink width 5 px or 5 ppt
+        bindsym j resize grow height 5 px or 5 ppt
+        bindsym k resize shrink height 5 px or 5 ppt
+        bindsym l resize grow width 5 px or 5 ppt
+        bindsym Left resize shrink width 5 px or 5 ppt
+        bindsym Down resize grow height 5 px or 5 ppt
+        bindsym Up resize shrink height 5 px or 5 ppt
+        bindsym Right resize grow width 5 px or 5 ppt
+
+        # back to normal: Enter or Escape or $mod+r
+        bindsym Return mode "default"
+        bindsym Escape mode "default"
+        bindsym $mod+r mode "default"
+}
+
+bindsym $mod+b exec "notify-send -u low -t 3000 'This is a very low priority message that is very important \
+maybe even too important.' 'And this is the detailed description!\nVery detailed. Very Very Very Very Very Very!!!!!'"
+#bindsym $mod+n exec "notify-send -u normal -t 3000 'This is a normal message that is very important \
+#maybe even too important.' 'And this is the detailed description!\nVery detailed'"
+bindsym $mod+m exec "notify-send -u critical -t 3000 'This is a very important warning that is very important \
+maybe even too important.' 'And this is the detailed description!\nVery detailed'"
+
+# ----------------------------------------------------------------------------
+# window colors
+# ----------------------------------------------------------------------------
+
+# 			border			background		text			indicator
+client.focused		$bg-color		$bg-color		$text-color		$indicator-color
+client.unfocused	$inactive-bg-color	$inactive-bg-color	$inactive-text-color	$inactive-bg-color
+client.focused_inactive	$inactive-bg-color	$inactive-bg-color	$inactive-text-color	$inactive-bg-color
+client.urgent		$urgent-bg-color	$urgent-bg-color	$text-color		$urgent-bg-color
+client.placeholder	$bg-color		$bg-color		$text-color		$bg-color
+client.background	$window-bg-color
+
+# start i3bar to display a workspace bar
+#bar {
+#	position top
+#
+#        status_command i3blocks
+#
+#	# font pango:DejaVu Sans Mono 12
+#	colors {
+#		background $bg-color
+#		separator #757575
+#		#			border			background		text
+#		focused_workspace	$bg-color		$bg-color		$text-color
+#		inactive_workspace	$inactive-bg-color	$inactive-bg-color	$inactive-text-color
+#		urgent_workspace	$urgent-bg-color	$urgent-bg-color	$text-color
+#	}
+#}^;N,
+
+# ----------------------------------------------------------------------------
+# assignments
+# ----------------------------------------------------------------------------
+
+# assign default monitor for workspaces
+workspace $ws1 output HDMI1 primary
+workspace $ws2 output primary
+workspace $ws10 output primary
+
+# assign programs to specific workspaces
+for_window [class="Spotify"] move container to workspace number $ws10
+
+# drowpdown/scratchpad windows
+for_window [instance="dropdown-general"] floating enable, resize set 1000 550, move scratchpad
+for_window [instance="dropdown-math"] floating enable, resize set 1000 550, move scratchpad
+
+# ----------------------------------------------------------------------------
+# startup applications
+# ----------------------------------------------------------------------------
+
+# set wallpaper
+exec_always --no-startup-id feh --bg-fill /home/robert/Pictures/.wallpaper.jpg
+
+# setup extended monitor
+exec_always --no-startup-id xrandr --output HDMI1 --auto --left-of eDP1
+
+# change keyboard layout and swap caps-lock with escape
+exec --no-startup-id "setxkbmap -layout at,us -variant ,dvorak -option 'caps:swapescape' -option 'grp:alt_shift_toggle'"
+
+# opacity effects
+#exec picom -b --backend glx --glx-no-stencil
+exec picom -b
+
+# polybar
+exec_always --no-startup-id $HOME/.config/polybar/launch.sh
+
+# enable numlock
+exec --no-startup-id xdotool key --clearmodifiers Num_Lock
+
+# blue light filter
+exec --no-startup-id redshift
+
+# notifications
+exec --no-startup-id dunst
+
+# flashing the focused window
+exec --no-startup-id flashfocus
+
+# lock screen
+exec --no-startup-id xautolock -resetsaver -locker "betterlockscreen -l" -time 10 -notify 30 -notifier "notify-send -u critical -t 3000 -- 'LOCKING screen in 30 seconds'"
+# xss-lock grabs a logind suspend inhibit lock and will use i3lock to lock the
+# screen before suspend. Use loginctl lock-session to lock your screen.
+#exec --no-startup-id xss-lock --transfer-sleep-lock -- i3lock --nofork
+
+# gui applications
+#exec --no-startup-id i3-msg 'workspace $ws1; exec firefox'
+exec --no-startup-id i3-msg 'workspace $ws2; exec $term; workspace $ws1'
+exec --no-startup-id $term -name dropdown-general
+exec --no-startup-id $term -name dropdown-math -font xft:Hack:pixelsize=24 -e qalc -c

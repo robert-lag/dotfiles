@@ -1,0 +1,352 @@
+"        _
+"       (_)
+" __   ___ _ __ ___  _ __ ___
+" \ \ / / | '_ ` _ \| '__/ __|
+"  \ V /| | | | | | | | | (__
+"   \_/ |_|_| |_| |_|_|  \___|
+"
+
+" --------------------------------------------------------------------------
+" General
+" --------------------------------------------------------------------------
+
+" Disable compatibility with Vi to enable useful Vim functionality
+set nocompatible
+
+" 'Q' in nomral mode enters Ex mode. You almost never want this
+"nmap Q <Nop>
+
+" Set the update time (in ms) which determines the delay of e.g. the writing
+" of the swap file or gitgutter markers
+set updatetime=500
+
+" Strip trailing whitespace on save
+function! <SID>StripTrailingWhitespaces()
+	if !&binary && &filetype != 'diff'
+		let l:save = winsaveview()
+		keeppatterns %s/\s\+$//e
+		call winrestview(l:save)
+	endif
+endfun
+autocmd FileType c,cpp,java,php,ruby,python,rust autocmd BufWritePre <buffer> :call <SID>StripTrailingWhitespaces()
+
+" --------------------------------------------------------------------------
+" Environment
+" --------------------------------------------------------------------------
+
+" Don't show which mode you're currently in (is handled by statusbar plugin)
+set noshowmode
+
+" Show current line number and relative line numbers to the current line
+set number
+set relativenumber
+
+" Always show the status line at the bottom, even if you only have one window
+" open.
+set laststatus=2
+
+" Make it possible to backspace over anything
+set backspace=indent,eol,start
+
+" Always hide a buffer (even if it has unsaved changes)
+set hidden
+
+" Disable audible bell
+set noerrorbells visualbell t_vb=
+
+" Enable mouse support
+set mouse+=a
+"se mouse+=a
+
+" Set offset between cursor and the upper and lower borders of the display
+set scrolloff=5
+
+" Make search case-insensitive when all chars in a string are lowercase.
+" Otherwise let the search be case-sensitive.
+set ignorecase
+set smartcase
+
+" Enable automatic indenting
+set smartindent
+set autoindent
+
+" Enable searching as you type, rather than waiting till yo press enter
+set incsearch
+
+" Enable recognition of folds based on the syntax
+set foldmethod=syntax
+
+" Open all folds when opening a file
+"set foldlevelstart=20
+
+" Set the width of a tab
+set tabstop=4
+set shiftwidth=4
+set softtabstop=4
+
+" --------------------------------------------------------------------------
+" Colors
+" --------------------------------------------------------------------------
+highlight! link SignColumn Background
+
+" Pmenu(tooltip) colors
+highlight Pmenu ctermfg=15 ctermbg=8
+highlight PmenuSel ctermfg=15 ctermbg=6
+highlight PmenuSbar ctermfg=8 ctermbg=8
+highlight PmenuThumb ctermfg=15 ctermbg=8
+
+highlight Folded ctermfg=15 ctermbg=8
+
+highlight SpellBad ctermbg=1
+
+" Show trailing whitespace
+"match Todo /\s\+$/
+highlight ExtraWhitespace ctermbg=DarkYellow guibg=#d79921
+au ColorScheme * highlight ExtraWhitespace guibg=#d79921
+au BufEnter * match ExtraWhitespace /\s\+$/
+au InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/
+au InsertLeave * match ExtraWhiteSpace /\s\+$/
+
+" --------------------------------------------------------------------------
+" Key mappings
+" --------------------------------------------------------------------------
+
+" Set leader character
+let mapleader = ","
+
+" Toggle pasting from clipboard
+map <leader>p :set paste!<CR>
+
+" Make it possible to clear the highlighting of words until the next search
+" by pressing <esc>
+" Causes bugs!!!
+"nnoremap <esc> :noh<return><esc>
+
+" Prevent bad habits like using arrow keys for movement in...
+" ...normal mode:
+"nnoremap <Left>  :echoe "Use h"<CR>
+"nnoremap <Right>  :echoe "Use l"<CR>
+"nnoremap <Up>  :echoe "Use k"<CR>
+"nnoremap <Down>  :echoe "Use j"<CR>
+
+" --------------------------------------------------------------------------
+" Filetypes
+" --------------------------------------------------------------------------
+
+" Enable syntax highlighting
+syntax on
+
+" Enable filetype plugins
+filetype plugin indent on
+
+" Set the filetype based on the file's extension, but only if
+" 'filetype' has not already been set
+au BufRead,BufNewFile *.xresources setfiletype xdefaults
+
+" --------------------------------------------------------------------------
+" Plugins
+" --------------------------------------------------------------------------
+call plug#begin('~/.vim/vim-plug')
+	" For commenting code using shortcuts
+	Plug 'preservim/nerdcommenter'
+
+	Plug 'jiangmiao/auto-pairs'
+
+	Plug 'tpope/vim-surround'
+
+	" Linter (recognizes syntax errors in code)
+	Plug 'dense-analysis/ale'
+
+	" Git wrapper for vim
+	Plug 'tpope/vim-fugitive'
+
+	Plug 'vim-scripts/taglist.vim'
+
+	" Status line
+	Plug 'itchyny/lightline.vim'
+
+	" Integration of ALE (linter) into lightline (status line)
+	Plug 'maximbaz/lightline-ale'
+
+	" Markdown Preview
+	Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install' }
+
+	Plug 'ap/vim-css-color'
+
+	" Autocompletion
+	Plug 'ycm-core/YouCompleteMe'
+call plug#end()
+
+" --------------------------------------------------------------------------
+" NERDTree
+" --------------------------------------------------------------------------
+" Start NERDTree and put the cursor back in the other window.
+"autocmd VimEnter * NERDTree | wincmd p
+
+" Exit Vim if NERDTree is the only window left.
+autocmd BufEnter * if tabpagenr('$') == 1 && winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() |
+	\ quit | endif
+
+" Shortcuts
+" nnoremap <C-n> :NERDTree<CR>
+nnoremap <leader>ee :NERDTreeToggle<CR>
+nnoremap <leader>er :NERDTreeFocus<CR>
+nnoremap <leader>ef :NERDTreeFind<CR>
+
+" --------------------------------------------------------------------------
+" NERDCommenter
+" --------------------------------------------------------------------------
+
+" Add spaces after comment delimiters by default
+let g:NERDSpaceDelims = 1
+
+" Align line-wise comment delimiters flush left instead of following code indentation
+let g:NERDDefaultAlign = 'left'
+
+" Allow commenting and inverting empty lines (useful when commenting a region)
+let g:NERDCommentEmptyLines = 1
+
+" Enable NERDCommenterToggle to check all selected lines is commented or not
+let g:NERDToggleCheckAllLines = 1
+
+" --------------------------------------------------------------------------
+" GitGutter
+" --------------------------------------------------------------------------
+" Always show the signcolumn
+set signcolumn=yes
+
+highlight GitGutterAdd guifg=#689d6a ctermfg=Green
+highlight GitGutterChange guifg=#d79921 ctermfg=Yellow
+highlight GitGutterDelete guifg=#cc241d ctermfg=Red
+let g:gitgutter_enabled = 1
+
+" Compact git status for statusline
+function! GitStatus()
+	let [a,m,r] = GitGutterGetHunkSummary()
+	if (a == 0 && m == 0 && r == 0)
+		return printf('')
+	elseif (a != 0 && m == 0 && r == 0)
+		return printf('+%d', a)
+	elseif (a == 0 && m != 0 && r == 0)
+		return printf('~%d', m)
+	elseif (a != 0 && m != 0 && r == 0)
+		return printf('+%d ~%d', a, m)
+	elseif (a == 0 && m == 0 && r != 0)
+		return printf('-%d', r)
+	elseif (a != 0 && m == 0 && r != 0)
+		return printf('+%d -%d', a, r)
+	elseif (a == 0 && m != 0 && r != 0)
+		return printf('~%d -%d', m, r)
+	elseif (a != 0 && m != 0 && r != 0)
+		return printf('+%d ~%d -%d', a, m, r)
+endfunction
+
+" Disable all key mappings
+let g:gitgutter_map_keys = 0
+
+" Shortcuts
+nmap ) <Plug>(GitGutterNextHunk)
+nmap ( <Plug>(GitGutterPrevHunk)
+
+" --------------------------------------------------------------------------
+" Vim-airline
+" --------------------------------------------------------------------------
+let g:airline_theme = 'distinguished'
+let g:airline_powerline_fonts = 1
+
+" Display number of changes in statusbar only if they are greater than 0
+let g:airline#extensions#hunks#non_zero_only = 1
+let g:airline_highlighting_cache = 1
+
+" --------------------------------------------------------------------------
+" Lightline
+" --------------------------------------------------------------------------
+let g:lightline = {
+	\ 'colorscheme': 'deus',
+	\ 'active': {
+	\ 	'left': [ [ 'mode', 'paste' ],
+	\             [ 'gitstatus', 'readonly', 'filename', 'modified' ] ],
+	\ 	'right': [ [ 'linter_checking', 'linter_errors', 'linter_warnings', 'linter_infos', 'linter_ok' ],
+	\              [ 'percent', 'lineinfo' ],
+	\              [ 'fileformat', 'fileencoding', 'filetype', 'gitbranch' ] ]
+	\ },
+	\ 'component_function': {
+	\	'gitbranch': 'FugitiveHead',
+	\ 	'gitstatus': 'GitStatus',
+	\	'fileformat': 'LightlineFileformat',
+	\	'fileencoding': 'LightlineFileencoding',
+	\	'filetype': 'LightlineFiletype'
+	\ },
+	\ }
+
+let g:lightline.component_expand = {
+	\ 'tabs': 'lightline#tabs',
+	\ 'linter_checking': 'lightline#ale#checking',
+	\ 'linter_infos': 'lightline#ale#infos',
+	\ 'linter_warnings': 'lightline#ale#warnings',
+	\ 'linter_errors': 'lightline#ale#errors',
+	\ 'linter_ok': 'lightline#ale#ok',
+	\ }
+
+let g:lightline.component_type = {
+	\ 'linter_checking': 'right',
+	\ 'linter_infos': 'right',
+	\ 'linter_warnings': 'warning',
+	\ 'linter_errors': 'error',
+	\ 'linter_ok': 'right',
+	\ 'lineinfo': 'right',
+	\ }
+
+function! LightlineFileformat()
+  return winwidth(0) > 70 ? &fileformat : ''
+endfunction
+
+function! LightlineFileencoding()
+  return winwidth(0) > 70 ? &fileencoding : ''
+endfunction
+
+function! LightlineFiletype()
+  return winwidth(0) > 70 ? (&filetype !=# '' ? &filetype : 'no ft') : ''
+endfunction
+
+let g:lightline#ale#indicator_checking = ""
+let g:lightline#ale#indicator_infos = ""
+let g:lightline#ale#indicator_warnings = ""
+let g:lightline#ale#indicator_errors = ""
+let g:lightline#ale#indicator_ok = ""
+
+" --------------------------------------------------------------------------
+" Markdown Preview
+" --------------------------------------------------------------------------
+autocmd FileType markdown map <buffer> <leader>s :MarkdownPreview<CR>
+
+" --------------------------------------------------------------------------
+" Taglist
+" --------------------------------------------------------------------------
+nnoremap <silent> <leader>t :TlistToggle<CR>
+
+" --------------------------------------------------------------------------
+" ALE
+" --------------------------------------------------------------------------
+
+" let g:ale_sign_error = '>>'
+" let g:ale_sign_warning = '--'
+
+highlight ALEErrorSign ctermbg=9
+highlight link ALEStyleErrorSign ALEErrorSign
+highlight ALEError ctermbg=1
+highlight link ALEStyleError ALEError
+
+highlight ALEWarningSign ctermbg=3
+highlight link ALEStyleWarningSign ALEWarningSign
+highlight ALEWarning ctermbg=8
+highlight link ALEStyleWarning ALEWarning
+
+highlight link ALEInfoSign ALEWarningSign
+highlight link ALEStyleInfoSign ALEInfoSign
+highlight link ALEInfo ALEWarning
+
+" --------------------------------------------------------------------------
+" YouCompleteMe
+" --------------------------------------------------------------------------
+let g:ycm_autoclose_preview_window_after_completion = 1
