@@ -4,6 +4,7 @@ vim/.vim/undodir/
 vim/.vim/view/
 vim/.vim/NERDTreeBookmarks
 vim/.vim/vim-plug/
+vim/.viminfo
 
 # nvim data files
 nvim/.config/nvim/.netrwhist
