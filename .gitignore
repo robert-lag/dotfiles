@@ -1,3 +1,6 @@
+# General
+*.log
+
 # vim data files
 vim/.vim/.netrwhist
 vim/.vim/undodir/
