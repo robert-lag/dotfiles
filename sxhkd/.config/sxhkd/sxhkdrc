@@ -1,0 +1,57 @@
+# -----------------------------------------------
+# General
+# -----------------------------------------------
+
+super + Return
+	$TERMINAL
+
+super + o ; {b,m,v,p}
+	{$BROWSER,thunderbird,vscodium,$TERMINAL -e ncmpcpp}
+
+super + d
+	dmenu_run
+
+# Lock screen
+super + shift + x
+	xautolock -locknow
+
+super + q
+	kill
+
+# super + shift + q ; {l,e,h,r,s,shift+s}
+	# {xautolock -locknow, }
+
+XF86Audio{Prev,Next}
+	mpc -q {prev,next}
+
+@XF86LaunchA
+	scrot -s -e 'image_viewer $f'
+
+XF86LaunchB
+	xdotool selectwindow | xsel -bi
+
+# super + {_,shift + }{h,j,k,l}
+	# bspc node -{f,s} {west,south,north,east}
+
+# {_,shift + ,super + }XF86MonBrightness{Down,Up}
+	# bright {-1,-10,min,+1,+10,max}
+
+# super + shift + equal
+	# sxiv -rt "$HOME/image"
+
+# super + {h,j,k,l}
+	# bspc node -f {west,south,north,east}
+
+# super + alt + {0-9}
+	# mpc -q seek {0-9}0%
+
+# super + {alt,ctrl,alt + ctrl} + XF86Eject
+	# sudo systemctl {suspend,reboot,poweroff}
+
+# -----------------------------------------------
+# i3wm
+# -----------------------------------------------
+
+# restart i3 inplace (preserves your layout/session)
+super + shift + r
+	i3-msg restart

@@ -1,5 +1,0 @@
-# Apply .Xresources
-[[ -f ~/.Xresources ]] && xrdb -merge -I$HOME ~/.Xresources
-
-# Start i3wm
-exec i3

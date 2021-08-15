@@ -1,2 +1,16 @@
-# Ingore vim history file
-vim/dot-vim/netrwhist
+# vim data files
+vim/.vim/.netrwhist
+vim/.vim/undodir/
+vim/.vim/view/
+vim/.vim/NERDTreeBookmarks
+vim/.vim/vim-plug/
+
+# nvim data files
+nvim/.config/nvim/.netrwhist
+
+# mpd
+mpd/.config/mpd/playlists/
+
+# gtk
+gtk/.config/gtk-3.0/assets/
+gtk/.config/gtk-3.0/bookmarks

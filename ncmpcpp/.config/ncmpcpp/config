@@ -1,0 +1,112 @@
+ncmpcpp_directory = "~/.config/ncmpcpp"
+lyrics_directory = "~/.local/share/lyrics"
+mpd_music_dir = "~/music"
+mpd_host = "localhost"
+mpd_port = "6600"
+
+autocenter_mode = "yes"
+follow_now_playing_lyrics = "yes"
+ignore_leading_the = "yes"
+ignore_diacritics = "yes"
+default_place_to_search_in = "database"
+
+## Commands ##
+execute_on_song_change = "show-mpd-song-msg"
+execute_on_player_state_change = "show-mpd-player-state-msg"
+
+## Display Mode ##
+playlist_editor_display_mode = "columns"
+search_engine_display_mode = "columns"
+browser_display_mode = "columns"
+playlist_display_mode = "columns"
+
+## General Colors ##
+colors_enabled = "yes"
+main_window_color = "white"
+header_window_color = "cyan"
+volume_color = "green"
+statusbar_color = "red"
+# statusbar_time_color = cyan:b
+progressbar_color = "black:b"
+progressbar_elapsed_color = "blue:b"
+# empty_tag_color = magenta
+
+## Song List ##
+song_columns_list_format = "(10)[blue]{l} (40)[green]{t} (20)[magenta]{a} (30)[yellow]{b}"
+song_list_format = "{$7%a - $9}{$5%t$9}|{$5%f$9}$R{$6%b $9}{$3%l$9}"
+# song_list_format = {$4%a - }{%t}|{$8%f$9}$R{$3(%l)$9}
+
+## Current Item ##
+current_item_prefix = "$(blue)$r"
+current_item_suffix = "$/r$(end)"
+# current_item_prefix = $(cyan)$r$b
+# current_item_suffix = $/r$(end)$/b
+current_item_inactive_column_prefix = "$(cyan)$r"
+
+## Alternative Interface ##
+user_interface = "alternative"
+alternative_header_first_line_format = "$0$aqqu$/a {$6%a$9 - }{$3%t$9}|{$3%f$9} $0$atqq$/a$9"
+alternative_header_second_line_format = "{{$4%b$9}{ [$8%y$9]}}|{$4%D$9}"
+# alternative_header_first_line_format = $b$1$aqqu$/a$9 {%t}|{%f} $1$atqq$/a$9$/b
+# alternative_header_second_line_format = {{$4$b%a$/b$9}{ - $7%b$9}{ ($4%y$9)}}|{%D}
+
+## Classic Interface ##
+song_status_format = " $6%a $7⟫⟫ $3%t $7⟫⟫ $4%b "
+# song_status_format = $b{{$8"%t"}} $3by {$4%a{ $3in $7%b{ (%y)}} $3}|{$8%f}
+
+# song_library_format = {%n - }{%t}|{%f}
+# current_item_inactive_column_prefix = $(magenta)$r
+# current_item_inactive_column_suffix = $/r$(end)
+
+startup_screen = "media_library"
+connected_message_on_startup = "no"
+media_library_primary_tag = "artist"
+media_library_hide_album_dates = "yes"
+media_library_albums_split_by_date = "no"
+
+
+# Visualizer
+visualizer_data_source = "/tmp/mpd.fifo"
+visualizer_output_name = "my_fifo"
+visualizer_in_stereo = "yes"
+visualizer_type = "spectrum"
+visualizer_look = "+|"
+
+## Navigation ##
+cyclic_scrolling = "no"
+header_text_scrolling = "yes"
+jump_to_now_playing_song_at_start = "yes"
+lines_scrolled = "2"
+
+## Other ##
+system_encoding = "utf-8"
+regular_expressions = "extended"
+
+## Selected tracks ##
+selected_item_prefix = "* "
+discard_colors_if_item_is_selected = "yes"
+
+## Seeking ##
+incremental_seeking = "yes"
+seek_time = "1"
+
+## Visibility ##
+header_visibility = "yes"
+statusbar_visibility = "yes"
+titles_visibility = "yes"
+
+## Progress Bar ##
+progressbar_look =  "=>-"
+
+## Now Playing ##
+now_playing_prefix = "> "
+centered_cursor = "yes"
+
+# Misc
+allow_for_physical_item_deletion = "yes"
+message_delay_time = 2
+display_bitrate = "yes"
+enable_window_title = "yes"
+empty_tag_marker = ""
+# external_editor = nvim
+# use_console_editor = yes

@@ -1,0 +1,56 @@
+#!/bin/sh
+#                        __ _ _
+# __  ___ __  _ __ ___  / _(_) | ___
+# \ \/ / '_ \| '__/ _ \| |_| | |/ _ \
+#  >  <| |_) | | | (_) |  _| | |  __/
+# /_/\_\ .__/|_|  \___/|_| |_|_|\___|
+#      |_|
+#
+# This file runs when a DM logs you into a grapical session
+# and is sourced by xinitrc
+
+# Apply .Xresources
+[ -f ${XDG_CONFIG_HOME:-$HOME/.config}/x11/xresources ] &&
+	xrdb -merge ${XDG_CONFIG_HOME:-$HOME/.config}/x11/xresources
+
+# Set background (using custom script)
+setbg
+
+# Blue light filter
+redshift &
+
+# Statusbar
+# dwmblocks
+
+# Opacity effects
+picom -b
+
+# Hide mouse cursor when typing
+xbanish &
+
+# Flash the focused window
+flashfocus &
+
+# Notifications
+dunst &
+
+# Set numlock
+xdotool key --clearmodifiers Num_Lock &
+
+# Setup extended monitor
+xrandr --output HDMI1 --auto --left-of eDP1
+
+# Set keyboard settings
+setxkbmap -layout at,us \
+	-variant nodeadkeys,dvorak \
+	-option "grp:alt_shift_toggle" \
+	-option "caps:swapescape"
+
+# setup lock screen (xautolock will also be called by suspend@USER.service)
+xautolock -detectsleep -resetsaver \
+	-locker "xsecurelock" -time 10 -notify 30 \
+	-notifier "notify-send -u critical -t 3000 -- 'LOCKING screen in 30 seconds'" \
+	-killer "systemctl suspend" -killtime 50 &
+
+# MPD daemon start (if no other user instance exists)
+[ ! -s ~/.config/mpd/pid ] && mpd

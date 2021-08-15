@@ -1,0 +1,24 @@
+[core]
+	editor = nvim
+	; use this value ('input') only for linux (on windows use 'true')
+	autocrlf = input
+[user]
+	name = Robert Lag
+	email = rob.lag@outlook.com
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+[color "decorate"]
+	head = bold red
+	branch = 220
+	remoteBranch = bold 214
+	tag = 154
+[alias]
+	lg1 = log --graph --abbrev-commit --decorate --format=format:'%C(bold 214)%>|(15)%h%Creset -%C(auto)%d%Creset %C(white)%s%Creset' --all
+	lg2 = log --graph --abbrev-commit --decorate --format=format:'%C(yellow)%h%Creset -%C(auto)%d%Creset %C(white)%s%Creset %C(dim white)- %ar%Creset' --all
+	lg = lg1
+	mylog = "!git log --pretty=format:'%h|%an|%s' -10 | while IFS='|' read hash author message; do printf '%s %-20s %s\n' \"$hash\" \"$author\" \"$message\"; done"
+[init]
+	defaultBranch = master

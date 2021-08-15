@@ -1,0 +1,250 @@
+#  _  __
+# | |/ _|
+# | | |_
+# | |  _|
+# | | |
+# |_|_|
+#
+
+# --------------------------------------------------
+# Basic vars {{{1
+# --------------------------------------------------
+set shell bash
+set shellopts '-eu'
+set ifs "\n"
+set scrolloff 10
+set icons true
+set period 1
+set hidden true
+
+# }}}1
+
+# --------------------------------------------------
+# Custom Functions {{{1
+# --------------------------------------------------
+
+# General {{{2
+cmd open ${{
+    case $(file --mime-type "$f" -bL) in
+        text/*|application/json) $EDITOR "$f";;
+        *) xdg-open "$f" ;;
+    esac
+}}
+
+cmd mkdir $mkdir -p "$(echo $* | tr ' ' '\ ')"
+
+cmd mkfile $$EDITOR $1
+
+cmd chmod ${{
+  printf "Mode Bits: "
+  read ans
+
+  for file in "$fx"
+  do
+    chmod $ans $file
+  done
+
+  lf -remote 'send reload'
+}}
+
+# Fzf-finder and movement {{{2
+cmd fzf-jump ${{
+  res="$(find . -maxdepth 3 | fzf --header='Jump to location')"
+  if [ -f "$res" ]; then
+    cmd="select"
+  elif [ -d "$res" ]; then
+    cmd="cd"
+  fi
+  lf -remote "send $id $cmd \"$res\""
+}}
+
+# Cut files {{{2
+# Add to cut/copied files
+cmd cut-add %{{
+    files=$(lf -remote load | tail -n +2)
+    newline=$'\n'
+
+    # change to $fx to add current file when no toggled
+    # files exist.
+    if [ -n "$files" ]; then
+        new_files=$(echo "$files${newline}$fx" | sort | uniq)
+    else
+        new_files=$fx
+    fi
+    # remove empty lines from the file list, because they keep messing
+    # up the selection.
+    new_files=$(echo "$new_files" | sed --quiet -e '/^$/d' -e 'p')
+
+    lf -remote "save${newline}move${newline}${new_files}${newline}"
+    lf -remote "send $id unselect${newline}send $id sync"
+}}
+
+# Remove from cut/copied files
+cmd cut-remove %{{
+    files=$(lf -remote load)
+    operation=$(echo "$files" | head -n1)
+
+    if [ "$operation" != "move" ]; then
+        lf -remote "send $id echoerr no files in cut list."
+        exit 1
+    fi
+
+    files=$(echo "$files" | tail -n +2)
+    newline=$'\n'
+
+    # change to $fx to remove current file when no toggled
+    # files exist.
+    if [ -n "$files" ]; then
+        # here we want all files in $files that aren't in $fx, making sure
+        # that none of the entries in $fx are included, even when they aren't
+        # in $files. To do this we concatenate $files and $fx (twice), printing
+        # only the uniqe lines.
+        new_files=$(echo "$files$newline$fx$newline$fx" | sort | uniq -u)
+    else
+        new_files=$files
+    fi
+    new_files=$(echo "$new_files" | sed --quiet -e '/^$/d' -e 'p')
+
+    lf -remote "save${newline}move${newline}${new_files}${newline}"
+    lf -remote "send $id unselect${newline}send $id sync"
+}}
+
+# Archive bindings {{{2
+cmd unarchive ${{
+  case "$f" in
+      *.zip) unzip "$f" ;;
+      *.tar.gz) tar -xzvf "$f" ;;
+      *.tar.bz2) tar -xjvf "$f" ;;
+      *.tar) tar -xvf "$f" ;;
+      *) echo "Unsupported format" ;;
+  esac
+}}
+
+cmd zip %zip -r "$f" "$f"
+
+# Trash files {{{2
+cmd trash ${{
+  files=$(printf "$fx" | tr '\n' ';')
+  while [ "$files" ]; do
+    # extract the substring from start of string up to delimiter.
+    # this is the first "element" of the string.
+    file=${files%%;*}
+
+    trash-put "$(basename "$file")"
+    # if there's only one element left, set `files` to an empty string.
+    # this causes us to exit this `while` loop.
+    # else, we delete the first "element" of the string from files, and move onto the next.
+    if [ "$files" = "$file" ]; then
+      files=''
+    else
+      files="${files#*;}"
+    fi
+  done
+}}
+
+cmd clear-trash %trash-empty
+
+cmd restore-trash ${{
+  trash-restore
+}}
+
+# Dragon drag-and-drop {{{2
+cmd dragon %dragon-drag-and-drop --all --and-exit $fx
+cmd dragon-stay %dragon-drag-and-drop --all $fx
+cmd dragon-individual %dragon-drag-and-drop $fx
+cmd dragon-cp %dragon-cp
+cmd dragon-mv %dragon-mv
+cmd dragon-dl %dragon-dl
+
+# Wallpaper {{{2
+cmd setbg "$1"
+
+# Change window title to current directory {{{2
+cmd on-cd &{{
+    # '&' commands run silently in background (which is what we want here),
+    # but are not connected to stdout.
+    # To make sure our escape sequence still reaches stdout we pipe it to /dev/tty
+	printf "\033]0; $(pwd | sed "s|$HOME|~|")\007" > /dev/tty
+}}
+on-cd
+
+# Vim-like commands {{{2
+cmd q quit
+cmd wq quit
+
+# }}}1
+
+# --------------------------------------------------
+# Bindings {{{1
+# --------------------------------------------------
+
+# Remove defaults {{{2
+map m
+map d
+
+# Basic bindings {{{2
+map ZZ quit
+map . set hidden!
+map md push :mkdir<space>
+map mf push :mkfile<space>
+map R reload
+map x $$f
+map X !$f
+map o &mimeopen $f
+map O $mimeopen --ask $f
+map l open
+map <enter> open
+map c toggle
+
+# Rename {{{2
+map A rename # at the very end
+map r push A<c-u> # new rename
+map I push A<c-a> # at the very beginning
+map i push A<a-b><a-b><a-f> # before extention
+map a push A<a-b> # after extention
+map B bulkrename
+
+# Wallpaper / lockscreen {{{2
+map bg $setbg $f
+
+# Archive bindings {{{2
+map az zip
+map au unarchive
+
+# Trash/delete bindings {{{2
+map DD delete
+map dd trash
+map tt trash
+map tc clear-trash
+map tr restore-trash
+map ma cut-add
+map mr cut-remove
+
+# Dragon drag-and-drop {{{2
+map dr dragon
+map ds dragon-stay
+map di dragon-individual
+map dm dragon-mv
+map dc dragon-cp
+map dl dragon-dl
+
+# Movement {{{2
+map gf fzf-jump
+
+map gh cd ~
+map gc cd ~/.config
+map gd cd ~/data/_user/documents
+map gD cd /dev
+map gE cd /etc
+map gi cd ~/data/_user/pictures
+map gm cd /media
+map gM cd /mnt
+map gO cd /opt
+map gp cd ~/data/_user/programming
+map gr cd /
+map gS cd /srv
+map gT cd /tmp
+map gu cd ~/data/_user
+map gU cd /usr
+map gV cd /var
+map g/ cd /

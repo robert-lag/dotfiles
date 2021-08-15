@@ -1,0 +1,98 @@
+!! __   __
+!! \ \ / /
+!!  \ V / _ __ ___  ___  ___  _   _ _ __ ___ ___  ___
+!!   > < | '__/ _ \/ __|/ _ \| | | | '__/ __/ _ \/ __|
+!!  / . \| | |  __/\__ \ (_) | |_| | | | (_|  __/\__ \
+!! /_/ \_\_|  \___||___/\___/ \__,_|_|  \___\___||___/
+!!
+
+!! ---------------------------------------------------------------------------
+!! Colorscheme
+!! ---------------------------------------------------------------------------
+#include "./xresources.d/colorschemes/gruvbox-dark-custom.xresources"
+
+!! ---------------------------------------------------------------------------
+!! dwm Appearance
+!! ---------------------------------------------------------------------------
+! dwm.font:				xft:monospace:style=Regular:pixelsize=18
+dwm.normbgcolor:		black_dark
+dwm.normfgcolor:		white_dark
+dwm.normbordercolor:	black_light
+dwm.selbgcolor:			blue_dark
+dwm.selfgcolor:			black_dark
+dwm.selbordercolor:		blue_dark
+
+!! ---------------------------------------------------------------------------
+!! demnu Appearance
+!! ---------------------------------------------------------------------------
+dmenu.font:				monospace:pixelsize=18
+dmenu.background:		black_dark
+dmenu.foreground:		white_light
+dmenu.selbackground:	yellow_dark
+dmenu.selforeground:	black_dark
+
+!! ---------------------------------------------------------------------------
+!! URxvt Appearance
+!! ---------------------------------------------------------------------------
+!! Font
+URxvt.font:				xft:Hack:style=Regular:pixelsize=18,xft:Inconsolata Nerd Font:pixelsize=10
+URxvt.boldFont:			xft:Hack:style=Bold:pixelsize=18
+URxvt.italicFont:		xft:Hack:style=Italic:pixelsize=18
+URxvt.boldItalicFont:	xft:Hack:style=Bold Italic:pixelsize=18
+
+URxvt.letterSpace:		0
+URxvt.lineSpace:		0
+
+URxvt.cursorBlink:		true
+URxvt.cursorUnderline:	false
+URxvt.saveline:			2048
+
+!! Window
+URxvt.geometry:			92x24
+URxvt.internalBorder:	12
+URxvt.scrollBar:		false
+URxvt.scrollBar_right:	false
+
+URxvt.urgentOnBell:		true
+URxvt.depth:			24
+URxvt.iso14755:			false
+
+!! ---------------------------------------------------------------------------
+!! Common Keybinds for Navigations
+!! ---------------------------------------------------------------------------
+URxvt.keysym.Shift-Up:		command:\033]720;1\007
+URxvt.keysym.Shift-Down:	command:\033]721;1\007
+URxvt.keysym.Control-Up:	\033[1;5A
+URxvt.keysym.Control-Down:	\033[1;5B
+URxvt.keysym.Control-Right:	\033[1;5C
+URxvt.keysym.Control-Left:	\033[1;5D
+
+!! ---------------------------------------------------------------------------
+!! Extensions
+!! ---------------------------------------------------------------------------
+URxvt.perl-ext-common:		default,resize-font,clipboard,url-select,keyboard-select
+URxvt.colorUL:				#4682B4
+
+!! resize-font
+URxvt.resize-font.smaller:	C-minus
+URxvt.resize-font.bigger:	C-plus
+
+!! clipboard
+URxvt.copyCommand:			xclip -i -selection clipboard
+URxvt.pasteCommand:			xclip -o -selection clipboard
+URxvt.keysym.M-c:			perl:clipboard:copy
+URxvt.keysym.M-v:			perl:clipboard:paste
+URxvt.keysym.M-C-v:			perl:clipboard:paste_escaped
+
+!! url-select
+URxvt.keysym.M-u:			perl:url-select:select_next
+URxvt.url-select.launcher:	/usr/bin/xdg-open
+URxvt.url-select.underline:	true
+
+!! keyboard-select
+URxvt.keysym.M-Escape:		perl:keyboard-select:activate
+URxvt.keysym.M-s:			perl:keyboard-select:search
+
+!! matcher
+URxvt.url-launcher:			/usr/bin/xdg-open
+URxvt.matcher.button:		C1
