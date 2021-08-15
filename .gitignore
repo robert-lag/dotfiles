@@ -15,3 +15,6 @@ mpd/.config/mpd/playlists/
 # gtk
 gtk/.config/gtk-3.0/assets/
 gtk/.config/gtk-3.0/bookmarks
+
+# zsh
+.zcompdump
