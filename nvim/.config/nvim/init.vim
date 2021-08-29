@@ -24,7 +24,7 @@ set updatetime=300
 
 " Persistent undo
 set undofile
-set undodir=$XDG_DATA_HOME/nvim/undodir
+set undodir=$HOME/.local/share/nvim/undodir
 
 " Always use system clipboard
 set clipboard+=unnamedplus
