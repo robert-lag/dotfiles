@@ -41,7 +41,11 @@ alias \
 	p="pacman" \
 	z="zathura"
 
+# Specify config files
+alias gdb="gdb -nh -x $XDG_CONFIG_HOME/gdb/init"
+
 # Other
 alias lf='lf-ueberzug'
 alias yt='youtube-dl --add-metadata --ignore-errors'	# Download video
-alias yta='yt -x'										# Download only audio
+alias yta='yt --extract-audio'							# Download only audio
+alias dla='youtube-dl-and-normalize-file'
