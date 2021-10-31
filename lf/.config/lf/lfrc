@@ -16,6 +16,7 @@ set scrolloff 10
 set icons true
 set period 1
 set hidden true
+set mouse true
 
 # }}}1
 
@@ -27,6 +28,14 @@ set hidden true
 cmd open ${{
     case $(file --mime-type "$f" -bL) in
         text/*|application/json) $EDITOR "$f";;
+        *) xdg-open "$f" ;;
+    esac
+}}
+
+cmd open-alternative ${{
+    case $(file --mime-type "$f" -bL) in
+        text/*|application/json) $EDITOR "$f";;
+        application/pdf) devour okular "$f" ;;
         *) xdg-open "$f" ;;
     esac
 }}
@@ -159,6 +168,33 @@ cmd dragon-dl %dragon-dl
 # Wallpaper {{{2
 cmd setbg "$1"
 
+# Create symlink {{{2
+# To create a symlink first copy/cut a file and
+# then use the create-symlink command:
+#	- copy file: creates soft-link
+#	- cut file: creates hard-link
+cmd link %{{
+	# Get all selected files and their current mode
+	# (copy or move)
+	load=$(lf -remote 'load')
+	mode=$(echo "$load" | sed -n '1p')
+	select_files_list=$(echo "$load" | sed '1d')
+
+	if [ -z "$select_files_list" ]; then
+		lf -remote "send $id echo no files to link"
+		exit 0
+	fi
+
+	case "$mode" in
+		# Symbolically copy mode is indicating a soft link
+		copy) ln --symbolic --relative --target-directory . -- "$select_files_list";;
+		# while a move mode is indicating a hard link
+		move) ln --target-directory . -- "$select_files_list";;
+	esac
+
+	lf -remote "send clear"
+}}
+
 # Change window title to current directory {{{2
 cmd on-cd &{{
     # '&' commands run silently in background (which is what we want here),
@@ -190,11 +226,25 @@ map mf push :mkfile<space>
 map R reload
 map x $$f
 map X !$f
-map o &mimeopen $f
-map O $mimeopen --ask $f
-map l open
+# map o &mimeopen $f
+# map O $mimeopen --ask $f
+map o open
+map O open-alternative
+map <c-o> open-alternative
 map <enter> open
-map c toggle
+
+# To create a symlink first copy/cut a file and
+# the use the create-symlink command:
+#	- copy file: creates soft-link
+#	- cut file: creates hard-link
+map L link
+
+# Mouse bindings {{{2
+map <m-up> up
+map <m-down> down
+map <m-1> toggle
+map <m-2> unselect
+map <m-3> invert
 
 # Rename {{{2
 map A rename # at the very end
@@ -231,17 +281,21 @@ map dl dragon-dl
 # Movement {{{2
 map gf fzf-jump
 
+# Directory shortcuts
 map gh cd ~
+map gb cd ~/.local/bin
 map gc cd ~/.config
 map gd cd ~/data/_user/documents
 map gD cd /dev
 map gE cd /etc
 map gi cd ~/data/_user/pictures
+map gl cd ~/.local
 map gm cd /media
 map gM cd /mnt
 map gO cd /opt
 map gp cd ~/data/_user/programming
 map gr cd /
+map gs cd ~/.local/share
 map gS cd /srv
 map gT cd /tmp
 map gu cd ~/data/_user
