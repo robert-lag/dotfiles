@@ -22,10 +22,6 @@ set $term st
 set $outer-gaps 6
 set $inner-gaps 6
 
-# screenshot
-set $scrnshot-name '%Y-%m-%d-%H%M%S-$wx$h-scrot.png'
-set $scrnshot-directory '~/Pictures/screenshots/'
-
 # workspaces
 set $ws1 "1"
 set $ws2 "2"
@@ -142,11 +138,14 @@ bindsym Super_R --release exec --no-startup-id flash_window
 
 # screenshot
 bindsym $mod+Print --release \
-	exec --no-startup-id "scrot $scrnshot-name -e 'mv $f $scrnshot-directory'", \
-	exec "notify-send -u normal -t 2000 'Screenshot taken' 'Saved in $scrnshot-directory'
-bindsym $mod+Shift+Print --release \
-	exec --no-startup-id "scrot --select --freeze $scrnshot-name -e 'mv $f $scrnshot-directory'", \
-	exec "notify-send -u normal -t 2000 'Screenshot taken' 'Saved in $scrnshot-directory'
+	exec --no-startup-id "screenshot"
+
+# color picker
+# copies the average pixel color in the selected region
+# or the color of the selected pixel
+bindsym $mod+c --release \
+	exec --no-startup-id "maim --select --tolerance 0 | convert - -resize 1x1\! - format '%[hex:p{p{0,0}}]' info:-", \
+	exec "notify-send -u normal -t 2000 'Copied color value'
 
 # music (mpc/mpd) bindings
 bindsym $mod+p exec --no-startup-id "mpc toggle"
@@ -383,6 +382,10 @@ for_window [class="Java"] move container to workspace number $ws8
 # drowpdown/scratchpad windows
 for_window [instance="dropdown-general"] floating enable, resize set 1000 550, move scratchpad
 for_window [instance="dropdown-math"] floating enable, resize set 1000 550, move scratchpad
+
+# make popup zoom windows floating as zoom doesn't use notifications (e.g. notify-send).
+# Instead it displays a new window for a short amount of time.
+for_window [title="zoom"] floating enable
 
 # }}}1
 
