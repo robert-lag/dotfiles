@@ -13,7 +13,6 @@ inode/directory=file.desktop
 application/rss+xml=rss.desktop
 application/zip=zip.desktop;
 
-x-scheme-handler/eclipse+command=_usr_lib_dbeaver_.desktop
 x-scheme-handler/http=firefox.desktop
 x-scheme-handler/https=firefox.desktop
 x-scheme-handler/ftp=firefox.desktop
@@ -27,10 +26,10 @@ application/x-extension-xht=firefox.desktop
 text/html=firefox.desktop
 
 x-scheme-hander/mailto=mail.desktop
-x-scheme-handler/mailto=userapp-Thunderbird-YM0DA1.desktop
-message/rfc822=userapp-Thunderbird-YM0DA1.desktop
-x-scheme-handler/mid=userapp-Thunderbird-YM0DA1.desktop
+x-scheme-handler/mid=mail.desktop
+message/rfc822=mail.desktop
 
 [Added Associations]
+x-scheme-handler/eclipse+command=_usr_lib_dbeaver_.desktop
 
 [Removed Associations]
