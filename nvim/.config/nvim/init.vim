@@ -228,7 +228,7 @@ call plug#begin(system('echo -n "${XDG_DATA_HOME:-$HOME/.local/share}/nvim/plugg
 	" Plug 'puremourning/vimspector'
 
 	" File browser
-	Plug 'preservim/nerdtree'
+	" Plug 'preservim/nerdtree'
 
 	" For commenting code using shortcuts
 	Plug 'preservim/nerdcommenter'
@@ -261,11 +261,11 @@ call plug#begin(system('echo -n "${XDG_DATA_HOME:-$HOME/.local/share}/nvim/plugg
 	Plug 'ap/vim-css-color'
 
 	" Autocompletion
-	" Plug 'ycm-core/YouCompleteMe', { 'do': './install.py' }
-	Plug 'neoclide/coc.nvim', {'branch': 'release'}
+	Plug 'ycm-core/YouCompleteMe', { 'do': './install.py' }
+	" Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
 	" Enhanced rust support
-	Plug 'rust-lang/rust.vim'
+	" Plug 'rust-lang/rust.vim'
 
 	" Markdown preview
 	Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install' }
