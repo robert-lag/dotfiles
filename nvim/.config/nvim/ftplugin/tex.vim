@@ -1,4 +1,5 @@
 set linebreak
+set foldmethod=marker
 
 vmap <D-j> gj
 vmap <D-k> gk
