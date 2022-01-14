@@ -37,8 +37,8 @@ set $ws10 "10"
 # colors
 set_from_resource $bg-color					i3wm.background		#2f343f
 set_from_resource $inactive-bg-color		i3wm.background		#2f343f
-set_from_resource $text-color				i3wm.foreground		#f3f4f5
-set_from_resource $inactive-text-color		i3wm.foreground		#676E7D
+set_from_resource $text-color				i3wm.color7			#f3f4f5
+set_from_resource $inactive-text-color		i3wm.color7			#676E7D
 set_from_resource $urgent-bg-color			i3wm.color1			#E53935
 set_from_resource $indicator-color			i3wm.color4			#147dad
 set_from_resource $window-bg-color			i3wm.background		#cccccc
@@ -52,8 +52,7 @@ set_from_resource $window-bg-color			i3wm.background		#cccccc
 # Use Mouse+$mod to drag floating windows to their wanted position
 floating_modifier $mod
 
-font pango:Ubuntu 12
-#font pango:DejaVu Sans Mono 10
+font pango:sans-serif 12
 
 # border
 default_border pixel 3
