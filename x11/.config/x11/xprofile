@@ -11,16 +11,16 @@
 
 # Apply .Xresources
 [ -f ${XDG_CONFIG_HOME:-$HOME/.config}/x11/xresources ] &&
-	xrdb -merge ${XDG_CONFIG_HOME:-$HOME/.config}/x11/xresources
+	xrdb -merge ${XDG_CONFIG_HOME:-$HOME/.config}/x11/xresources &
 
 # Set background (using custom script)
-setbg
+setbg &
 
 # Blue light filter
 redshift &
 
 # Statusbar
-# dwmblocks
+# dwmblocks &
 
 # Opacity effects
 picom -b
@@ -38,13 +38,13 @@ dunst &
 xdotool key --clearmodifiers Num_Lock &
 
 # Setup extended monitor
-xrandr --output HDMI1 --auto --left-of eDP1
+xrandr --output HDMI1 --auto --left-of eDP1 &
 
 # Set keyboard settings
 setxkbmap -layout at,us \
 	-variant nodeadkeys,dvorak \
 	-option "grp:alt_shift_toggle" \
-	-option "caps:swapescape"
+	-option "caps:swapescape" &
 
 # setup lock screen (xautolock will also be called by suspend@USER.service)
 xautolock -detectsleep -resetsaver \
@@ -53,4 +53,7 @@ xautolock -detectsleep -resetsaver \
 	-killer "systemctl suspend" -killtime 50 &
 
 # MPD daemon start (if no other user instance exists)
-[ ! -s ~/.config/mpd/pid ] && mpd
+[ ! -s ~/.config/mpd/pid ] && mpd &
+
+# Syncthing (for syncing folders with computers/smartphones)
+syncthing -no-browser -no-restart -logflags=0 &
