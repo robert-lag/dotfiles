@@ -1,16 +1,11 @@
-https://www.archlinux.org/feeds/news/ "tech"
+# Productivity
 http://feeds.feedburner.com/zenhabits "productivity" "inspiration"
 https://medium.com/feed/keep-learning-keep-growing "medium" "productivity" "inspiration"
+
+# Technical
+https://www.archlinux.org/feeds/news/ "tech"
+https://hnrss.org/newest?points=50 "tech"
 
 # Reddit
 https://www.reddit.com/r/Zettelkasten/.rss "reddit" "productivity" "note-taking" "~Zettelkasten (Reddit)"
 https://www.reddit.com/r/StudiumAT/.rss "reddit" "studies" "~Studium AT (Reddit)"
-
-# Video content
-https://www.youtube.com/feeds/videos.xml?channel_id=UCKCTmact-90hXpV2ns8GSsA "yt" "programming" "~DevDuck (YouTube)"
-https://www.youtube.com/feeds/videos.xml?channel_id=UCIabPXjvT5BVTxRDPCBBOOQ "yt" "programming" "~Dani (YouTube)"
-https://www.youtube.com/feeds/videos.xml?channel_id=UC8JNIm02zw8h_3NBrP_zsZA "yt" "productivity" "~Andrew Kirby (YouTube)"
-https://www.youtube.com/feeds/videos.xml?channel_id=UCGOVq1UBjaq45vO_oyVQNYw "yt" "entertainment" "~Maschek (YouTube)"
-https://www.youtube.com/feeds/videos.xml?channel_id=UC2eYFnH61tmytImy1mTYvhA "yt" "tech" "~Luke Smith (YouTube)"
-https://www.youtube.com/feeds/videos.xml?channel_id=UCld68syR8Wi-GY_n4CaoJGA "yt" "tech" "~Brodie Robertson (YouTube)"
-https://www.youtube.com/feeds/videos.xml?channel_id=UCXuqSBlHAE6Xw-yeJA0Tunw "yt" "tech" "~Linus Tech Tips (YouTube)"
