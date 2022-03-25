@@ -22,5 +22,5 @@
 	mylog = "!git log --pretty=format:'%h|%an|%s' -10 | while IFS='|' read hash author message; do printf '%s %-20s %s\n' \"$hash\" \"$author\" \"$message\"; done"
 [init]
 	defaultBranch = master
-[credential "https://github.com"]
+[credential]
 	helper = store --file ~/.local/share/git/.credentials
