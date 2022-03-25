@@ -28,15 +28,19 @@ set mouse true
 cmd open ${{
     case $(file --mime-type "$f" -bL) in
         text/*|application/json) $EDITOR "$f";;
+        application/x-sc) sc-im "$f";;
+        application/x-freeplane) freeplane-java-11 "$f" ;;
         *) xdg-open "$f" ;;
     esac
 }}
 
 cmd open-alternative ${{
     case $(file --mime-type "$f" -bL) in
-        text/*|application/json) $EDITOR "$f";;
         application/pdf) devour okular "$f" ;;
-        *) xdg-open "$f" ;;
+        image/*) devour gimp "$f" ;;
+        text/html) firefox "$f" ;;
+        application/x-freeplane) freeplane-java-11 "$f" ;;
+        *) $EDITOR "$f";;
     esac
 }}
 
@@ -120,21 +124,23 @@ cmd cut-remove %{{
 
 # Archive bindings {{{2
 cmd unarchive ${{
-  case "$f" in
-      *.zip) unzip "$f" ;;
-      *.tar.gz) tar -xzvf "$f" ;;
-      *.tar.bz2) tar -xjvf "$f" ;;
-      *.tar) tar -xvf "$f" ;;
-      *) echo "Unsupported format" ;;
-  esac
+	case "$f" in
+		*.zip) unzip "$f" ;;
+		*.tar.gz) tar -xzvf "$f" ;;
+		*.tar.bz2) tar -xjvf "$f" ;;
+		*.tar) tar -xvf "$f" ;;
+		*) echo "Unsupported format" ;;
+	esac
 }}
 
-cmd zip %zip -r "$f" "$f"
+cmd zip ${{
+	apack "$(basename "$f").zip" "$(basename "$f")"
+}}
 
 # Trash files {{{2
 cmd trash ${{
-  files=$(printf "$fx" | tr '\n' ';')
-  while [ "$files" ]; do
+	files=$(printf "$fx" | tr '\n' ';')
+	while [ "$files" ]; do
     # extract the substring from start of string up to delimiter.
     # this is the first "element" of the string.
     file=${files%%;*}
@@ -164,9 +170,6 @@ cmd dragon-individual %dragon-drag-and-drop $fx
 cmd dragon-cp %dragon-cp
 cmd dragon-mv %dragon-mv
 cmd dragon-dl %dragon-dl
-
-# Wallpaper {{{2
-cmd setbg "$1"
 
 # Create symlink {{{2
 # To create a symlink first copy/cut a file and
@@ -256,6 +259,7 @@ map B bulkrename
 
 # Wallpaper / lockscreen {{{2
 map bg $setbg $f
+map bl $set-lockscreen $f
 
 # Archive bindings {{{2
 map az zip
@@ -285,10 +289,10 @@ map gf fzf-jump
 map gh cd ~
 map gb cd ~/.local/bin
 map gc cd ~/.config
-map gd cd ~/data/_user/documents
+map gd cd ~/data/_user/Documents
 map gD cd /dev
 map gE cd /etc
-map gi cd ~/data/_user/pictures
+map gi cd ~/data/_user/Pictures
 map gl cd ~/.local
 map gm cd /media
 map gM cd /mnt
