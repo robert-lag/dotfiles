@@ -149,6 +149,7 @@ bindsym $mod+c --release \
 # music (mpc/mpd) bindings
 bindsym $mod+p exec --no-startup-id "mpc toggle"
 bindsym $mod+Shift+p exec --no-startup-id "mpc pause"
+
 bindsym $mod+m exec --no-startup-id "mpc prev"
 bindsym $mod+Shift+m exec --no-startup-id "mpc seek 0%"
 bindsym $mod+minus exec --no-startup-id "mpc next"
@@ -157,6 +158,15 @@ bindsym $mod+comma exec --no-startup-id "mpc seek -10"
 bindsym $mod+Shift+comma exec --no-startup-id "mpc seek -60"
 bindsym $mod+period exec --no-startup-id "mpc seek +10"
 bindsym $mod+Shift+period exec --no-startup-id "mpc seek +60"
+
+bindsym $mod+F9 exec --no-startup-id "mpc prev"
+bindsym $mod+Shift+F9 exec --no-startup-id "mpc seek 0%"
+bindsym $mod+F12 exec --no-startup-id "mpc next"
+bindsym $mod+Shift+F12 exec --no-startup-id "mpc repeat"
+bindsym $mod+F10 exec --no-startup-id "mpc seek -10"
+bindsym $mod+Shift+F10 exec --no-startup-id "mpc seek -60"
+bindsym $mod+F11 exec --no-startup-id "mpc seek +10"
+bindsym $mod+Shift+F11 exec --no-startup-id "mpc seek +60"
 
 # wlan
 bindsym $mod+w exec --no-startup-id dmenu-wlan-scanner
