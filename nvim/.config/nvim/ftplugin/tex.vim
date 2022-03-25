@@ -1,4 +1,4 @@
-set linebreak
+set wrap linebreak
 set foldmethod=marker
 
 vmap <D-j> gj
