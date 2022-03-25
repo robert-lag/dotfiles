@@ -3,6 +3,7 @@
 ## ~/.ncmpcpp/bindings or $XDG_CONFIG_HOME/ncmpcpp/bindings ##
 ## and set up your preferences                              ##
 ##############################################################
+# Default keybindings {{{1
 #
 #def_key "mouse"
 #  mouse_event
@@ -361,7 +362,7 @@
 #def_key "f"
 #	find_item_forward
 
-# Windows
+# Windows {{{1
 def_key "f1"
  show_help
 
@@ -404,7 +405,16 @@ def_key "="
 def_key "@"
  show_server_info
 
-# Movement
+def_key "m"
+  show_media_library
+def_key "M"
+  toggle_media_library_columns_mode
+def_key "t"
+  show_tag_editor
+def_key "v"
+  show_visualizer
+
+# Movement {{{1
 def_key "j"
     scroll_down
 def_key "k"
@@ -462,7 +472,13 @@ def_key "n"
 def_key "N"
     previous_found_item
 
-# Miscellaneous
+def_key "Z"
+	move_selected_items_up
+def_key "T"
+	move_selected_items_down
+
+
+# Delete {{{1
 def_key "delete"
   delete_playlist_items
 def_key "delete"
@@ -476,19 +492,11 @@ def_key "x"
 def_key "x"
  delete_stored_playlist
 
-# not used but bound
+# Not used but bound {{{1
 # def_key "J"
 #     move_sort_order_down
 # def_key "K"
 #     move_sort_order_up
-def_key "m"
-  show_media_library
-def_key "M"
-  toggle_media_library_columns_mode
-def_key "t"
-  show_tag_editor
-def_key "v"
-  show_visualizer
 def_key "G"
   move_end
 def_key "U"
