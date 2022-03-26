@@ -288,13 +288,14 @@ map gf fzf-jump
 # Directory shortcuts
 map gh cd ~
 map gb cd ~/.local/bin
+map gB cd /usr/local/bin
 map gc cd ~/.config
 map gd cd ~/data/_user/Documents
 map gD cd /dev
 map gE cd /etc
 map gi cd ~/data/_user/Pictures
 map gl cd ~/.local
-map gm cd /media
+map gm cd /run/media
 map gM cd /mnt
 map gO cd /opt
 map gp cd ~/data/_user/programming
