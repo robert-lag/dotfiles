@@ -1,0 +1,39 @@
+# Directories to be ignored
+.android/
+.cache/
+/.config/
+.dendron/
+.eclipse/
+.freeplane/
+.gradle/
+.hplip/
+.java/
+.mume/
+.pki/
+.sane/
+.swt/
+.vimgolf/
+downloads/
+Downloads/
+
+programming/**/build/
+programming/**/Build/
+programming/**/builds/
+programming/**/Builds/
+programming/**/bin/
+vim-plug/
+
+.Trash-0/
+.Trash-*/
+.Trash/
+
+# Windows directories
+$RECYCLE.BIN/
+DeliveryOptimization/
+System Volume Information/
+WindowsApps/
+WpSystem/
+WUDownloadCache/
+Program Files/
+Programme/
+pagefile.sys
