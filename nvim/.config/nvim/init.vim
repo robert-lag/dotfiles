@@ -163,10 +163,10 @@ let mapleader = ","
 "nnoremap <Down>  :echoe "Use j"<CR>
 
 " Shortcuts for split navigation, saving a keypress
-map <C-h> <C-w>h
-map <C-j> <C-w>j
-map <C-k> <C-w>k
-map <C-l> <C-w>l
+" map <C-h> <C-w>h
+" map <C-j> <C-w>j
+" map <C-k> <C-w>k
+" map <C-l> <C-w>l
 
 " Toggle spellchecking
 noremap <leader>c :setlocal spell! spelllang=en_us,de<CR>
@@ -228,7 +228,7 @@ call plug#begin(system('echo -n "${XDG_DATA_HOME:-$HOME/.local/share}/nvim/plugg
 	" Plug 'puremourning/vimspector'
 
 	" File browser
-	" Plug 'preservim/nerdtree'
+	Plug 'preservim/nerdtree'
 
 	" For commenting code using shortcuts
 	Plug 'preservim/nerdcommenter'
@@ -255,13 +255,14 @@ call plug#begin(system('echo -n "${XDG_DATA_HOME:-$HOME/.local/share}/nvim/plugg
 	Plug 'itchyny/lightline.vim'
 
 	" Integration of ALE (linter) into lightline (status line)
-	Plug 'maximbaz/lightline-ale'
+	" Plug 'maximbaz/lightline-ale'
 
 	" Colorize css color codes (e.g. #689d6a)
 	Plug 'ap/vim-css-color'
 
 	" Autocompletion
 	Plug 'ycm-core/YouCompleteMe', { 'do': './install.py' }
+	" Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 	" Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
 	" Enhanced rust support
@@ -280,7 +281,8 @@ call plug#begin(system('echo -n "${XDG_DATA_HOME:-$HOME/.local/share}/nvim/plugg
 	Plug 'KeitaNakamura/tex-conceal.vim'
 
 	" Snippets
-	Plug 'sirver/ultisnips'
+	Plug 'SirVer/ultisnips'
+	Plug 'honza/vim-snippets'
 
 	" CSV support
 	Plug 'zhaocai/csv.vim'
@@ -374,7 +376,7 @@ let g:airline_highlighting_cache = 1
 " Lightline {{{1
 " --------------------------------------------------------------------------
 let g:lightline = {
-	\ 'colorscheme': 'deus',
+	\ 'colorscheme': 'gruvbox',
 	\ 'active': {
 	\ 	'left': [ [ 'mode', 'paste' ],
 	\             [ 'gitstatus', 'readonly', 'filename', 'modified' ] ],
@@ -614,3 +616,16 @@ let g:csv_highlight_column = 'y'
 "         endif
 "     endwhile
 " endfunction
+"
+" --------------------------------------------------------------------------
+" UltiSnips {{{1
+" --------------------------------------------------------------------------
+let g:UltiSnipsExpandTrigger="<leader>f"
+let g:UltiSnipsJumpForwardTrigger="<C-j>"
+let g:UltiSnipsJumpBackwardTrigger="<C-k>"
+let g:UltiSnipsSnippetDirectories=["UltiSnips", "my_snippets"]
+
+" --------------------------------------------------------------------------
+" Deoplete {{{1
+" --------------------------------------------------------------------------
+let g:deoplete#enable_at_startup = 1
