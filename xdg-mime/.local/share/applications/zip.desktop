@@ -1,4 +1,4 @@
 [Desktop Entry]
 Type=Application
-Name=PDF reader
+Name=Unpack Zip
 Exec=/usr/bin/aunpack %u
