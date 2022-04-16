@@ -35,13 +35,19 @@ cmd open ${{
 }}
 
 cmd open-alternative ${{
-    case $(file --mime-type "$f" -bL) in
-        application/pdf) devour okular "$f" ;;
-        image/*) devour gimp "$f" ;;
-        text/html) firefox "$f" ;;
-        application/x-freeplane) freeplane-java-11 "$f" ;;
-        *) $EDITOR "$f";;
-    esac
+	file_ext="${f##*.}"
+
+	if [ "$file_ext" = "desktop" ]; then
+		open-desktop-file "$f"
+	else
+		case $(file --mime-type "$f" -bL) in
+			application/pdf) devour okular "$f" ;;
+			image/*) devour gimp "$f" ;;
+			text/html) firefox "$f" ;;
+			application/x-freeplane) freeplane-java-11 "$f" ;;
+			*) $EDITOR "$f";;
+		esac
+	fi
 }}
 
 cmd mkdir $mkdir -p "$(echo $* | tr ' ' '\ ')"
@@ -223,6 +229,7 @@ map d
 
 # Basic bindings {{{2
 map ZZ quit
+map <esc> quit
 map . set hidden!
 map md push :mkdir<space>
 map mf push :mkfile<space>
