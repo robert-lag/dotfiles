@@ -1,5 +1,6 @@
 set wrap linebreak
 set foldmethod=marker
+set expandtab
 
 vmap <D-j> gj
 vmap <D-k> gk

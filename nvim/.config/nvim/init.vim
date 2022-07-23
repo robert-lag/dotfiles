@@ -130,7 +130,12 @@ highlight PmenuSel ctermfg=15 ctermbg=6
 highlight PmenuSbar ctermfg=15 ctermbg=8
 highlight PmenuThumb ctermfg=15 ctermbg=15
 
+" Color of folds
 highlight Folded ctermfg=15 ctermbg=8
+
+" Color of concealed passages (like dollar signs at the beginning
+" and end of a formula in latex)
+highlight Conceal ctermfg=11 ctermbg=8
 
 highlight SpellBad ctermbg=1
 
@@ -172,7 +177,7 @@ let mapleader = ","
 noremap <leader>c :setlocal spell! spelllang=en_us,de<CR>
 
 " Correct last spelling mistake
-inoremap <leader>d <c-g>u<Esc>[s1z=`]a<c-g>u
+nnoremap <leader>d <c-g>u<Esc>[s1z=`]a<c-g>u
 
 " Programming snippets
 nnoremap <Space><Space> <Esc>/<++><CR>"_c4l
@@ -277,9 +282,6 @@ call plug#begin(system('echo -n "${XDG_DATA_HOME:-$HOME/.local/share}/nvim/plugg
 	" Enhanced latex support
 	Plug 'lervag/vimtex'
 
-	" Latex concealment
-	Plug 'KeitaNakamura/tex-conceal.vim'
-
 	" Snippets
 	Plug 'SirVer/ultisnips'
 	Plug 'honza/vim-snippets'
@@ -361,16 +363,6 @@ let g:gitgutter_map_keys = 0
 " Shortcuts
 nmap ) <Plug>(GitGutterNextHunk)
 nmap ( <Plug>(GitGutterPrevHunk)
-
-" --------------------------------------------------------------------------
-" Vim-airline {{{1
-" --------------------------------------------------------------------------
-let g:airline_theme = 'distinguished'
-let g:airline_powerline_fonts = 1
-
-" Display number of changes in statusbar only if they are greater than 0
-let g:airline#extensions#hunks#non_zero_only = 1
-let g:airline_highlighting_cache = 1
 
 " --------------------------------------------------------------------------
 " Lightline {{{1
@@ -534,7 +526,7 @@ let g:rainbow_ctermfgs = ['lightblue', 'lightgreen', 'yellow', 'red', 'magenta']
 " --------------------------------------------------------------------------
 " Markdown Preview {{{1
 " --------------------------------------------------------------------------
-autocmd FileType markdown map <buffer> <leader>m :MarkdownPreview<CR>
+autocmd FileType markdown nmap <buffer> <leader>m :MarkdownPreview<CR>
 
 let g:mkdp_preview_options = {
     \ 'mkit': {},
@@ -553,7 +545,7 @@ let g:mkdp_preview_options = {
 " --------------------------------------------------------------------------
 " Latex Preview {{{1
 " --------------------------------------------------------------------------
-autocmd FileType plaintex,tex map <buffer> <leader>m :LLPStartPreview<CR>
+autocmd FileType plaintex,tex nmap <buffer> <leader>m :LLPStartPreview<CR>
 
 " PDF viewer
 let g:livepreview_previewer = 'zathura'
@@ -571,9 +563,6 @@ let g:tex_flavor='latex'
 let g:vimtex_view_method='zathura'
 let g:vimtex_quickfix_mode=0
 
-" --------------------------------------------------------------------------
-" tex-conceal.vim {{{1
-" --------------------------------------------------------------------------
 set conceallevel=1
 let g:tex_conceal='abdmg'
 
@@ -620,7 +609,7 @@ let g:csv_highlight_column = 'y'
 " --------------------------------------------------------------------------
 " UltiSnips {{{1
 " --------------------------------------------------------------------------
-let g:UltiSnipsExpandTrigger="<leader>f"
+let g:UltiSnipsExpandTrigger="<leader><leader>"
 let g:UltiSnipsJumpForwardTrigger="<C-j>"
 let g:UltiSnipsJumpBackwardTrigger="<C-k>"
 let g:UltiSnipsSnippetDirectories=["UltiSnips", "my_snippets"]
