@@ -9,6 +9,7 @@ image/png=img.desktop
 image/jpg=img.desktop
 image/jpeg=img.desktop
 image/gif=img.desktop
+image/svg+xml=img.desktop
 inode/directory=file.desktop
 application/rss+xml=rss.desktop
 application/zip=zip.desktop;
