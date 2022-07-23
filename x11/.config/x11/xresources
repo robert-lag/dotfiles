@@ -9,7 +9,7 @@
 !! ---------------------------------------------------------------------------
 !! Colorscheme
 !! ---------------------------------------------------------------------------
-#include "./xresources.d/colorschemes/gruvbox-dark-custom.xresources"
+#include "./xresources.d/colorschemes/gruvbox-dark-custom3.xresources"
 
 !! ---------------------------------------------------------------------------
 !! dwm Appearance

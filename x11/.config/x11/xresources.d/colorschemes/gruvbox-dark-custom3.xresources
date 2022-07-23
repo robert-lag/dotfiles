@@ -5,7 +5,7 @@
 ! -----------------------------------------------------------------------------
 
 #define black_dark #282828
-#define black_light #595350
+#define black_light #363636
 #define red_dark #cc241d
 #define red_light #fb4934
 #define green_dark #98971a
