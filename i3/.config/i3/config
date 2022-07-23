@@ -176,27 +176,30 @@ bindsym $mod+w exec --no-startup-id dmenu-wlan-scanner
 
 # adjust volume in PulseAudio
 set $refresh_i3status killall -SIGUSR1 i3status
-#bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ +2% && \
-#	pactl set-sink-mute @DEFAULT_SINK@ 0 && \
-#	$refresh_i3status; \
-#	exec --no-startup-id notify-send "Message"
 bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ +2% && \
 	pactl set-sink-mute @DEFAULT_SINK@ 0 && \
+	volume-notification && \
 	$refresh_i3status
 bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ -2% && \
 	pactl set-sink-mute @DEFAULT_SINK@ 0 && \
+	volume-notification && \
 	$refresh_i3status
 bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute @DEFAULT_SINK@ toggle && \
+	volume-notification && \
 	$refresh_i3status
 bindsym XF86AudioMicMute exec --no-startup-id pactl set-source-mute @DEFAULT_SOURCE@ toggle && \
+	volume-notification && \
 	$refresh_i3status
+
 #bindsym --release XF86AudioRaiseVolume exec amixer -q set Master 5%+ unmute
 #bindsym --release XF86AudioLowerVolume exec amixer -q set Master 5%- unmute
 #bindsym --release XF86AudioMute exec amixer -q set Master toggle
 
 # sreen brightness controls
-bindsym XF86MonBrightnessUp exec xbacklight -inc 10 # increase screen brightness
-bindsym XF86MonBrightnessDown exec xbacklight -dec 10 # decrease screen brightness
+bindsym XF86MonBrightnessUp exec xbacklight -inc 10 && \
+	brightness-notification
+bindsym XF86MonBrightnessDown exec xbacklight -dec 10 && \
+	brightness-notification
 
 # media player controls
 # on some pcs the play button is used to toggle

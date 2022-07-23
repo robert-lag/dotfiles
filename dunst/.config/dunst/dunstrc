@@ -51,7 +51,7 @@
     # Draw a line of "separator_height" pixel height between two
     # notifications.
     # Set to 0 to disable.
-    separator_height = 2
+    separator_height = 1
 
     # Padding between text and separator.
     padding = 8
@@ -61,10 +61,10 @@
 
     # Defines width in pixels of frame around the notification window.
     # Set to 0 to disable.
-    frame_width = 3
+    frame_width = 1
 
     # Defines color of the frame around the notification window.
-    frame_color = "#ebdbb2"
+    frame_color = "#404040"
 
     # Define a color for the separator.
     # possible values are:
@@ -72,7 +72,7 @@
     #  * foreground: use the same color as the foreground;
     #  * frame: use the same color as the frame;
     #  * anything else will be interpreted as a X color.
-    separator_color = auto
+    separator_color = frame
 
     # Sort messages by urgency.
     sort = yes
@@ -84,9 +84,12 @@
     # section for how to disable this if necessary
     idle_threshold = 120
 
+	# Progress bar
+	progress_bar_height = 3
+
     ### Text ###
 
-    font = Monospace 14
+    font = Roboto 12
 
     # The spacing between lines.  If the height is smaller than the
     # font height, it will get raised to the font height.
@@ -156,7 +159,7 @@
     stack_duplicates = true
 
     # Hide the count of stacked notifications with the same content
-    hide_duplicate_count = false
+    hide_duplicate_count = true
 
     # Display indicators for URLs (U) and actions (A).
     show_indicators = yes
@@ -221,11 +224,11 @@
     # corners.
     # The radius will be automatically lowered if it exceeds half of the
     # notification height to avoid clipping text and/or icons.
-    corner_radius = 2
+    corner_radius = 5
 
     # Ignore the dbus closeNotification message.
     # Useful to enforce the timeout set by dunst configuration. Without this
-    # parameter, an application may close the notification sent before the 
+    # parameter, an application may close the notification sent before the
     # user defined timeout.
     ignore_dbusclose = false
 
@@ -293,6 +296,7 @@
     # Otherwise the "#" and following would be interpreted as a comment.
     background = "#282828"
     foreground = "#ebdbb2"
+	highlight = "#83a598"
     timeout = 10
     # Icon for notifications with low urgency, uncomment to enable
     icon = ~/.config/dunst/normal.png
@@ -300,14 +304,17 @@
 [urgency_normal]
     background = "#282828"
     foreground = "#ebdbb2"
+	highlight = "#ebdbb2"
     timeout = 10
     # Icon for notifications with normal urgency, uncomment to enable
     icon = ~/.config/dunst/normal.png
 
 [urgency_critical]
-    background = "#991A15"
+    #background = "#991A15"
+    background = "#b72828"
     foreground = "#ebdbb2"
-    frame_color = "#cc241d"
+    frame_color = "#991A15"
+	highlight = "#f29c1f"
     timeout = 0
     # Icon for notifications with critical urgency, uncomment to enable
     icon = ~/.config/dunst/critical.png
