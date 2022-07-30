@@ -4,6 +4,7 @@ local wibox = require("wibox")
 local beautiful = require("beautiful")
 local xresources = require("beautiful.xresources")
 local xrdb = xresources.get_current_theme()
+require("volume")
 
 local function darker(color_value, darker_n)
     local result = "#"
@@ -16,7 +17,6 @@ local function darker(color_value, darker_n)
     return result
 end
 
--- Load the module:
 local battery_widget = require 'battery-widget'
 
 local cpu_widget = wibox.widget {
@@ -30,7 +30,7 @@ local cpu_widget = wibox.widget {
                 valign = 'center',
                 widget = wibox.widget.textbox,
             },
-            id = 'inner_chart',
+            id = 'inner',
             fg = xrdb.color4,
             widget = wibox.container.background
         },
@@ -41,13 +41,27 @@ local cpu_widget = wibox.widget {
         thickness = 2,
         min_value = 0,
         max_value = 100,
-        value = 40,
+        value = 0,
         rounded_edge = true,
         widget = wibox.container.arcchart
     },
     margins = 1,
     widget = wibox.container.margin
 }
+
+function update_cpu_widget()
+    awful.spawn.easy_async_with_shell("top -bn2 | grep '%Cpu' | tail -1 | grep -P '(....|...) id,'|awk '{print 100-$8 }'", function(out)
+        cpu_widget.chart.value = out
+        -- cpu_widget.chart.inner.number.text = string.format("%2d",math.floor(out))
+    end)
+end
+
+update_cpu_widget()
+
+cpu_widget_timer = timer({ timeout = 4.0 })
+cpu_widget_timer:connect_signal("timeout", update_cpu_widget)
+cpu_widget_timer:start()
+
 
 local volume_widget = wibox.widget {
     {
@@ -60,7 +74,7 @@ local volume_widget = wibox.widget {
                 valign = 'center',
                 widget = wibox.widget.textbox,
             },
-            id = 'inner_chart',
+            id = 'inner',
             fg = xrdb.color3,
             widget = wibox.container.background
         },
@@ -71,13 +85,25 @@ local volume_widget = wibox.widget {
         thickness = 2,
         min_value = 0,
         max_value = 100,
-        value = 40,
+        value = 0,
         rounded_edge = true,
         widget = wibox.container.arcchart
     },
     margins = 1,
     widget = wibox.container.margin
 }
+
+function update_volume_widget()
+    awful.spawn.easy_async_with_shell("get-volume", function(out)
+        volume_widget.chart.value = out
+    end)
+end
+
+update_volume_widget()
+
+volume_widget_timer = timer({ timeout = 10.0 })
+volume_widget_timer:connect_signal("timeout", update_volume_widget)
+volume_widget_timer:start()
 
 local chart_widget = wibox.widget {
     {
@@ -90,7 +116,7 @@ local chart_widget = wibox.widget {
                 valign = 'center',
                 widget = wibox.widget.textbox,
             },
-            id = 'inner_chart',
+            id = 'inner',
             widget = wibox.container.background
         },
         colors = {
@@ -100,7 +126,7 @@ local chart_widget = wibox.widget {
         thickness = 2,
         min_value = 0,
         max_value = 100,
-        value = 40,
+        value = 0,
         rounded_edge = true,
         widget = wibox.container.arcchart
     },
@@ -125,7 +151,7 @@ my_battery_widget:connect_signal('upower::update', function (widget, device)
         widget.chart.colors = {
             xrdb.color2
         }
-        widget.chart.inner_chart.fg = xrdb.color2
+        widget.chart.inner.fg = xrdb.color2
         if device.percentage < 100 then
             -- battery_icon = ""
             battery_icon = ""
@@ -168,7 +194,7 @@ my_battery_widget:connect_signal('upower::update', function (widget, device)
             widget.chart.colors = {
                 xrdb.color1
             }
-            widget.chart.inner_chart.fg = xrdb.color1
+            widget.chart.inner.fg = xrdb.color1
         elseif device.percentage <= 20 then
             if device.percentage % 5 == 0 then
                 awful.spawn("notify-send --icon=/home/robert/.config/awesome/battery-alert.png -- 'Low Battery'")
@@ -176,17 +202,17 @@ my_battery_widget:connect_signal('upower::update', function (widget, device)
             widget.chart.colors = {
                 xrdb.color11
             }
-            widget.chart.inner_chart.fg = xrdb.color11
+            widget.chart.inner.fg = xrdb.color11
         else
             widget.chart.colors = {
                 xrdb.color2
             }
-            widget.chart.inner_chart.fg = xrdb.color2
+            widget.chart.inner.fg = xrdb.color2
         end
     end
 
     widget.chart.value = device.percentage
-    widget.chart.inner_chart.number.text = string.format('%s', battery_icon)
+    widget.chart.inner.number.text = string.format('%s', battery_icon)
 end)
 
 -- Create a wibox for each screen and add it
@@ -310,6 +336,7 @@ awful.screen.connect_for_each_screen(function(s)
             --     color = xrdb.color7,
             --     widget = wibox.widget.textbox,
             -- },
+            volume_wid,
             cpu_widget,
             volume_widget,
             my_battery_widget,
