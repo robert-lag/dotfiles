@@ -1,0 +1,5 @@
+#!/bin/sh
+# Changes the foreground color of the images into a
+# yellowish tint and saves the result in another file
+
+convert battery-alert-original.png +level-colors transparent,"#d79921" battery-alert.png
