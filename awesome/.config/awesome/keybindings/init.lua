@@ -134,6 +134,22 @@ globalkeys = gears.table.join(
 
 -- Client keys {{{1
 clientkeys = gears.table.join(
+    awful.key({ modkey            }, ",",       function (c)
+        local screen = awful.screen.focused()
+        local tag = screen.tags[11]
+        if tag then
+            awful.tag.viewtoggle(tag)
+        end
+    end,
+              {description = "toggle general scratchpad",   group = "client"}),
+    awful.key({ modkey            }, ".",       function (c)
+        local screen = awful.screen.focused()
+        local tag = screen.tags[12]
+        if tag then
+            awful.tag.viewtoggle(tag)
+        end
+    end,
+              {description = "toggle math scratchpad",   group = "client"}),
     awful.key({ modkey            }, "q",       function (c) c:kill() end,
               {description = "close",               group = "client"}),
     awful.key({ modkey,           }, "space",  awful.client.floating.toggle,

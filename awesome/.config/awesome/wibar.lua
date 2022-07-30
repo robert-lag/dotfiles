@@ -280,11 +280,20 @@ awful.screen.connect_for_each_screen(function(s)
     -- Each screen has its own tag table.
     for i = 1, 10 do
         awful.tag.add(tostring(i), {
-            master_width_factor = 0.6,
             layout = awful.layout.layouts[1],
             screen = s,
         })
     end
+
+    awful.tag.add("-", {
+        layout = awful.layout.suit.floating,
+        screen = s,
+    })
+
+    awful.tag.add("+", {
+        layout = awful.layout.suit.floating,
+        screen = s,
+    })
 
     -- Create a promptbox for each screen
     s.mypromptbox = awful.widget.prompt()
@@ -328,28 +337,26 @@ awful.screen.connect_for_each_screen(function(s)
         },
         s.mytasklist, -- Middle widget
         { -- Right widgets
-            layout = wibox.layout.fixed.horizontal,
-            spacing = 10,
-            -- spacing_widget = {
-            --     text = '|',
-            --     align = 'center',
-            --     color = xrdb.color7,
-            --     widget = wibox.widget.textbox,
-            -- },
-            volume_wid,
-            cpu_widget,
-            volume_widget,
-            my_battery_widget,
-            wibox.widget {
-                {
-                    widget = wibox.widget.textclock()
-                },
-                bg = xrdb.color8,
-                fg = xrdb.color3,
-                widget = wibox.container.background,
+            {
+                cpu_widget,
+                volume_widget,
+                my_battery_widget,
+                wibox.widget.textclock(),
+                wibox.widget.systray(),
+                s.mylayoutbox,
+
+                -- spacing_widget = {
+                --     text = '|',
+                --     align = 'center',
+                --     color = xrdb.color7,
+                --     widget = wibox.widget.textbox,
+                -- },
+                spacing = 10,
+                layout = wibox.layout.fixed.horizontal,
             },
-            wibox.widget.systray(),
-            s.mylayoutbox,
+            bg = xrdb.color8,
+            fg = xrdb.color3,
+            widget = wibox.container.background
         },
     }
 end)

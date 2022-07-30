@@ -12,13 +12,24 @@ local gfs = require("gears.filesystem")
 local themes_path = gfs.get_themes_dir()
 local current_path = "/home/robert/.config/awesome/theme/"
 
+local function darker(color_value, darker_n)
+    local result = "#"
+    for s in color_value:gmatch("[a-fA-F0-9][a-fA-F0-9]") do
+        local bg_numeric_value = tonumber("0x"..s) - darker_n
+        if bg_numeric_value < 0 then bg_numeric_value = 0 end
+        if bg_numeric_value > 255 then bg_numeric_value = 255 end
+        result = result .. string.format("%2.2x", bg_numeric_value)
+    end
+    return result
+end
+
 -- inherit default theme
 local theme = dofile(themes_path.."default/theme.lua")
 -- load vector assets' generators for this theme
 
 theme.font          = "monospace 10"
 
-theme.bg_normal     = xrdb.background
+theme.bg_normal     = darker(xrdb.color8, 10)
 theme.bg_focus      = xrdb.color8
 theme.bg_urgent     = xrdb.color9
 theme.bg_minimize   = xrdb.background
@@ -26,12 +37,12 @@ theme.bg_systray    = theme.bg_normal
 
 theme.fg_normal     = xrdb.color7
 theme.fg_focus      = xrdb.color3
-theme.fg_urgent     = theme.bg_normal
-theme.fg_minimize   = xrdb.color7
+theme.fg_urgent     = xrdb.color0
+theme.fg_minimize   = darker(xrdb.color7, 50)
 
 theme.useless_gap   = dpi(0)
 theme.border_width  = dpi(3)
-theme.border_normal = xrdb.color0
+theme.border_normal = darker(xrdb.color8, 10)
 theme.border_focus  = theme.bg_focus
 theme.border_marked = xrdb.color10
 
@@ -48,7 +59,9 @@ theme.border_marked = xrdb.color10
 
 theme.tooltip_fg = theme.fg_normal
 theme.tooltip_bg = theme.bg_normal
-beautiful.master_width_factor = 0.8
+
+theme.titlebar_bg_normal = darker(xrdb.color8, 5)
+theme.master_width_factor = 0.6
 
 -- Variables set for theming the menu:
 -- menu_[bg|fg]_[normal|focus]
@@ -67,16 +80,6 @@ theme.menu_font = "monospace 16"
 theme = theme_assets.recolor_layout(theme, theme.fg_normal)
 
 -- Recolor titlebar icons:
-local function darker(color_value, darker_n)
-    local result = "#"
-    for s in color_value:gmatch("[a-fA-F0-9][a-fA-F0-9]") do
-        local bg_numeric_value = tonumber("0x"..s) - darker_n
-        if bg_numeric_value < 0 then bg_numeric_value = 0 end
-        if bg_numeric_value > 255 then bg_numeric_value = 255 end
-        result = result .. string.format("%2.2x", bg_numeric_value)
-    end
-    return result
-end
 theme = theme_assets.recolor_titlebar(
     theme, theme.fg_normal, "normal"
 )
@@ -100,7 +103,7 @@ theme = theme_assets.recolor_titlebar(
 -- from /usr/share/icons and /usr/share/icons/hicolor will be used.
 theme.icon_theme = nil
 
--- Generate Awesome icon:
+-- Generate Awesome icon:    placement = awful.placement.bottom_right,
 theme.awesome_icon = theme_assets.awesome_icon(
     theme.menu_height, theme.bg_focus, theme.fg_focus
 )
@@ -111,7 +114,7 @@ theme.taglist_squares_sel = theme_assets.taglist_squares_sel(
     taglist_square_size, theme.fg_normal
 )
 theme.taglist_squares_unsel = theme_assets.taglist_squares_unsel(
-    taglist_square_size, theme.fg_normal
+    taglist_square_size, theme.bg_normal
 )
 
 -- Try to determine if we are running light or dark colorscheme:

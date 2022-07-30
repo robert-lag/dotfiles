@@ -49,9 +49,12 @@ client.connect_signal("request::titlebars", function(c)
         end)
     )
 
-    awful.titlebar(c) : setup {
+    local top_titlebar = awful.titlebar(c, {
+        size = 35,
+    })
+
+    top_titlebar : setup {
         { -- Left
-            --awful.titlebar.widget.iconwidget(c),
             buttons = buttons,
             layout  = wibox.layout.fixed.horizontal
         },

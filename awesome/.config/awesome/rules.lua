@@ -57,4 +57,25 @@ awful.rules.rules = {
     -- Set Firefox to always map on the tag named "2" on screen 1.
     -- { rule = { class = "Firefox" },
     --   properties = { screen = 1, tag = "2" } },
+
+    -- Scratchpads
+    { rule = { instance = "dropdown-general" },
+      properties = {
+          screen = 1,
+          tag = "-",
+          floating = true,
+          ontop = true,
+          placement = awful.placement.centered,
+      }
+    },
+
+    { rule = { instance = "dropdown-math" },
+      properties = {
+          screen = 1,
+          tag = "+",
+          floating = true,
+          ontop = true,
+          placement = awful.placement.centered,
+      }
+    },
 }
