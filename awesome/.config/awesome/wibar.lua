@@ -4,7 +4,6 @@ local wibox = require("wibox")
 local beautiful = require("beautiful")
 local xresources = require("beautiful.xresources")
 local xrdb = xresources.get_current_theme()
-require("volume")
 
 local function darker(color_value, darker_n)
     local result = "#"
@@ -105,7 +104,7 @@ volume_widget_timer = timer({ timeout = 10.0 })
 volume_widget_timer:connect_signal("timeout", update_volume_widget)
 volume_widget_timer:start()
 
-local chart_widget = wibox.widget {
+local battery_widget_ui = wibox.widget {
     {
 
         {
@@ -135,16 +134,19 @@ local chart_widget = wibox.widget {
 }
 
 -- Create the battery widget:
-local my_battery_widget = battery_widget {
+local battery_widget = battery_widget {
     screen = screen,
     use_display_device = true,
     instant_update = true,
-    widget_template = chart_widget
+    widget_template = battery_widget_ui
 }
+
+
+local was_discharging = false
 
 -- When UPower updates the battery status, the widget is notified
 -- and calls a signal you need to connect to:
-my_battery_widget:connect_signal('upower::update', function (widget, device)
+battery_widget:connect_signal('upower::update', function (widget, device)
     local battery_icon
     if device.state == 1 then
         -- Device is charging
@@ -152,6 +154,12 @@ my_battery_widget:connect_signal('upower::update', function (widget, device)
             xrdb.color2
         }
         widget.chart.inner.fg = xrdb.color2
+
+        if was_discharging then
+            awful.spawn("xbacklight -set 100 -time 500")
+            was_discharging = false
+        end
+
         if device.percentage < 100 then
             -- battery_icon = ""
             battery_icon = ""
@@ -160,6 +168,9 @@ my_battery_widget:connect_signal('upower::update', function (widget, device)
         end
     else
         -- Device is discharging
+
+        was_discharging = true
+
         if device.percentage <= 5 then
             battery_icon = ""
             awful.spawn("set-max-brightness 10")
@@ -214,6 +225,51 @@ my_battery_widget:connect_signal('upower::update', function (widget, device)
     widget.chart.value = device.percentage
     widget.chart.inner.number.text = string.format('%s', battery_icon)
 end)
+
+-- Wifi widget
+local wifi_widget = wibox.widget {
+    {
+        id = 'icon',
+        text = '睊',
+        align = 'left',
+        valign = 'center',
+        forced_width = 20,
+        font = "monospace 15",
+        widget = wibox.widget.textbox,
+    },
+    {
+        id = 'name',
+        text = '',
+        align = 'left',
+        valign = 'center',
+        widget = wibox.widget.textbox,
+    },
+    spacing = 5,
+    layout = wibox.layout.fixed.horizontal
+}
+
+awful.widget.watch(
+    "iw dev wlan0 link", 5,
+    function(widget, stdout, stderr, exitreason, exitcode)
+        local wifi = string.match(stdout, "SSID:.*\n")
+        local index_1, index_2 = string.find(stdout, "SSID: [^\n]*")
+        local wifi_signal = string.match(stdout, "signal:.*\n")
+        local index_3, index_4 = string.find(stdout, "signal: [^\n]*")
+        local index_5, index_6 = string.find(stdout, "tx bitrate:%s%d+%p+%d+%s%a+%p%a")
+
+        if ( wifi == '' or wifi == nil ) then
+            widget.icon.text = "睊"
+            widget.name.text =""
+        else
+            wifi = string.sub(stdout, index_1+6, index_2)
+            wifi_signal = string.sub(stdout, index_3+8, index_4-1)
+            wifi_bitrate = string.sub(stdout, index_5+12, index_6)
+            widget.icon.text = "直"
+            widget.name.text = wifi
+        end
+    end,
+    wifi_widget
+)
 
 -- Create a wibox for each screen and add it
 local taglist_buttons = gears.table.join(
@@ -297,6 +353,7 @@ awful.screen.connect_for_each_screen(function(s)
 
     -- Create a promptbox for each screen
     s.mypromptbox = awful.widget.prompt()
+
     -- Create an imagebox widget which will contain an icon indicating which layout we're using.
     -- We need one layoutbox per screen.
     -- s.mylayoutbox = awful.widget.layoutbox(s)
@@ -305,6 +362,7 @@ awful.screen.connect_for_each_screen(function(s)
     --                        awful.button({ }, 3, function () awful.layout.inc(-1) end),
     --                        awful.button({ }, 4, function () awful.layout.inc( 1) end),
     --                        awful.button({ }, 5, function () awful.layout.inc(-1) end)))
+
     -- Create a taglist widget
     s.mytaglist = awful.widget.taglist {
         screen  = s,
@@ -331,19 +389,18 @@ awful.screen.connect_for_each_screen(function(s)
         layout = wibox.layout.align.horizontal,
         { -- Left widgets
             layout = wibox.layout.fixed.horizontal,
-            mylauncher,
             s.mytaglist,
             s.mypromptbox,
         },
         s.mytasklist, -- Middle widget
         { -- Right widgets
             {
+                wifi_widget,
                 cpu_widget,
                 volume_widget,
-                my_battery_widget,
+                battery_widget,
                 wibox.widget.textclock(),
                 wibox.widget.systray(),
-                s.mylayoutbox,
 
                 -- spacing_widget = {
                 --     text = '|',
