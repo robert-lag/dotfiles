@@ -1,15 +1,15 @@
 local awful = require("awful")
 local gears = require("gears")
-local hotkeys_popup = require("awful.hotkeys_popup")
+-- local hotkeys_popup = require("awful.hotkeys_popup")
 -- Enable hotkeys help widget for VIM and other apps
 -- when client with a matching name is opened:
-require("awful.hotkeys_popup.keys")
+-- require("awful.hotkeys_popup.keys")
 
 -- Global keys{{{1
 globalkeys = gears.table.join(
     -- General {{{2
-    awful.key({ modkey,           }, "s",      hotkeys_popup.show_help,
-              {description="show help", group="awesome"}),
+    -- awful.key({ modkey,           }, "s",      hotkeys_popup.show_help,
+              -- {description="show help", group="awesome"}),
     awful.key({ modkey,           }, "Left",   awful.tag.viewprev,
               {description = "view previous", group = "tag"}),
     awful.key({ modkey,           }, "Right",  awful.tag.viewnext,
@@ -139,6 +139,15 @@ clientkeys = gears.table.join(
         local tag = screen.tags[11]
         if tag then
             awful.tag.viewtoggle(tag)
+
+            -- Focus scratchpad
+            if tag.selected then
+                for _, c in ipairs(client.get()) do
+                    if c.instance == "dropdown-general" then
+                        client.focus = c
+                    end
+                end
+            end
         end
     end,
               {description = "toggle general scratchpad",   group = "client"}),
@@ -147,6 +156,15 @@ clientkeys = gears.table.join(
         local tag = screen.tags[12]
         if tag then
             awful.tag.viewtoggle(tag)
+
+            -- Focus scratchpad
+            if tag.selected then
+                for _, c in ipairs(client.get()) do
+                    if c.instance == "dropdown-math" then
+                        client.focus = c
+                    end
+                end
+            end
         end
     end,
               {description = "toggle math scratchpad",   group = "client"}),

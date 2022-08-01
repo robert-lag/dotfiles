@@ -45,7 +45,10 @@ local cpu_widget = wibox.widget {
         widget = wibox.container.arcchart
     },
     margins = 1,
-    widget = wibox.container.margin
+    widget = wibox.container.margin,
+    buttons = gears.table.join(
+            awful.button({ }, 1, function() awful.spawn(string.format("%s -e htop", terminal)) end)
+    )
 }
 
 function update_cpu_widget()
@@ -227,6 +230,8 @@ battery_widget:connect_signal('upower::update', function (widget, device)
 end)
 
 -- Wifi widget
+local current_wifi = ""
+local wifi_ui_collapsed = false
 local wifi_widget = wibox.widget {
     {
         id = 'icon',
@@ -245,7 +250,13 @@ local wifi_widget = wibox.widget {
         widget = wibox.widget.textbox,
     },
     spacing = 5,
-    layout = wibox.layout.fixed.horizontal
+    layout = wibox.layout.fixed.horizontal,
+    buttons = gears.table.join(
+            awful.button({ }, 1, function(w)
+                awful.spawn(string.format("notify-send '%s'", current_wifi))
+            end),
+            awful.button({ }, 3, function() awful.spawn(string.format("%s -e %s -c 'iwctl station wlan0 show; iwctl'", terminal, shell)) end)
+    )
 }
 
 awful.widget.watch(
@@ -259,13 +270,13 @@ awful.widget.watch(
 
         if ( wifi == '' or wifi == nil ) then
             widget.icon.text = "睊"
-            widget.name.text =""
+            current_wifi = ""
         else
             wifi = string.sub(stdout, index_1+6, index_2)
             wifi_signal = string.sub(stdout, index_3+8, index_4-1)
             wifi_bitrate = string.sub(stdout, index_5+12, index_6)
             widget.icon.text = "直"
-            widget.name.text = wifi
+            current_wifi = wifi
         end
     end,
     wifi_widget
@@ -362,6 +373,20 @@ awful.screen.connect_for_each_screen(function(s)
     --                        awful.button({ }, 3, function () awful.layout.inc(-1) end),
     --                        awful.button({ }, 4, function () awful.layout.inc( 1) end),
     --                        awful.button({ }, 5, function () awful.layout.inc(-1) end)))
+
+
+    local original_taglist_label = awful.widget.taglist.taglist_label
+    function awful.widget.taglist.taglist_label(tag, args, tb)
+      local text, bg, bg_image, icon, other_args =
+        original_taglist_label(tag, args, tb)
+
+      -- Hide tags 11 and 12
+      if tag.index == 11 or tag.index == 12 then
+          text = ""
+      end
+
+      return text, bg, bg_image, icon, other_args
+    end
 
     -- Create a taglist widget
     s.mytaglist = awful.widget.taglist {

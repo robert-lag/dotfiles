@@ -54,9 +54,9 @@ awful.rules.rules = {
       properties = { fullscreen = false }
     },
 
-    -- Set Firefox to always map on the tag named "2" on screen 1.
-    -- { rule = { class = "Firefox" },
-    --   properties = { screen = 1, tag = "2" } },
+    -- Set Firefox to always map on the tag named "1" on screen 1.
+    { rule = { class = "firefox" },
+      properties = { screen = 1, tag = "1" } },
 
     -- Scratchpads
     { rule = { instance = "dropdown-general" },
@@ -65,6 +65,8 @@ awful.rules.rules = {
           tag = "-",
           floating = true,
           ontop = true,
+          urgent = false,
+          skip_taskbar = true,
           placement = awful.placement.centered,
       }
     },
@@ -75,6 +77,8 @@ awful.rules.rules = {
           tag = "+",
           floating = true,
           ontop = true,
+          urgent = false,
+          skip_taskbar = true,
           placement = awful.placement.centered,
       }
     },
