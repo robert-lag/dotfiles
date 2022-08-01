@@ -97,11 +97,23 @@ local volume_widget = wibox.widget {
 
 function update_volume_widget()
     awful.spawn.easy_async_with_shell("get-volume", function(out)
+        if out == "0\n" then
+            volume_widget.chart.inner.number.text = 'ﱝ'
+        else
+            volume_widget.chart.inner.number.text = '墳'
+        end
         volume_widget.chart.value = out
     end)
 end
 
 update_volume_widget()
+
+volume_widget:connect_signal("button::press", function()
+            -- awful.spawn("notify-send 'Hello world'")
+            awful.spawn("pactl set-sink-mute @DEFAULT_SINK@ toggle")
+            update_volume_widget()
+        end)
+
 
 volume_widget_timer = timer({ timeout = 10.0 })
 volume_widget_timer:connect_signal("timeout", update_volume_widget)
@@ -252,7 +264,7 @@ local wifi_widget = wibox.widget {
     spacing = 5,
     layout = wibox.layout.fixed.horizontal,
     buttons = gears.table.join(
-            awful.button({ }, 1, function(w)
+            awful.button({ }, 1, function()
                 awful.spawn(string.format("notify-send '%s'", current_wifi))
             end),
             awful.button({ }, 3, function() awful.spawn(string.format("%s -e %s -c 'iwctl station wlan0 show; iwctl'", terminal, shell)) end)
