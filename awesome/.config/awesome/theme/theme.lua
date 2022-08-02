@@ -56,10 +56,16 @@ theme.border_marked = xrdb.color10
 -- Example:
 --theme.taglist_bg_focus = "#ff0000"
 
+-- Tooltip
 theme.tooltip_fg = theme.fg_normal
 theme.tooltip_bg = theme.bg_normal
 
+-- Systray
+theme.systray_icon_spacing = 5
+theme.bg_systray = xrdb.color8
+
 theme.titlebar_bg_normal = darker(xrdb.color8, 5)
+
 theme.master_width_factor = 0.6
 
 -- Variables set for theming the menu:

@@ -20,7 +20,7 @@ local menubar = require("menubar")
 -- Check if awesome encountered an error during startup and fell back to
 -- another config (This code will only ever execute for the fallback config)
 if awesome.startup_errors then
-    awful.spawn(string.format("notify-send --urgency critical -- 'Oops, there were errors during startup!' '%s'", awesome.startup_errors))
+    awful.spawn(string.format("notify-send --urgency critical --expire-time=10000 -- 'Oops, there were errors during startup!' '%s'", awesome.startup_errors))
 end
 
 -- Handle runtime errors after startup
@@ -31,7 +31,7 @@ do
         if in_error then return end
         in_error = true
 
-        awful.spawn(string.format("notify-send --urgency critical -- 'Oops, an error happenend!' '%s'", err))
+        awful.spawn(string.format("notify-send --urgency critical --expire-time=10000 -- 'Oops, an error happenend!' '%s'", err))
 
         in_error = false
     end)

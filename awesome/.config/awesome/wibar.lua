@@ -20,32 +20,28 @@ local battery_widget = require 'battery-widget'
 
 local cpu_widget = wibox.widget {
     {
-
         {
-            {
-                id = 'number',
-                text = '',
-                align = 'center',
-                valign = 'center',
-                widget = wibox.widget.textbox,
-            },
-            id = 'inner',
-            fg = xrdb.color4,
-            widget = wibox.container.background
+            id = 'icon',
+            text = '',
+            align = 'left',
+            valign = 'center',
+            font = "monospace 15",
+            forced_width = 20,
+            widget = wibox.widget.textbox,
         },
-        colors = {
-            xrdb.color4
+        {
+            id = 'number',
+            text = ' 0%',
+            align = 'left',
+            valign = 'center',
+            widget = wibox.widget.textbox,
         },
-        id = 'chart',
-        thickness = 2,
-        min_value = 0,
-        max_value = 100,
-        value = 0,
-        rounded_edge = true,
-        widget = wibox.container.arcchart
+        id = 'inner',
+        spacing = 2,
+        layout = wibox.layout.fixed.horizontal,
     },
-    margins = 1,
-    widget = wibox.container.margin,
+    fg = xrdb.color4,
+    widget = wibox.container.background,
     buttons = gears.table.join(
             awful.button({ }, 1, function() awful.spawn(string.format("%s -e htop", terminal)) end)
     )
@@ -53,8 +49,7 @@ local cpu_widget = wibox.widget {
 
 function update_cpu_widget()
     awful.spawn.easy_async_with_shell("top -bn2 | grep '%Cpu' | tail -1 | grep -P '(....|...) id,'|awk '{print 100-$8 }'", function(out)
-        cpu_widget.chart.value = out
-        -- cpu_widget.chart.inner.number.text = string.format("%2d",math.floor(out))
+        cpu_widget.inner.number.text = string.format("%2d%%",math.floor(out))
     end)
 end
 
@@ -67,42 +62,39 @@ cpu_widget_timer:start()
 
 local volume_widget = wibox.widget {
     {
-
         {
-            {
-                id = 'number',
-                text = '墳',
-                align = 'center',
-                valign = 'center',
-                widget = wibox.widget.textbox,
-            },
-            id = 'inner',
-            fg = xrdb.color3,
-            widget = wibox.container.background
+            id = 'icon',
+            text = '墳',
+            align = 'center',
+            valign = 'center',
+            font = "monospace 15",
+            forced_width = 20,
+            widget = wibox.widget.textbox,
         },
-        colors = {
-            xrdb.color3
+        {
+            id = 'number',
+            text = '100%',
+            align = 'left',
+            valign = 'center',
+            widget = wibox.widget.textbox,
         },
-        id = 'chart',
-        thickness = 2,
-        min_value = 0,
-        max_value = 100,
-        value = 0,
-        rounded_edge = true,
-        widget = wibox.container.arcchart
+        id = 'inner',
+        spacing = 3,
+        layout = wibox.layout.fixed.horizontal,
     },
-    margins = 1,
-    widget = wibox.container.margin
+    fg = xrdb.color5,
+    widget = wibox.container.background
 }
 
 function update_volume_widget()
     awful.spawn.easy_async_with_shell("get-volume", function(out)
-        if out == "0\n" then
-            volume_widget.chart.inner.number.text = 'ﱝ'
+        local volume = tonumber(out)
+        if volume <= 0 then
+            volume_widget.inner.icon.text = 'ﱝ'
         else
-            volume_widget.chart.inner.number.text = '墳'
+            volume_widget.inner.icon.text = '墳'
         end
-        volume_widget.chart.value = out
+        volume_widget.inner.number.text = string.format("%2d%%", volume)
     end)
 end
 
@@ -121,31 +113,26 @@ volume_widget_timer:start()
 
 local battery_widget_ui = wibox.widget {
     {
-
         {
-            {
-                id = 'number',
-                text = '0',
-                align = 'center',
-                valign = 'center',
-                widget = wibox.widget.textbox,
-            },
-            id = 'inner',
-            widget = wibox.container.background
+            id = 'icon',
+            text = '',
+            align = 'left',
+            valign = 'center',
+            font = "monospace 15",
+            widget = wibox.widget.textbox,
         },
-        colors = {
-            xrdb.color2
+        {
+            id = 'number',
+            text = '100%',
+            align = 'left',
+            valign = 'center',
+            widget = wibox.widget.textbox,
         },
-        id = 'chart',
-        thickness = 2,
-        min_value = 0,
-        max_value = 100,
-        value = 0,
-        rounded_edge = true,
-        widget = wibox.container.arcchart
+        id = 'inner',
+        spacing = 3,
+        layout = wibox.layout.fixed.horizontal,
     },
-    margins = 1,
-    widget = wibox.container.margin
+    widget = wibox.container.background
 }
 
 -- Create the battery widget:
@@ -158,6 +145,8 @@ local battery_widget = battery_widget {
 
 
 local was_discharging = false
+local brightness_reduced_warning = false
+local brightness_reduced_critical = false
 
 -- When UPower updates the battery status, the widget is notified
 -- and calls a signal you need to connect to:
@@ -165,36 +154,49 @@ battery_widget:connect_signal('upower::update', function (widget, device)
     local battery_icon
     if device.state == 1 then
         -- Device is charging
-        widget.chart.colors = {
-            xrdb.color2
-        }
-        widget.chart.inner.fg = xrdb.color2
+        widget.fg = xrdb.color2
 
+        -- Set the brightness to maximum after plugging in the cable
         if was_discharging then
             awful.spawn("xbacklight -set 100 -time 500")
             was_discharging = false
         end
 
         if device.percentage < 100 then
-            -- battery_icon = ""
-            battery_icon = ""
+            battery_icon = ""
         else
             battery_icon = ""
         end
+
+        brightness_reduced_warning = false
+        brightness_reduced_critical = false
     else
         -- Device is discharging
 
         was_discharging = true
+        device.percentage = 3
 
         if device.percentage <= 5 then
             battery_icon = ""
-            awful.spawn("set-max-brightness 10")
+            if not brightness_reduced_critical then
+                awful.spawn("set-max-brightness 10")
+                awful.spawn("notify-send --urgency critical --icon=/home/robert/.config/awesome/battery-alert.png -- 'Very Low Battery'")
+                brightness_reduced_critical = true
+            end
         elseif device.percentage <= 10 then
             battery_icon = ""
-            awful.spawn("set-max-brightness 50")
+            if not brightness_reduced_warning then
+                awful.spawn("set-max-brightness 50")
+                awful.spawn("notify-send --icon=/home/robert/.config/awesome/battery-alert.png -- 'Low Battery'")
+                brightness_reduced_warning = true
+            end
         elseif device.percentage <= 20 then
             battery_icon = ""
-            awful.spawn("set-max-brightness 50")
+            if not brightness_reduced_warning then
+                awful.spawn("set-max-brightness 50")
+                awful.spawn("notify-send --icon=/home/robert/.config/awesome/battery-alert.png -- 'Low Battery'")
+                brightness_reduced_warning = true
+            end
         elseif device.percentage <= 30 then
             battery_icon = ""
         elseif device.percentage <= 40 then
@@ -214,31 +216,16 @@ battery_widget:connect_signal('upower::update', function (widget, device)
         end
 
         if device.percentage <= 5 then
-            if device.percentage % 5 == 0 then
-                awful.spawn("notify-send --urgency critical --icon=/home/robert/.config/awesome/battery-alert.png -- 'Very Low Battery'")
-            end
-            widget.chart.colors = {
-                xrdb.color1
-            }
-            widget.chart.inner.fg = xrdb.color1
+            widget.fg = xrdb.color1
         elseif device.percentage <= 20 then
-            if device.percentage % 5 == 0 then
-                awful.spawn("notify-send --icon=/home/robert/.config/awesome/battery-alert.png -- 'Low Battery'")
-            end
-            widget.chart.colors = {
-                xrdb.color11
-            }
-            widget.chart.inner.fg = xrdb.color11
+            widget.fg = xrdb.color3
         else
-            widget.chart.colors = {
-                xrdb.color2
-            }
-            widget.chart.inner.fg = xrdb.color2
+            widget.fg = xrdb.color2
         end
     end
 
-    widget.chart.value = device.percentage
-    widget.chart.inner.number.text = string.format('%s', battery_icon)
+    widget.inner.icon.text = string.format('%s', battery_icon)
+    widget.inner.number.text = string.format("%3d%%", device.percentage)
 end)
 
 -- Wifi widget
@@ -246,23 +233,28 @@ local current_wifi = ""
 local wifi_ui_collapsed = false
 local wifi_widget = wibox.widget {
     {
-        id = 'icon',
-        text = '睊',
-        align = 'left',
-        valign = 'center',
-        forced_width = 20,
-        font = "monospace 15",
-        widget = wibox.widget.textbox,
+        {
+            id = 'icon',
+            text = '睊',
+            align = 'left',
+            valign = 'center',
+            forced_width = 20,
+            font = "monospace 15",
+            widget = wibox.widget.textbox,
+        },
+        {
+            id = 'name',
+            text = '',
+            align = 'left',
+            valign = 'center',
+            widget = wibox.widget.textbox,
+        },
+        id = 'inner',
+        spacing = 5,
+        layout = wibox.layout.fixed.horizontal,
     },
-    {
-        id = 'name',
-        text = '',
-        align = 'left',
-        valign = 'center',
-        widget = wibox.widget.textbox,
-    },
-    spacing = 5,
-    layout = wibox.layout.fixed.horizontal,
+    fg = xrdb.color6,
+    widget = wibox.container.background,
     buttons = gears.table.join(
             awful.button({ }, 1, function()
                 awful.spawn(string.format("notify-send '%s'", current_wifi))
@@ -281,13 +273,13 @@ awful.widget.watch(
         local index_5, index_6 = string.find(stdout, "tx bitrate:%s%d+%p+%d+%s%a+%p%a")
 
         if ( wifi == '' or wifi == nil ) then
-            widget.icon.text = "睊"
+            widget.inner.icon.text = "睊"
             current_wifi = ""
         else
             wifi = string.sub(stdout, index_1+6, index_2)
             wifi_signal = string.sub(stdout, index_3+8, index_4-1)
             wifi_bitrate = string.sub(stdout, index_5+12, index_6)
-            widget.icon.text = "直"
+            widget.inner.icon.text = "直"
             current_wifi = wifi
         end
     end,
@@ -432,24 +424,40 @@ awful.screen.connect_for_each_screen(function(s)
         s.mytasklist, -- Middle widget
         { -- Right widgets
             {
-                wifi_widget,
-                cpu_widget,
-                volume_widget,
-                battery_widget,
-                wibox.widget.textclock(),
-                wibox.widget.systray(),
+                {
+                    wifi_widget,
+                    cpu_widget,
+                    volume_widget,
+                    battery_widget,
+                    {
+                        {
+                            format = '%b %d, %H:%M',
+                            widget = wibox.widget.textclock(),
+                        },
+                        fg = xrdb.color3,
+                        widget = wibox.container.background
+                    },
+                    {
+                        {
+                            widget = wibox.widget.systray(),
+                        },
+                        margins = 4,
+                        widget = wibox.container.margin
+                    },
 
-                -- spacing_widget = {
-                --     text = '|',
-                --     align = 'center',
-                --     color = xrdb.color7,
-                --     widget = wibox.widget.textbox,
-                -- },
-                spacing = 10,
-                layout = wibox.layout.fixed.horizontal,
+                    spacing_widget = {
+                        text = '|',
+                        align = 'center',
+                        widget = wibox.widget.textbox,
+                    },
+                    spacing = 20,
+                    layout = wibox.layout.fixed.horizontal,
+                },
+                left = 8,
+                widget = wibox.container.margin
             },
             bg = xrdb.color8,
-            fg = xrdb.color3,
+            fg = xrdb.color7,
             widget = wibox.container.background
         },
     }
