@@ -26,7 +26,7 @@ local cpu_widget = wibox.widget {
             align = 'left',
             valign = 'center',
             font = "monospace 15",
-            forced_width = 20,
+            forced_width = 15,
             widget = wibox.widget.textbox,
         },
         {
@@ -37,7 +37,7 @@ local cpu_widget = wibox.widget {
             widget = wibox.widget.textbox,
         },
         id = 'inner',
-        spacing = 2,
+        spacing = 5,
         layout = wibox.layout.fixed.horizontal,
     },
     fg = xrdb.color4,
@@ -79,7 +79,7 @@ local volume_widget = wibox.widget {
             widget = wibox.widget.textbox,
         },
         id = 'inner',
-        spacing = 3,
+        spacing = 5,
         layout = wibox.layout.fixed.horizontal,
     },
     fg = xrdb.color5,
@@ -129,7 +129,7 @@ local battery_widget_ui = wibox.widget {
             widget = wibox.widget.textbox,
         },
         id = 'inner',
-        spacing = 3,
+        spacing = 5,
         layout = wibox.layout.fixed.horizontal,
     },
     widget = wibox.container.background
@@ -174,7 +174,6 @@ battery_widget:connect_signal('upower::update', function (widget, device)
         -- Device is discharging
 
         was_discharging = true
-        device.percentage = 3
 
         if device.percentage <= 5 then
             battery_icon = ""
@@ -225,7 +224,7 @@ battery_widget:connect_signal('upower::update', function (widget, device)
     end
 
     widget.inner.icon.text = string.format('%s', battery_icon)
-    widget.inner.number.text = string.format("%3d%%", device.percentage)
+    widget.inner.number.text = string.format("%2d%%", device.percentage)
 end)
 
 -- Wifi widget

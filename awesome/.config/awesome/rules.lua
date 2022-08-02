@@ -12,7 +12,6 @@ awful.rules.rules = {
                      keys = clientkeys,
                      buttons = clientbuttons,
                      screen = awful.screen.preferred,
-                     -- Remove gaps
                      size_hints_honor = false,
                      placement = awful.placement.no_overlap+awful.placement.no_offscreen
      }
@@ -67,6 +66,8 @@ awful.rules.rules = {
           ontop = true,
           urgent = false,
           skip_taskbar = true,
+          width = 1000,
+          height = 600,
           placement = awful.placement.centered,
       }
     },
@@ -79,6 +80,8 @@ awful.rules.rules = {
           ontop = true,
           urgent = false,
           skip_taskbar = true,
+          width = 1000,
+          height = 600,
           placement = awful.placement.centered,
       }
     },
