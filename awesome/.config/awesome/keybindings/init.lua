@@ -1,6 +1,6 @@
 local awful = require("awful")
 local gears = require("gears")
--- local hotkeys_popup = require("awful.hotkeys_popup")
+local hotkeys_popup = require("awful.hotkeys_popup")
 -- Enable hotkeys help widget for VIM and other apps
 -- when client with a matching name is opened:
 -- require("awful.hotkeys_popup.keys")
@@ -8,8 +8,8 @@ local gears = require("gears")
 -- Global keys{{{1
 globalkeys = gears.table.join(
     -- General {{{2
-    -- awful.key({ modkey,           }, "s",      hotkeys_popup.show_help,
-              -- {description="show help", group="awesome"}),
+    awful.key({ modkey,           }, "s",      hotkeys_popup.show_help,
+              {description="show help", group="awesome"}),
     awful.key({ modkey,           }, "Left",   awful.tag.viewprev,
               {description = "view previous", group = "tag"}),
     awful.key({ modkey,           }, "Right",  awful.tag.viewnext,
@@ -52,7 +52,14 @@ globalkeys = gears.table.join(
               {description = "open a terminal", group = "launcher"}),
     awful.key({ modkey, "Control" }, "r", awesome.restart,
               {description = "reload awesome", group = "awesome"}),
-    awful.key({ modkey, "Shift"   }, "q", function () mymainmenu:show() end,
+    awful.key({ modkey, "Shift"   }, "q", function ()
+        local screen_geometry = awful.screen.focused().geometry
+
+        mymainmenu:show { coords = {
+            x = screen_geometry.x + screen_geometry.width / 2 - mymainmenu.theme.width / 2,
+            y = screen_geometry.y + screen_geometry.height / 2 - mymainmenu.theme.height * #mymainmenu.items / 2
+        }}
+    end,
               {description = "show main menu", group = "awesome"}),
 
     awful.key({ modkey,           }, "l",     function () awful.tag.incmwfact( 0.05)          end,
@@ -103,6 +110,30 @@ globalkeys = gears.table.join(
               {description = "show application launcher", group = "launcher"}),
     awful.key({ }, "XF86Search", function() awful.spawn("dmenu_run") end,
               {description = "show application launcher", group = "launcher"}),
+    awful.key({ modkey }, "o", nil, function()
+            keygrabber.run(function(mods, key, action)
+                if key == "Super_L" and action == "release" then
+                    -- Continue to wait after the Super key was released
+                    return
+                end
+
+                local app_shortcuts = {
+                    b = "firefox",
+                    m = "thunderbird",
+                    v = "vscodium",
+                    p = terminal .. " -e ncmpcpp",
+                    g = "gimp",
+                    y = "gtk-youtube-viewer",
+                }
+
+                if action == "press" then
+                    awful.spawn(app_shortcuts[key])
+                end
+
+                keygrabber.stop()
+            end)
+        end,
+              {description = "start hotkey application launcher", group = "launcher"}),
 
     -- Volume {{{2
     awful.key({ }, "XF86AudioMute", function() awful.spawn("volume-notification toggle_mute") end,
@@ -174,8 +205,8 @@ clientkeys = gears.table.join(
               {description = "toggle floating",     group = "client"}),
     awful.key({ modkey, "Shift"   }, "Return", function (c) c:swap(awful.client.getmaster()) end,
               {description = "move to master",      group = "client"}),
-    awful.key({ modkey,           }, "o",      function (c) c:move_to_screen() end,
-              {description = "move to screen",      group = "client"}),
+    -- awful.key({ modkey,           }, "o",      function (c) c:move_to_screen() end,
+    --           {description = "move to screen",      group = "client"}),
     awful.key({ modkey,           }, "t",      function (c) c.ontop = not c.ontop end,
               {description = "toggle keep on top",  group = "client"}),
     awful.key({ modkey, "Shift"   }, "f",

@@ -95,12 +95,13 @@ mymainmenu = awful.menu({ items = {
         { "awesome", myawesomemenu },
     }
 })
-
--- Menubar configuration
-menubar.utils.terminal = terminal -- Set the terminal for applications that require it
 -- }}}
 
 -- {{{ Wibar
+
+-- Menubar configuration
+menubar.utils.terminal = terminal -- Set the terminal for applications that require it
+
 require("wibar")
 -- }}}
 

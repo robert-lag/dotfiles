@@ -149,8 +149,8 @@ client.connect_signal("property::size", function (c)
             gears.surface.apply_shape_bounding(c, gears.shape.rounded_rect, 10)
         end)
     else
-        -- Hide titlebar
         gears.timer.delayed_call(function()
+            -- Hide titlebar
             setTitlebar(c, false)
         end)
     end
