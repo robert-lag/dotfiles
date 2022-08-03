@@ -86,6 +86,7 @@ set signcolumn=yes
 set tabstop=4
 set shiftwidth=4
 set softtabstop=4
+set expandtab
 
 " Strip trailing whitespace on save
 function! <SID>StripTrailingWhitespaces()
@@ -103,15 +104,11 @@ autocmd FileType c,cpp,java,php,ruby,python,rust,sh,zsh,conf autocmd BufWritePre
 " Folding {{{1
 " --------------------------------------------------------------------------
 
-" Enable recognition of folds based on the syntax
-set foldmethod=syntax
+" Enable recognition of folds based on markers
+set foldmethod=marker
 
 " Open all folds when opening a file
 "set foldlevelstart=20
-
-augroup foldmethod_for_filetypes
-	autocmd FileType conf setlocal foldmethod=marker
-augroup END
 
 " Make folds persistent across sessions
 autocmd BufWinLeave * mkview
