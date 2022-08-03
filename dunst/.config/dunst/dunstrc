@@ -1,5 +1,13 @@
+#      _                 _
+#   __| |_   _ _ __  ___| |_ _ __ ___
+#  / _` | | | | '_ \/ __| __| '__/ __|
+# | (_| | |_| | | | \__ \ |_| | | (__
+#  \__,_|\__,_|_| |_|___/\__|_|  \___|
+#
+#
+# [global] {{{1
 [global]
-    ### Display ###
+    ### Display ### {{{2
 
     # Which monitor should the notifications be displayed on.
     monitor = 0
@@ -17,77 +25,46 @@
     # will be ignored.
     follow = mouse
 
-    # The geometry of the window:
-    #   [{width}]x{height}[+/-{x}+/-{y}]
-    # The geometry of the message window.
-    # The height is measured in number of notifications everything else
-    # in pixels.  If the width is omitted but the height is given
-    # ("-geometry x2"), the message window expands over the whole screen
-    # (dmenu-like).  If width is 0, the window expands to the longest
-    # message displayed.  A positive x is measured from the left, a
-    # negative from the right side of the screen.  Y is measured from
-    # the top and down respectively.
-    # The width can be negative.  In this case the actual width is the
-    # screen width minus the width defined in within the geometry option.
-    geometry = "0x0-0+30"
+    ### Geometry ### {{{2
 
-    # Show how many messages are currently hidden (because of geometry).
-    indicate_hidden = yes
+    # dynamic width from 0 to 300
+    # width = (0, 300)
+    # constant width of 300
+    # width = 300
+    width = (300, 500)
 
-    # Shrink window if it's smaller than the width.  Will be ignored if
-    # width is 0.
-    shrink = no
+    # The maximum height of a single notification, excluding the frame.
+    height = 400
 
-    # The transparency of the window.  Range: [0; 100].
-    # This option will only work if a compositing window manager is
-    # present (e.g. xcompmgr, compiz, etc.).
-    transparency = 0
+    # Position the notification in the top right corner
+    origin = top-right
 
-    # The height of the entire notification.  If the height is smaller
-    # than the font height and padding combined, it will be raised
-    # to the font height and padding.
-    notification_height = 0
+    # Offset from the origin
+    offset = 15x45
 
-    # Draw a line of "separator_height" pixel height between two
-    # notifications.
-    # Set to 0 to disable.
-    separator_height = 1
+    # Scale factor. It is auto-detected if value is 0.
+    scale = 0
 
-    # Padding between text and separator.
-    padding = 8
+    ### Progress bar ### {{{2
 
-    # Horizontal padding.
-    horizontal_padding = 8
+    # Turn on the progess bar. It appears when a progress hint is passed with
+    # for example dunstify -h int:value:12
+    progress_bar = true
 
-    # Defines width in pixels of frame around the notification window.
-    # Set to 0 to disable.
-    frame_width = 1
+    # Set the progress bar height. This includes the frame, so make sure
+    # it's at least twice as big as the frame width.
+    progress_bar_height = 3
 
-    # Defines color of the frame around the notification window.
-    frame_color = "#404040"
+    # Set the frame width of the progress bar
+    progress_bar_frame_width = 1
 
-    # Define a color for the separator.
-    # possible values are:
-    #  * auto: dunst tries to find a color fitting to the background;
-    #  * foreground: use the same color as the foreground;
-    #  * frame: use the same color as the frame;
-    #  * anything else will be interpreted as a X color.
-    separator_color = frame
+    # Set the minimum width for the progress bar
+    progress_bar_min_width = 150
 
-    # Sort messages by urgency.
-    sort = yes
+    # Set the maximum width for the progress bar
+    progress_bar_max_width = 500
 
-    # Don't remove messages, if the user is idle (no mouse or keyboard input)
-    # for longer than idle_threshold seconds.
-    # Set to 0 to disable.
-    # A client can set the 'transient' hint to bypass this. See the rules
-    # section for how to disable this if necessary
-    idle_threshold = 120
-
-	# Progress bar
-	progress_bar_height = 3
-
-    ### Text ###
+    ### Text ### {{{2
 
     font = Roboto 12
 
@@ -164,7 +141,16 @@
     # Display indicators for URLs (U) and actions (A).
     show_indicators = yes
 
-    ### Icons ###
+    ### Icons ### {{{2
+
+    # Recursive icon lookup. You can set a single theme, instead of having to
+    # define all lookup paths.
+    enable_recursive_icon_lookup = false
+
+    # Set icon theme (only used for recursive icon lookup)
+    icon_theme = Adwaita
+    # You can also set multiple icon themes, with the leftmost one being used first.
+    # icon_theme = "Adwaita, breeze"
 
     # Align icons left/right/off
     icon_position = left
@@ -181,7 +167,7 @@
     # Paths to default icons.
     icon_path = /usr/share/icons/gnome/16x16/status/:/usr/share/icons/gnome/16x16/devices/
 
-    ### History ###
+    ### History ### {{{2
 
     # Should a notification popped up from history be sticky or timeout
     # as if it would normally do.
@@ -190,7 +176,7 @@
     # Maximum amount of notifications kept in history
     history_length = 20
 
-    ### Misc/Advanced ###
+    ### Misc/Advanced ### {{{2
 
     # dmenu path.
     dmenu = /usr/bin/dmenu -p dunst:
@@ -205,20 +191,6 @@
     title = Dunst
     class = Dunst
 
-    # Print a notification on startup.
-    # This is mainly for error detection, since dbus (re-)starts dunst
-    # automatically after a crash.
-    startup_notification = false
-
-    # Manage dunst's desire for talking
-    # Can be one of the following values:
-    #  crit: Critical features. Dunst aborts
-    #  warn: Only non-fatal warnings
-    #  mesg: Important Messages
-    #  info: all unimportant stuff
-    # debug: all less than unimportant stuff
-    verbosity = mesg
-
     # Define the corner radius of the notification window
     # in pixel size. If the radius is 0, you have no rounded
     # corners.
@@ -232,19 +204,7 @@
     # user defined timeout.
     ignore_dbusclose = false
 
-    ### Legacy
-
-    # Use the Xinerama extension instead of RandR for multi-monitor support.
-    # This setting is provided for compatibility with older nVidia drivers that
-    # do not support RandR and using it on systems that support RandR is highly
-    # discouraged.
-    #
-    # By enabling this setting dunst will not be able to detect when a monitor
-    # is connected or disconnected which might break follow mode if the screen
-    # layout changes.
-    force_xinerama = false
-
-    ### mouse
+    ### mouse {{{2
 
     # Defines list of actions for each mouse event
     # Possible values are:
@@ -259,18 +219,8 @@
     mouse_middle_click = close_all
     mouse_right_click = close_current
 
-# Experimental features that may or may not work correctly. Do not expect them
-# to have a consistent behaviour across releases.
-[experimental]
-    # Calculate the dpi to use on a per-monitor basis.
-    # If this setting is enabled the Xft.dpi value will be ignored and instead
-    # dunst will attempt to calculate an appropriate dpi value for each monitor
-    # using the resolution and physical size. This might be useful in setups
-    # where there are multiple screens with very different dpi values.
-    per_monitor_dpi = false
 
-[shortcuts]
-
+    ### Shortcuts ### {{{2
     # Shortcuts are specified as [modifier+][modifier+]...key
     # Available modifiers are "ctrl", "mod1" (the alt-key), "mod2",
     # "mod3" and "mod4" (windows-key).
@@ -286,32 +236,113 @@
     # On the US keyboard layout "grave" is normally above TAB and left
     # of "1". Make sure this key actually exists on your keyboard layout,
     # e.g. check output of 'xmodmap -pke'
-    history = ctrl+dead_grave
+    history = ctrl+grave
 
     # Context menu.
     context = ctrl+shift+period
 
+    ### Other settings ### {{{2
+
+    # Maximum number of notification (0 means no limit)
+    notification_limit = 0
+
+    # Show how many messages are currently hidden (because of geometry).
+    indicate_hidden = yes
+
+    # Shrink window if it's smaller than the width.  Will be ignored if
+    # width is 0.
+    shrink = no
+
+    # The transparency of the window.  Range: [0; 100].
+    # This option will only work if a compositing window manager is
+    # present (e.g. xcompmgr, compiz, etc.).
+    transparency = 0
+
+    # Draw a line of "separator_height" pixel height between two
+    # notifications.
+    # Set to 0 to disable.
+    separator_height = 1
+
+    # Padding between text and separator.
+    padding = 8
+
+    # Horizontal padding.
+    horizontal_padding = 8
+
+    # Defines width in pixels of frame around the notification window.
+    # Set to 0 to disable.
+    frame_width = 1
+
+    # Defines color of the frame around the notification window.
+    frame_color = "#404040"
+
+    # Define a color for the separator.
+    # possible values are:
+    #  * auto: dunst tries to find a color fitting to the background;
+    #  * foreground: use the same color as the foreground;
+    #  * frame: use the same color as the frame;
+    #  * anything else will be interpreted as a X color.
+    separator_color = frame
+
+    # Size of gap to display between notifications - requires a compositor.
+    # If value is greater than 0, separator_height will be ignored and a border
+    # of size frame_width will be drawn around each notification instead.
+    # Click events on gaps do not currently propagate to applications below.
+    gap_size = 5
+
+    # Sort messages by urgency.
+    sort = yes
+
+    # Don't remove messages, if the user is idle (no mouse or keyboard input)
+    # for longer than idle_threshold seconds.
+    # Set to 0 to disable.
+    # A client can set the 'transient' hint to bypass this. See the rules
+    # section for how to disable this if necessary
+    idle_threshold = 120
+
+# }}}1
+
+# [experimental] {{{1
+# Experimental features that may or may not work correctly. Do not expect them
+# to have a consistent behaviour across releases.
+[experimental]
+    # Calculate the dpi to use on a per-monitor basis.
+    # If this setting is enabled the Xft.dpi value will be ignored and instead
+    # dunst will attempt to calculate an appropriate dpi value for each monitor
+    # using the resolution and physical size. This might be useful in setups
+    # where there are multiple screens with very different dpi values.
+    per_monitor_dpi = false
+
+# }}}1
+
+# [urgency_low] {{{1
 [urgency_low]
     # IMPORTANT: colors have to be defined in quotation marks.
     # Otherwise the "#" and following would be interpreted as a comment.
-    background = "#282828"
+    background = "#282828bb"
     foreground = "#ebdbb2"
 	highlight = "#83a598"
     timeout = 10
     # Icon for notifications with low urgency, uncomment to enable
     icon = ~/.config/dunst/normal.png
 
+# }}}1
+
+# [urgency_normal] {{{1
 [urgency_normal]
-    background = "#282828"
+    background = "#282828bb"
     foreground = "#ebdbb2"
 	highlight = "#ebdbb2"
     timeout = 10
     # Icon for notifications with normal urgency, uncomment to enable
     icon = ~/.config/dunst/normal.png
 
+# }}}1
+
+# [urgency_critical] {{{1
 [urgency_critical]
     #background = "#991A15"
-    background = "#b72828"
+    background = "#b72828bb"
     foreground = "#ebdbb2"
     frame_color = "#991A15"
 	highlight = "#f29c1f"
@@ -319,6 +350,9 @@
     # Icon for notifications with critical urgency, uncomment to enable
     icon = ~/.config/dunst/critical.png
 
+# }}}1
+
+# Other sections {{{1
 # Every section that isn't one of the above is interpreted as a rules to
 # override settings for certain messages.
 #
@@ -434,4 +468,6 @@
 #    appname = "some_volume_notifiers"
 #    set_stack_tag = "volume"
 #
+# }}}1
+
 # vim: ft=cfg
