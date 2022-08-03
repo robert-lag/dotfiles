@@ -20,5 +20,6 @@ else
 fi
 
 # Start the window manager
-exec i3
+# exec i3
 # exec dwm
+exec awesome
