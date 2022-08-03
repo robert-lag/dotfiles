@@ -9,12 +9,16 @@
 # This file runs when a DM logs you into a grapical session
 # and is sourced by xinitrc
 
-# Apply .Xresources
+# Apply .Xresources (not asynchronosly as following commands need it)
 [ -f ${XDG_CONFIG_HOME:-$HOME/.config}/x11/xresources ] &&
-	xrdb -merge ${XDG_CONFIG_HOME:-$HOME/.config}/x11/xresources &
+	xrdb -merge ${XDG_CONFIG_HOME:-$HOME/.config}/x11/xresources
+
+# Scratchpads
+$TERMINAL -n dropdown-general -e $SHELL -c "neofetch;$SHELL" &
+$TERMINAL -n dropdown-math -f xft:Hack:pixelsize=24 -e qalc -c &
 
 # Set background (using custom script)
-setbg &
+setbg
 
 # Blue light filter
 redshift &
@@ -23,7 +27,7 @@ redshift &
 # dwmblocks &
 
 # Opacity effects
-picom -b
+picom -b --experimental-backends
 
 # Hide mouse cursor when typing
 xbanish &
@@ -57,3 +61,6 @@ xautolock -detectsleep -resetsaver \
 
 # Syncthing (for syncing folders with computers/smartphones)
 syncthing -no-browser -no-restart -logflags=0 &
+
+# Startup applications
+firefox &
