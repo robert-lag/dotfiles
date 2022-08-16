@@ -136,11 +136,20 @@ globalkeys = gears.table.join(
               {description = "start hotkey application launcher", group = "launcher"}),
 
     -- Volume {{{2
-    awful.key({ }, "XF86AudioMute", function() awful.spawn("volume-notification toggle_mute") end,
+    awful.key({ }, "XF86AudioMute", function()
+        awful.spawn("volume-notification toggle_mute")
+        update_volume_widget()
+    end,
               {description = "(un)mute volume", group = "volume"}),
-    awful.key({ }, "XF86AudioRaiseVolume", function() awful.spawn("volume-notification inc") end,
+    awful.key({ }, "XF86AudioRaiseVolume", function()
+        awful.spawn("volume-notification inc")
+        update_volume_widget()
+    end,
               {description = "raise volume", group = "volume"}),
-    awful.key({ }, "XF86AudioLowerVolume", function() awful.spawn("volume-notification dec") end,
+    awful.key({ }, "XF86AudioLowerVolume", function()
+        awful.spawn("volume-notification dec")
+        update_volume_widget()
+    end,
               {description = "lower volume", group = "volume"}),
 
     -- Music {{{2
@@ -165,7 +174,7 @@ globalkeys = gears.table.join(
 
 -- Client keys {{{1
 clientkeys = gears.table.join(
-    awful.key({ modkey            }, ",",       function (c)
+    awful.key({ modkey            }, ",",       function ()
         local screen = awful.screen.focused()
         local tag = screen.tags[11]
         if tag then
@@ -176,13 +185,18 @@ clientkeys = gears.table.join(
                 for _, c in ipairs(client.get()) do
                     if c.instance == "dropdown-general" then
                         client.focus = c
+
+                        -- Center the client
+                        local screen_geometry = awful.screen.focused().geometry
+                        c.x = screen_geometry.x + screen_geometry.width / 2 - c.width / 2
+                        c.y = screen_geometry.y + screen_geometry.height / 2 - c.height / 2
                     end
                 end
             end
         end
     end,
               {description = "toggle general scratchpad",   group = "client"}),
-    awful.key({ modkey            }, ".",       function (c)
+    awful.key({ modkey            }, ".",       function ()
         local screen = awful.screen.focused()
         local tag = screen.tags[12]
         if tag then
@@ -193,6 +207,11 @@ clientkeys = gears.table.join(
                 for _, c in ipairs(client.get()) do
                     if c.instance == "dropdown-math" then
                         client.focus = c
+
+                        -- Center the client
+                        local screen_geometry = awful.screen.focused().geometry
+                        c.x = screen_geometry.x + screen_geometry.width / 2 - c.width / 2
+                        c.y = screen_geometry.y + screen_geometry.height / 2 - c.height / 2
                     end
                 end
             end
