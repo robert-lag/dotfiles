@@ -52,8 +52,8 @@ setxkbmap -layout at,us \
 
 # setup lock screen (xautolock will also be called by suspend@USER.service)
 xautolock -detectsleep -resetsaver \
-	-locker "xsecurelock" -time 10 -notify 30 \
-	-notifier "notify-send -u critical -t 3000 -- 'LOCKING screen in 30 seconds'" \
+	-locker "xsecurelock" -time 10 -notify 5 \
+	-notifier "/usr/lib/xsecurelock/until_nonidle /usr/lib/xsecurelock/dimmer" \
 	-killer "systemctl suspend" -killtime 50 &
 
 # MPD daemon start (if no other user instance exists)
