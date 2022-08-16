@@ -1,5 +1,6 @@
-syntax match ZettelkastenNoteLink "\v\[\[[a-zA-Z0-9]+\]\]"
-highlight ZettelkastenNoteLink ctermfg=Yellow
+" Highlight note links in zettelkasten
+highlight ZettelkastenNoteLink ctermfg=11
+call matchadd("ZettelkastenNoteLink", "\[\[[a-zA-Z0-9]*\]\]")
 
 " Set that wrapping only takes place between words and not in the middle of a
 " word
