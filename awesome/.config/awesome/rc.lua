@@ -16,6 +16,10 @@ local menubar = require("menubar")
 -- when client with a matching name is opened:
 -- require("awful.hotkeys_popup.keys")
 
+image_path = "/home/robert/.config/awesome/images/"
+
+middle_widgets = {}
+
 -- {{{ Error handling
 -- Check if awesome encountered an error during startup and fell back to
 -- another config (This code will only ever execute for the fallback config)
@@ -79,21 +83,25 @@ awful.layout.layouts = {
 -- {{{ Menu
 
 -- Create a awesome submenu
-myawesomemenu = {
-   -- { "hotkeys", function() hotkeys_popup.show_help(nil, awful.screen.focused()) end },
-   { "manual", terminal .. " -e man awesome" },
-   { "edit config", editor_cmd .. " " .. awesome.conffile },
-   { "restart", awesome.restart },
-   { "quit", function() awesome.quit() end },
+awesomemenu = {
+    -- { "hotkeys", function() hotkeys_popup.show_help(nil, awful.screen.focused()) end },
+    { " manual", terminal .. " -e man awesome", image_path.."placeholder.png" },
+    { " edit config", editor_cmd .. " " .. awesome.conffile, image_path.."placeholder.png" },
+    { " restart", awesome.restart, image_path.."placeholder.png" },
+    { " quit", function() awesome.quit() end, image_path.."placeholder.png" },
+}
+
+systemmenu = {
+    { " reboot", "systemctl reboot", image_path.."placeholder.png" },
+    { " shutdown", "systemctl poweroff -i", image_path.."placeholder.png" },
 }
 
 -- Create a launcher widget and a main menu
-mymainmenu = awful.menu({ items = {
-        { "lock", "xautolock -locknow" },
-        { "reboot", "systemctl reboot" },
-        { "shutdown", "systemctl poweroff -i" },
-        { "awesome", myawesomemenu },
-    }
+mymainmenu = awful.menu({
+    { " lock", "xautolock -locknow", image_path.."placeholder.png" },
+    { " system", systemmenu, image_path.."placeholder.png" },
+    { " awesome", awesomemenu, image_path.."placeholder.png" },
+    { " terminal", terminal, image_path.."placeholder.png" },
 })
 -- }}}
 

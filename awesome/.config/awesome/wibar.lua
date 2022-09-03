@@ -4,7 +4,9 @@ local wibox = require("wibox")
 local beautiful = require("beautiful")
 local xresources = require("beautiful.xresources")
 local xrdb = xresources.get_current_theme()
+local battery_widget = require("battery-widget")
 
+-- Helper functions {{{1
 local function darker(color_value, darker_n)
     local result = "#"
     for s in color_value:gmatch("[a-fA-F0-9][a-fA-F0-9]") do
@@ -16,8 +18,7 @@ local function darker(color_value, darker_n)
     return result
 end
 
-local battery_widget = require 'battery-widget'
-
+-- CPU Widget {{{1
 local cpu_widget = wibox.widget {
     {
         {
@@ -59,7 +60,7 @@ cpu_widget_timer = timer({ timeout = 4.0 })
 cpu_widget_timer:connect_signal("timeout", update_cpu_widget)
 cpu_widget_timer:start()
 
-
+-- Volume Widget {{{1
 local volume_widget = wibox.widget {
     {
         {
@@ -111,6 +112,7 @@ volume_widget_timer = timer({ timeout = 10.0 })
 volume_widget_timer:connect_signal("timeout", update_volume_widget)
 volume_widget_timer:start()
 
+-- Battery Widget {{{1
 local battery_widget_ui = wibox.widget {
     {
         {
@@ -179,21 +181,21 @@ battery_widget:connect_signal('upower::update', function (widget, device)
             battery_icon = ""
             if not brightness_reduced_critical then
                 awful.spawn("set-max-brightness 10")
-                awful.spawn("notify-send --urgency critical --icon=/home/robert/.config/awesome/battery-alert.png -- 'Very Low Battery'")
+                awful.spawn("notify-send --urgency critical --icon=~/.local/share/dunst/icons/battery-alert.png -- 'Very Low Battery'")
                 brightness_reduced_critical = true
             end
         elseif device.percentage <= 10 then
             battery_icon = ""
             if not brightness_reduced_warning then
                 awful.spawn("set-max-brightness 50")
-                awful.spawn("notify-send --icon=/home/robert/.config/awesome/battery-alert.png -- 'Low Battery'")
+                awful.spawn("notify-send --icon=~/.local/share/dunst/icons/battery-alert.png -- 'Low Battery'")
                 brightness_reduced_warning = true
             end
         elseif device.percentage <= 20 then
             battery_icon = ""
             if not brightness_reduced_warning then
                 awful.spawn("set-max-brightness 50")
-                awful.spawn("notify-send --icon=/home/robert/.config/awesome/battery-alert.png -- 'Low Battery'")
+                awful.spawn("notify-send --icon=~/.local/share/dunst/icons/battery-alert.png -- 'Low Battery'")
                 brightness_reduced_warning = true
             end
         elseif device.percentage <= 30 then
@@ -227,7 +229,7 @@ battery_widget:connect_signal('upower::update', function (widget, device)
     widget.inner.number.text = string.format("%2d%%", device.percentage)
 end)
 
--- Wifi widget
+-- Wifi widget {{{1
 local current_wifi = ""
 local wifi_ui_collapsed = false
 local wifi_widget = wibox.widget {
@@ -256,8 +258,9 @@ local wifi_widget = wibox.widget {
     widget = wibox.container.background,
     buttons = gears.table.join(
             awful.button({ }, 1, function()
-                awful.spawn(string.format("notify-send '%s'", current_wifi))
+                awful.spawn(string.format("notify-send --icon=~/.local/share/dunst/icons/wifi.png -- '%s'", current_wifi))
             end),
+            awful.button({ }, 2, function() awful.spawn("dmenu-wlan-scanner") end),
             awful.button({ }, 3, function() awful.spawn(string.format("%s -e %s -c 'iwctl station wlan0 show; iwctl'", terminal, shell)) end)
     )
 }
@@ -285,7 +288,9 @@ awful.widget.watch(
     wifi_widget
 )
 
--- Create a wibox for each screen and add it
+
+
+-- Setup Mouse Bindings {{{1
 local taglist_buttons = gears.table.join(
                     awful.button({ }, 1, function(t) t:view_only() end),
                     awful.button({ modkey }, 1, function(t)
@@ -325,6 +330,7 @@ local tasklist_buttons = gears.table.join(
                                               awful.client.focus.byidx(-1)
                                           end))
 
+-- Set Wallpaper {{{1
 local function set_wallpaper(s)
     -- Wallpaper
     if beautiful.wallpaper then
@@ -343,11 +349,13 @@ beautiful.tasklist_disable_icon = true
 -- Re-set wallpaper when a screen's geometry changes (e.g. different resolution)
 -- screen.connect_signal("property::geometry", set_wallpaper)
 
+-- Create a wibox for each screen and add it {{{1
+local index_of_screen = 1
 awful.screen.connect_for_each_screen(function(s)
     -- Wallpaper
     -- set_wallpaper(s)
 
-    -- Each screen has its own tag table.
+    -- Each screen has its own tag table {{{2
     for i = 1, 10 do
         awful.tag.add(tostring(i), {
             layout = awful.layout.layouts[1],
@@ -365,40 +373,36 @@ awful.screen.connect_for_each_screen(function(s)
         screen = s,
     })
 
-    -- Create a promptbox for each screen
-    s.mypromptbox = awful.widget.prompt()
+    awful.tag.add("*", {
+        layout = awful.layout.suit.floating,
+        screen = s,
+    })
 
-    -- Create an imagebox widget which will contain an icon indicating which layout we're using.
-    -- We need one layoutbox per screen.
-    -- s.mylayoutbox = awful.widget.layoutbox(s)
-    -- s.mylayoutbox:buttons(gears.table.join(
-    --                        awful.button({ }, 1, function () awful.layout.inc( 1) end),
-    --                        awful.button({ }, 3, function () awful.layout.inc(-1) end),
-    --                        awful.button({ }, 4, function () awful.layout.inc( 1) end),
-    --                        awful.button({ }, 5, function () awful.layout.inc(-1) end)))
-
-
+    -- Hide specific tags {{{2
     local original_taglist_label = awful.widget.taglist.taglist_label
     function awful.widget.taglist.taglist_label(tag, args, tb)
       local text, bg, bg_image, icon, other_args =
         original_taglist_label(tag, args, tb)
 
-      -- Hide tags 11 and 12
-      if tag.index == 11 or tag.index == 12 then
+      -- Hide tags 11, 12 and 13
+      if tag.index == 11 or tag.index == 12 or tag.index == 13 then
           text = ""
       end
 
       return text, bg, bg_image, icon, other_args
     end
 
-    -- Create a taglist widget
+    -- Create a promptbox for each screen {{{2
+    s.mypromptbox = awful.widget.prompt()
+
+    -- Create a taglist widget {{{2
     s.mytaglist = awful.widget.taglist {
         screen  = s,
         filter  = awful.widget.taglist.filter.noempty,
         buttons = taglist_buttons
     }
 
-    -- Create a tasklist widget
+    -- Create a tasklist widget {{{2
     s.mytasklist = awful.widget.tasklist {
         screen  = s,
         filter  = awful.widget.tasklist.filter.currenttags,
@@ -409,10 +413,34 @@ awful.screen.connect_for_each_screen(function(s)
         },
     }
 
-    -- Create the wibox
+    -- Middle Widget {{{2
+    middle_widgets[index_of_screen] = wibox.widget {
+        s.mytasklist,
+        {
+            {
+                {
+                    id = 'inner',
+                    text = 'Hello World',
+                    widget = wibox.widget.textbox
+                },
+                id = 'margin',
+                left = 5,
+                right = 5,
+                widget = wibox.container.margin
+            },
+            id = 'message',
+            fg = xrdb.color0,
+            bg = xrdb.color3,
+            widget = wibox.container.background
+        },
+        layout = wibox.layout.ratio.horizontal
+    }
+    middle_widgets[index_of_screen]:ajust_ratio(2, 1, 0, 0)
+
+    -- Create the wibox {{{2
     s.mywibox = awful.wibar({ position = "top", screen = s, opacity = 0.95 })
 
-    -- Add widgets to the wibox
+    -- Add widgets to the wibox {{{2
     s.mywibox:setup {
         layout = wibox.layout.align.horizontal,
         { -- Left widgets
@@ -420,7 +448,7 @@ awful.screen.connect_for_each_screen(function(s)
             s.mytaglist,
             s.mypromptbox,
         },
-        s.mytasklist, -- Middle widget
+        middle_widgets[index_of_screen], -- Middle widget
         { -- Right widgets
             {
                 {
@@ -460,4 +488,21 @@ awful.screen.connect_for_each_screen(function(s)
             widget = wibox.container.background
         },
     }
+    -- }}}2
+
+    index_of_screen = index_of_screen + 1
 end)
+
+-- Show / Hide message in wibar {{{1
+function show_message(message)
+    for _, middle_widget in ipairs(middle_widgets) do
+        middle_widget.message.margin.inner.text = message
+        middle_widget:ajust_ratio(2, 0, 1, 0)
+    end
+end
+
+function hide_message()
+    for _, middle_widget in ipairs(middle_widgets) do
+        middle_widget:ajust_ratio(2, 1, 0, 0)
+    end
+end

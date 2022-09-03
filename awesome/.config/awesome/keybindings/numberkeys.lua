@@ -1,6 +1,8 @@
 local gears = require("gears")
 local awful = require("awful")
 
+-- The key represent the keycodes
+-- The value represents the corresponding tag
 local keycodes = {
     [10] = 1,
     [11] = 2,

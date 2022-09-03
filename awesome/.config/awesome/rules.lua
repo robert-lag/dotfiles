@@ -3,7 +3,7 @@ local beautiful = require("beautiful")
 
 -- Rules to apply to new clients (through the "manage" signal).
 awful.rules.rules = {
-    -- All clients will match this rule.
+    -- All clients will match this rule {{{1
     { rule = { },
       properties = { border_width = beautiful.border_width,
                      border_color = beautiful.border_normal,
@@ -17,7 +17,7 @@ awful.rules.rules = {
      }
     },
 
-    -- Floating clients.
+    -- Floating clients {{{1
     { rule_any = {
         instance = {
           "DTA",  -- Firefox addon DownThemAll.
@@ -30,7 +30,6 @@ awful.rules.rules = {
           "Gpick",
           "Kruler",
           "MessageWin",  -- kalarm.
-          "Sxiv",
           "Tor Browser", -- Needs a fixed window size to avoid fingerprinting by screen size.
           "Wpa_gui",
           "veromix",
@@ -46,18 +45,29 @@ awful.rules.rules = {
           "ConfigManager",  -- Thunderbird's about:config.
           "pop-up",       -- e.g. Google Chrome's (detached) Developer Tools.
         }
-      }, properties = { floating = true }},
-
-    -- MPV always in fullscreen
-    { rule = { class = "mpv" },
-      properties = { fullscreen = false }
+      }, properties = { floating = true }
     },
 
-    -- Set Firefox to always map on the tag named "1" on screen 1.
-    { rule = { class = "firefox" },
-      properties = { screen = 1, tag = "1" } },
+    -- Fullscreen clients {{{1
+    { rule_any = {
+        class = {
+            "Sxiv",
+            "mpv"
+        }
+      }, properties = { fullscreen = true }
+    },
 
-    -- Scratchpads
+    -- Firefox {{{1
+    { rule = { class = "firefox" },
+      properties = { screen = 1, tag = "1" }
+    },
+
+    -- ncmpcpp {{{1
+    { rule = { instance = "ncmpcpp" },
+      properties = { screen = 1, tag = "10" }
+    },
+
+    -- Scratchpads {{{1
     { rule = { instance = "dropdown-general" },
       properties = {
           screen = 1,
@@ -71,7 +81,6 @@ awful.rules.rules = {
           placement = awful.placement.centered,
       }
     },
-
     { rule = { instance = "dropdown-math" },
       properties = {
           screen = 1,

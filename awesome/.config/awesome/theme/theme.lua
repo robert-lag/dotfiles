@@ -10,6 +10,7 @@ local xrdb = xresources.get_current_theme()
 local gfs = require("gears.filesystem")
 local themes_path = gfs.get_themes_dir()
 local current_path = "/home/robert/.config/awesome/theme/"
+local image_path = "/home/robert/.config/awesome/images/"
 
 local function darker(color_value, darker_n)
     local result = "#"
@@ -71,10 +72,11 @@ theme.master_width_factor = 0.6
 -- Variables set for theming the menu:
 -- menu_[bg|fg]_[normal|focus]
 -- menu_[border_color|border_width]
-theme.menu_submenu_icon = current_path.."submenu.png"
-theme.menu_height = dpi(35)
-theme.menu_width  = dpi(250)
-theme.menu_font = "monospace 16"
+theme.menu_submenu_icon = image_path.."submenu.png"
+theme.menu_height = dpi(50)
+theme.menu_width  = dpi(350)
+theme.menu_font = "monospace 20"
+theme.menu_border_color = xrdb.color8
 
 -- You can add as many variables as
 -- you wish and access them by using

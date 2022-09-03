@@ -1,8 +1,9 @@
-##############################################################
-## This is the example bindings file. Copy it to            ##
-## ~/.ncmpcpp/bindings or $XDG_CONFIG_HOME/ncmpcpp/bindings ##
-## and set up your preferences                              ##
-##############################################################
+#  _ __   ___ _ __ ___  _ __   ___ _ __  _ __
+# | '_ \ / __| '_ ` _ \| '_ \ / __| '_ \| '_ \
+# | | | | (__| | | | | | |_) | (__| |_) | |_) |
+# |_| |_|\___|_| |_| |_| .__/ \___| .__/| .__/
+#                      |_|        |_|   |_|
+#
 # Default keybindings {{{1
 #
 #def_key "mouse"
@@ -362,6 +363,10 @@
 #def_key "f"
 #	find_item_forward
 
+# Playlist {{{1
+def_key "space"
+  add_item_to_playlist
+
 # Windows {{{1
 def_key "f1"
  show_help
@@ -409,10 +414,25 @@ def_key "m"
   show_media_library
 def_key "M"
   toggle_media_library_columns_mode
+
 def_key "t"
   show_tag_editor
+
 def_key "v"
   show_visualizer
+
+def_key "s"
+  show_search_engine
+def_key "space"
+  start_searching
+
+def_key "f"
+  show_browser
+def_key "f"
+  change_browse_mode
+
+def_key "P"
+  show_playlist
 
 # Movement {{{1
 def_key "j"
@@ -447,6 +467,8 @@ def_key "l"
 def_key "g"
   move_home
 #jump_to_position_in_song
+def_key "G"
+  move_end
 
 def_key "K"
  select_item
@@ -464,9 +486,6 @@ def_key "L"
 def_key "H"
  seek_backward
 
-def_key "."
-    show_lyrics
-
 def_key "n"
     next_found_item
 def_key "N"
@@ -476,7 +495,6 @@ def_key "Z"
 	move_selected_items_up
 def_key "T"
 	move_selected_items_down
-
 
 # Delete {{{1
 def_key "delete"
@@ -492,22 +510,21 @@ def_key "x"
 def_key "x"
  delete_stored_playlist
 
+# Lyrics {{{1
+def_key "."
+    show_lyrics
+def_key "-"
+    run_external_command "lyrics-dl"
+def_key "e"
+    edit_lyrics
+
 # Not used but bound {{{1
 # def_key "J"
 #     move_sort_order_down
 # def_key "K"
 #     move_sort_order_up
-def_key "G"
-  move_end
 def_key "U"
   update_database
 def_key "s"
   reset_search_engine
-def_key "s"
-  show_search_engine
-def_key "f"
-  show_browser
-def_key "f"
-  change_browse_mode
-def_key "P"
-  show_playlist
+

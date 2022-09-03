@@ -17,7 +17,7 @@ local function setTitlebar(client, showBar)
     end
 end
 
--- Signal function to execute when a new client appears.
+-- Signal function to execute when a new client appears
 client.connect_signal("manage", function (c)
     -- Set the windows at the slave,
     -- i.e. put it at the end of others instead of setting it master.
@@ -26,7 +26,7 @@ client.connect_signal("manage", function (c)
     if awesome.startup
       and not c.size_hints.user_position
       and not c.size_hints.program_position then
-        -- Prevent clients from being unreachable after screen count changes.
+        -- Prevent clients from being unreachable after screen count changes
         awful.placement.no_offscreen(c)
     end
 
@@ -35,7 +35,7 @@ client.connect_signal("manage", function (c)
 end)
 
 
--- Add a titlebar if titlebars_enabled is set to true in the rules.
+-- Add a titlebar if titlebars_enabled is set to true in the rules
 client.connect_signal("request::titlebars", function(c)
     -- buttons for the titlebar
     local buttons = gears.table.join(
@@ -86,58 +86,13 @@ tag.connect_signal("property::layout", function(t)
 
             -- Make rounded borders around clients
             gears.timer.delayed_call(function()
-                gears.surface.apply_shape_bounding(c, gears.shape.rounded_rect, 30)
+                gears.surface.apply_shape_bounding(c, gears.shape.rounded_rect, 10)
             end)
         else
             setTitlebar(c, false)
         end
     end
 end)
-
-local function apply_shape(draw, shape, ...)
-  local geo = draw:geometry()
-  local shape_args = ...
-
-  local img = cairo.ImageSurface(cairo.Format.A1, geo.width, geo.height)
-  local cr = cairo.Context(img)
-
-  cr:set_operator(cairo.Operator.CLEAR)
-  cr:set_source_rgba(0,0,0,1)
-  cr:paint()
-  cr:set_operator(cairo.Operator.SOURCE)
-  cr:set_source_rgba(1,1,1,1)
-
-  shape(cr, geo.width, geo.height, shape_args)
-
-  cr:fill()
-
-  draw.shape_bounding = img._native
-
-  cr:set_operator(cairo.Operator.CLEAR)
-  cr:set_source_rgba(0,0,0,1)
-  cr:paint()
-  cr:set_operator(cairo.Operator.SOURCE)
-  cr:set_source_rgba(1,1,1,1)
-
-  local border = beautiful.base_border_width
-  --local titlebar_height = titlebar.is_enabled(draw) and beautiful.titlebar_height or border
-  local titlebar_height = border
-  gears.shape.transform(shape):translate(
-    border, titlebar_height
-  )(
-    cr,
-    geo.width-border*2,
-    geo.height-titlebar_height-border,
-    --shape_args
-    8
-  )
-
-  cr:fill()
-
-  draw.shape_clip = img._native
-
-  img:finish()
-end
 
 client.connect_signal("property::size", function (c)
     if (c.floating or c.first_tag.layout == awful.layout.suit.floating) and not c.fullscreen then
