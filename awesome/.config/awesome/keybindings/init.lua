@@ -39,6 +39,42 @@ globalkeys = gears.table.join(
             )
         end
     end, {description = "restore minimized", group = "client"}),
+    awful.key({ modkey,           }, "ö", nil, function ()
+        show_message("(d)efault | (e)qual | (s)quare")
+        keygrabber.run(function(mods, key, action)
+            if key == "Super_L" and action == "release" then
+                -- Continue to wait after the Super key was released
+                return
+            end
+
+            local master_width_factor = {
+                e = 0.5,
+                d = 0.6,
+                s = 0.5,
+            }
+
+            local master_count = {
+                e = 1,
+                d = 1,
+                s = 2,
+            }
+
+            if action == "press" then
+                hide_message()
+                if key ~= "Escape" then
+                    if master_width_factor[key] == nil then
+                        awful.spawn("notify-send -t 1500 'Key not assigned'")
+                    else
+                        awful.tag.selected().master_width_factor = master_width_factor[key]
+                        awful.tag.selected().master_count = master_count[key]
+                        awful.tag.selected().column_count = 1
+                    end
+                end
+            end
+
+            keygrabber.stop()
+        end)
+    end, {description = "show layout menu", group = "layout"}),
 
     -- Open standard applications {{{2
     awful.key({ modkey            }, "Return", function () awful.spawn(terminal) end,
@@ -60,56 +96,52 @@ globalkeys = gears.table.join(
     awful.key({ }, "XF86Search", function() awful.spawn("dmenu_run") end,
               {description = "show application launcher", group = "launcher"}),
     awful.key({ modkey }, "o", nil, function()
-            show_message("(b)rowser | (m)ail | (v)scodium | music (p)layer | (g)imp | (y)outube | (t)erminal")
-            keygrabber.run(function(mods, key, action)
-                if key == "Super_L" and action == "release" then
-                    -- Continue to wait after the Super key was released
-                    return
-                end
+        show_message("(b)rowser | (m)ail | (v)scodium | music (p)layer | (g)imp | (y)outube | (t)erminal")
+        keygrabber.run(function(mods, key, action)
+            if key == "Super_L" and action == "release" then
+                -- Continue to wait after the Super key was released
+                return
+            end
 
-                local app_shortcuts = {
-                    b = "firefox",
-                    m = "thunderbird",
-                    v = "vscodium",
-                    p = terminal .. " -e ncmpcpp",
-                    g = "gimp",
-                    y = "gtk-youtube-viewer",
-                    t = "st",
-                    Return = "st",
-                }
+            local app_shortcuts = {
+                b = "firefox",
+                m = "thunderbird",
+                v = "vscodium",
+                p = terminal .. " -e ncmpcpp",
+                g = "gimp",
+                y = "gtk-youtube-viewer",
+                t = "st",
+                Return = "st",
+            }
 
-                if action == "press" then
-                    hide_message()
-                    if key ~= "Escape" then
-                        if app_shortcuts[key] == nil then
-                            awful.spawn("notify-send -t 1500 'Key not assigned'")
-                        else
-                            awful.spawn(app_shortcuts[key])
-                        end
+            if action == "press" then
+                hide_message()
+                if key ~= "Escape" then
+                    if app_shortcuts[key] == nil then
+                        awful.spawn("notify-send -t 1500 'Key not assigned'")
+                    else
+                        awful.spawn(app_shortcuts[key])
                     end
                 end
+            end
 
-                keygrabber.stop()
-            end)
-        end,
-              {description = "start hotkey application launcher", group = "launcher"}),
+            keygrabber.stop()
+        end)
+    end, {description = "start hotkey application launcher", group = "launcher"}),
 
     -- Volume {{{2
     awful.key({ }, "XF86AudioMute", function()
         awful.spawn("volume-notification toggle_mute")
         update_volume_widget()
-    end,
-              {description = "(un)mute volume", group = "volume"}),
+    end, {description = "(un)mute volume", group = "volume"}),
     awful.key({ }, "XF86AudioRaiseVolume", function()
         awful.spawn("volume-notification inc")
         update_volume_widget()
-    end,
-              {description = "raise volume", group = "volume"}),
+    end, {description = "raise volume", group = "volume"}),
     awful.key({ }, "XF86AudioLowerVolume", function()
         awful.spawn("volume-notification dec")
         update_volume_widget()
-    end,
-              {description = "lower volume", group = "volume"}),
+    end, {description = "lower volume", group = "volume"}),
 
     -- Music {{{2
     awful.key({ }, "XF86AudioPrev", function() awful.spawn("mpc prev") end,
