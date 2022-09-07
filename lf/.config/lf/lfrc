@@ -30,7 +30,7 @@ cmd open ${{
         text/*|application/json) $EDITOR "$f";;
         application/x-sc) sc-im "$f";;
         application/x-freeplane) freeplane-java-11 "$f" ;;
-        *) xdg-open "$f" ;;
+        *) xdg-open "$f" & ;;
     esac
 }}
 
@@ -43,7 +43,7 @@ cmd open-alternative ${{
 		case $(file --mime-type "$f" -bL) in
 			application/pdf) devour okular "$f" ;;
 			image/*) devour gimp "$f" ;;
-			text/html) firefox "$f" ;;
+			text/html) firefox "$f" & ;;
 			application/x-freeplane) freeplane-java-11 "$f" ;;
 			*) $EDITOR "$f";;
 		esac
