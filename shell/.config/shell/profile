@@ -26,7 +26,6 @@
 
 # Paths
 export PATH="$PATH:${$(find $HOME/.local/bin -type d -printf %p:)%%:}"
-export CDPATH=".:$HOME/cd-shortcuts"
 
 # Default programs
 export EDITOR="nvim"
@@ -64,6 +63,7 @@ export _JAVA_OPTIONS=-Djava.util.prefs.userRoot="$XDG_CONFIG_HOME/java"
 export NPM_CONFIG_USERCONFIG="$XDG_CONFIG_HOME/npm/npmrc"
 export GOPATH="$XDG_DATA_HOME/go"
 export SSB_HOME="$XDG_DATA_HOME/zoom"
+export LEIN_HOME="$XDG_DATA_HOME/lein"
 
 # Might cause errors for VSCodium / VSCode (original path: ~/.vscode-oss)
 export VSCODE_PORTABLE="$XDG_DATA_HOME/vscode"
