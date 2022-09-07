@@ -64,3 +64,4 @@ syncthing -no-browser -no-restart -logflags=0 &
 
 # Startup applications
 firefox &
+$TERMINAL -n ncmpcpp -e $SHELL -c "ncmpcpp" &
