@@ -137,8 +137,8 @@ highlight Conceal ctermfg=11 ctermbg=8
 highlight SpellBad ctermbg=1
 
 " Show trailing whitespace
-highlight ExtraWhitespace ctermbg=DarkYellow guibg=#d79921
-autocmd ColorScheme * highlight ExtraWhitespace guibg=#d79921
+highlight ExtraWhitespace ctermbg=8
+autocmd ColorScheme * highlight ExtraWhitespace
 autocmd BufEnter * match ExtraWhitespace /\s\+$/
 autocmd InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/
 autocmd InsertLeave * match ExtraWhiteSpace /\s\+$/
