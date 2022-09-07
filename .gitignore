@@ -21,3 +21,6 @@ gtk/.config/gtk-3.0/bookmarks
 
 # zsh
 .zcompdump
+
+# dunst
+dunst/.config/dunst/experimental-images/
