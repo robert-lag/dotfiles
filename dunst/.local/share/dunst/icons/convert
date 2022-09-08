@@ -1,5 +1,0 @@
-#!/bin/sh
-# Changes the foreground color of the image normal-original.png into a
-# yellowish tint and saves the result in output.png
-
-convert normal-original.png +level-colors transparent,"#ebdbb2" output.png

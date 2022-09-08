@@ -230,6 +230,7 @@ battery_widget:connect_signal('upower::update', function (widget, device)
 end)
 
 -- Wifi widget {{{1
+local connected_to_ethernet = true
 local current_wifi = ""
 local wifi_ui_collapsed = false
 local wifi_widget = wibox.widget {
@@ -258,7 +259,11 @@ local wifi_widget = wibox.widget {
     widget = wibox.container.background,
     buttons = gears.table.join(
             awful.button({ }, 1, function()
-                awful.spawn(string.format("notify-send --icon=~/.local/share/dunst/icons/wifi.png -- '%s'", current_wifi))
+                if connected_to_ethernet then
+                    awful.spawn("notify-send --expire-time 4000 --icon=~/.local/share/dunst/icons/lan.png -- 'Ethernet'")
+                else
+                    awful.spawn(string.format("notify-send --expire-time 4000 --icon=~/.local/share/dunst/icons/wifi.png -- '%s'", current_wifi))
+                end
             end),
             awful.button({ }, 2, function() awful.spawn("dmenu-wlan-scanner") end),
             awful.button({ }, 3, function() awful.spawn(string.format("%s -e %s -c 'iwctl station wlan0 show; iwctl'", terminal, shell)) end)
@@ -268,6 +273,10 @@ local wifi_widget = wibox.widget {
 awful.widget.watch(
     "iw dev wlan0 link", 5,
     function(widget, stdout, stderr, exitreason, exitcode)
+        if connected_to_ethernet then
+            return
+        end
+
         local wifi = string.match(stdout, "SSID:.*\n")
         local index_1, index_2 = string.find(stdout, "SSID: [^\n]*")
         local wifi_signal = string.match(stdout, "signal:.*\n")
@@ -288,7 +297,18 @@ awful.widget.watch(
     wifi_widget
 )
 
-
+awful.widget.watch(
+    "sh -c 'ip address show enp2s0 | grep inet'", 5,
+    function(widget, stdout, stderr, exitreason, exitcode)
+        if stdout == "" then
+            connected_to_ethernet = false
+        else
+            connected_to_ethernet = true
+            widget.inner.icon.text = ""
+        end
+    end,
+    wifi_widget
+)
 
 -- Setup Mouse Bindings {{{1
 local taglist_buttons = gears.table.join(
