@@ -383,12 +383,12 @@ awful.screen.connect_for_each_screen(function(s)
     function awful.widget.taglist.taglist_label(tag, args, tb)
       local text, bg, bg_image, icon, other_args =
         original_taglist_label(tag, args, tb)
-
+    
       -- Hide tags 11, 12 and 13
       if tag.index == 11 or tag.index == 12 or tag.index == 13 then
           text = ""
       end
-
+    
       return text, bg, bg_image, icon, other_args
     end
 
