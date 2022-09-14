@@ -14,6 +14,14 @@ setopt interactive_comments
 # Prompt
 PS1="%B%{$fg[cyan]%}%n@%M%{$fg[white]%}:%{$fg[yellow]%}%~%{$reset_color%}$%b "
 
+# Show git information in right prompt
+autoload -Uz vcs_info
+precmd_vcs_info() { vcs_info }
+precmd_functions+=( precmd_vcs_info )
+setopt prompt_subst
+RPROMPT='%{$fg[cyan]%}${vcs_info_msg_0_}%{$reset_color%}'
+zstyle ':vcs_info:git:*' formats '%b'
+
 # History
 HISTSIZE=10000000
 SAVEHIST=10000000
