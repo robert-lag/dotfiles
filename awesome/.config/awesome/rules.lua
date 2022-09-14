@@ -59,7 +59,7 @@ awful.rules.rules = {
 
     -- Firefox {{{1
     { rule = { class = "firefox" },
-      properties = { screen = 1, tag = "1" }
+      properties = { tag = "1" }
     },
 
     -- ncmpcpp {{{1

@@ -143,8 +143,12 @@ theme.wallpaper = function(s)
 end
 
 -- Define the image to load
-theme.titlebar_close_button_normal = themes_path.."default/titlebar/close_normal.png"
-theme.titlebar_close_button_focus  = themes_path.."default/titlebar/close_focus.png"
+theme.titlebar_close_button_normal = image_path.."close-normal.png"
+theme.titlebar_close_button_normal_hover = image_path.."close-normal.png"
+theme.titlebar_close_button_normal_press = image_path.."close-normal.png"
+theme.titlebar_close_button_focus  = image_path.."close-focus.png"
+theme.titlebar_close_button_focus_hover = image_path.."close-focus.png"
+theme.titlebar_close_button_focus_press = image_path.."close-focus.png"
 
 theme.titlebar_minimize_button_normal = themes_path.."default/titlebar/minimize_normal.png"
 theme.titlebar_minimize_button_focus  = themes_path.."default/titlebar/minimize_focus.png"

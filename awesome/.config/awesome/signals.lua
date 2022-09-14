@@ -31,7 +31,7 @@ client.connect_signal("manage", function (c)
     end
 
     -- Show titlebar only on floating windows
-    setTitlebar(c, c.floating or c.first_tag.layout == awful.layout.suit.floating)
+    setTitlebar(c, c.floating or (c.first_tag ~= nil and c.first_tag.layout == awful.layout.suit.floating))
 end)
 
 
@@ -95,7 +95,7 @@ tag.connect_signal("property::layout", function(t)
 end)
 
 client.connect_signal("property::size", function (c)
-    if (c.floating or c.first_tag.layout == awful.layout.suit.floating) and not c.fullscreen then
+    if (c.floating or (c.first_tag ~= nil and c.first_tag.layout == awful.layout.suit.floating)) and not c.fullscreen then
         gears.timer.delayed_call(function()
             -- Show titlebar
             setTitlebar(c, true)

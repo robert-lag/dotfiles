@@ -329,18 +329,7 @@ local taglist_buttons = gears.table.join(
                 )
 
 local tasklist_buttons = gears.table.join(
-                     awful.button({ }, 1, function (c)
-                                              if c == client.focus then
-                                                  c.minimized = true
-                                              else
-                                                  c:emit_signal(
-                                                      "request::activate",
-                                                      "tasklist",
-                                                      {raise = true}
-                                                  )
-                                              end
-                                          end),
-                     awful.button({ }, 3, function(c)
+                     awful.button({ }, 1, function(c)
                                             c.fullscreen = not c.fullscreen
                                           end),
                      awful.button({ }, 4, function ()
@@ -425,7 +414,7 @@ awful.screen.connect_for_each_screen(function(s)
     -- Create a tasklist widget {{{2
     s.mytasklist = awful.widget.tasklist {
         screen  = s,
-        filter  = awful.widget.tasklist.filter.currenttags,
+        filter  = awful.widget.tasklist.filter.focused,
         buttons = tasklist_buttons,
         style    = {
             shape  = function(cr,w,h) gears.shape.rounded_rect(cr,w,h, 4) end,
@@ -433,7 +422,7 @@ awful.screen.connect_for_each_screen(function(s)
         },
     }
 
-    -- Middle Widget {{{2
+    -- Create the middle Widget {{{2
     middle_widgets[index_of_screen] = wibox.widget {
         s.mytasklist,
         {
