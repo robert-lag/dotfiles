@@ -84,6 +84,9 @@ export XSECURELOCK_DISCARD_FIRST_KEYPRESS=1
 export XSECURELOCK_DIM_TIME_MS=1000
 export XSECURELOCK_WAIT_TIME_MS=5000
 
+# Difftastic settings
+export DFT_TAB_WIDTH=4
+
 # Source icons list for file manager (lf)
 LF_ICONS=$(sed ~/.config/diricons \
             -e '/^[ \t]*#/d'       \

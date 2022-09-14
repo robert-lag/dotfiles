@@ -5,14 +5,16 @@
 #   - zshrc
 
 # Use neovim for vim if present.
-[ -x "$(command -v nvim)" ] && alias vim="nvim" vimdiff="nvim -d"
+[ -x "$(command -v nvim)" ] && \
+    alias vim="nvim" \
+          vimdiff="nvim -d"
 
 # Use $XINITRC variable if file exists.
 [ -f "$XINITRC" ] && alias startx="startx $XINITRC"
 
 # Sudo not required for some system commands
 for x in mount umount pacman ; do
-	alias $x="sudo $x"
+    alias $x="sudo $x"
 done
 
 # Color
@@ -25,24 +27,24 @@ alias diff='diff --color=auto'
 
 # Verbosity and other common settings
 alias \
-	cd='cd -P' \
-	cp="cp -iv" \
-	mv="mv -iv" \
-	rm="rm -vI" \
-	mkd="mkdir -pv" \
-	ffmpeg="ffmpeg -hide_banner"
+    cd='cd -P' \
+    cp="cp -iv" \
+    mv="mv -iv" \
+    rm="rm -vI" \
+    mkd="mkdir -pv" \
+    ffmpeg="ffmpeg -hide_banner"
 
 # Abbreviations for common commands
 alias \
-	ka="killall" \
-	g="git" \
-	yt="youtube-viewer" \
-	v="$EDITOR" \
-	p="pacman" \
-	z="zathura"
+    ka="killall" \
+    g="git" \
+    yt="youtube-viewer" \
+    v="$EDITOR" \
+    p="pacman" \
+    z="zathura"
 
 # Other
 alias lf='lf-ueberzug'
-alias yt='youtube-dl --add-metadata --ignore-errors'	# Download video
-alias yta='yt --extract-audio'							# Download only audio
+alias yt='youtube-dl --add-metadata --ignore-errors'    # Download video
+alias yta='yt --extract-audio'                          # Download only audio
 alias dla='youtube-dl-and-normalize-file'

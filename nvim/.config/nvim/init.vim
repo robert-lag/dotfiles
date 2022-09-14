@@ -90,11 +90,11 @@ set expandtab
 
 " Strip trailing whitespace on save
 function! <SID>StripTrailingWhitespaces()
-	if !&binary && &filetype != 'diff'
-		let l:save = winsaveview()
-		keeppatterns %s/\s\+$//e
-		call winrestview(l:save)
-	endif
+    if !&binary && &filetype != 'diff'
+        let l:save = winsaveview()
+        keeppatterns %s/\s\+$//e
+        call winrestview(l:save)
+    endif
 endfun
 autocmd FileType c,cpp,java,php,ruby,python,rust,sh,zsh,conf autocmd BufWritePre <buffer> :call <SID>StripTrailingWhitespaces()
 
@@ -121,6 +121,9 @@ autocmd BufWinEnter * silent! loadview
 " --------------------------------------------------------------------------
 highlight! link SignColumn Background
 
+" Hide tilde ('~') symbols at end of files
+highlight NonText ctermfg=0 ctermbg=0
+
 " Popup menu (tooltip) colors
 highlight Pmenu ctermfg=15 ctermbg=8
 highlight PmenuSel ctermfg=15 ctermbg=6
@@ -134,14 +137,26 @@ highlight Folded ctermfg=15 ctermbg=8
 " and end of a formula in latex)
 highlight Conceal ctermfg=11 ctermbg=8
 
-highlight SpellBad ctermbg=1
+" Color of misspelled words
+highlight SpellBad ctermfg=15 ctermbg=9
+
+" Color of line numbers
+highlight LineNr ctermfg=11 ctermbg=0
+highlight LineNrAbove ctermfg=240 ctermbg=0
+highlight LineNrBelow ctermfg=240 ctermbg=0
 
 " Show trailing whitespace
-highlight ExtraWhitespace ctermbg=8
+highlight ExtraWhitespace ctermfg=15 ctermbg=8
 autocmd ColorScheme * highlight ExtraWhitespace
 autocmd BufEnter * match ExtraWhitespace /\s\+$/
 autocmd InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/
 autocmd InsertLeave * match ExtraWhiteSpace /\s\+$/
+
+" Diff colors
+highlight DiffDelete cterm=bold ctermfg=0 ctermbg=5
+highlight DiffText cterm=bold ctermfg=0 ctermbg=3
+highlight DiffAdd cterm=none ctermfg=0 ctermbg=6
+highlight DiffChange cterm=none ctermfg=0 ctermbg=4
 
 " }}}1
 
@@ -155,20 +170,9 @@ let mapleader = ","
 " Make it possible to clear the highlighting of words until the next search
 " by pressing <esc>
 " Causes bugs!!!
-"nnoremap <esc> :noh<return><esc>
-
-" Prevent bad habits like using arrow keys for movement in...
-" ...normal mode:
-"nnoremap <Left>  :echoe "Use h"<CR>
-"nnoremap <Right>  :echoe "Use l"<CR>
-"nnoremap <Up>  :echoe "Use k"<CR>
-"nnoremap <Down>  :echoe "Use j"<CR>
+nnoremap <esc> :noh<return><esc>:<esc>
 
 " Shortcuts for split navigation, saving a keypress
-" map <C-h> <C-w>h
-" map <C-j> <C-w>j
-" map <C-k> <C-w>k
-" map <C-l> <C-w>l
 
 " Toggle spellchecking
 noremap <leader>c :setlocal spell! spelllang=en_us,de<CR>
@@ -186,6 +190,35 @@ noremap <leader>bh :silent !dmenu-zettelkasten-history-viewer -o<cr>
 noremap <leader>bl :silent !dmenu-zettelkasten-history-viewer -l<cr>
 noremap <leader>bo :silent !cat<Space>"%"<Space>\|<Space>dmenu-zettelkasten-link-handler<Space>-o<cr>
 
+" Move between changes
+noremap <leader>n ]c
+noremap <leader>N [c
+
+noremap <n ]c
+noremap <N [c
+
+" Move between windows
+noremap <leader>h <C-w>h
+noremap <leader>j <C-w>j
+noremap <leader>k <C-w>k
+noremap <leader>l <C-w>l
+noremap <leader>w <C-w><C-w>
+
+noremap <h <C-w>h
+noremap <j <C-w>j
+noremap <k <C-w>k
+noremap <l <C-w>l
+noremap <w <C-w><C-w>
+
+" noremap <C-h> <C-w>h
+" noremap <C-j> <C-w>j
+" noremap <C-k> <C-w>k
+" noremap <C-l> <C-w>l
+
+" This remapping is needed to ensure that nvim doesn't wait
+" for further input after the second '<' is typed
+noremap << <<
+
 " }}}1
 
 " --------------------------------------------------------------------------
@@ -201,11 +234,11 @@ filetype plugin indent on
 " Set the filetype based on the file's extension, but only if 'filetype' has
 " not already been set
 augroup auto_filetype
-	" If the file has the extension or is called 'xesources'
-	autocmd BufRead,BufNewFile *xresources setfiletype xdefaults
+    " If the file has the extension or is called 'xesources'
+    autocmd BufRead,BufNewFile *xresources setfiletype xdefaults
 
-	autocmd BufRead,BufNewFile *.conf setfiletype conf
-	autocmd BufRead,BufNewFile config setfiletype conf
+    autocmd BufRead,BufNewFile *.conf setfiletype conf
+    autocmd BufRead,BufNewFile config setfiletype conf
 augroup END
 
 " Run xrdb whenever Xresources is updated
@@ -220,71 +253,74 @@ cnoremap w!! execute 'silent! write !sudo tee % >/dev/null' <bar> edit!
 " Plugins {{{1
 " --------------------------------------------------------------------------
 call plug#begin(system('echo -n "${XDG_DATA_HOME:-$HOME/.local/share}/nvim/plugged"'))
-	" Colorschemes
-	Plug 'lifepillar/vim-gruvbox8'
+    " Colorschemes
+    Plug 'lifepillar/vim-gruvbox8'
 
-	" Support for repeating actions of plugins using '.'
-	Plug 'tpope/vim-repeat'
+    " Show all available colors
+    Plug 'guns/xterm-color-table.vim'
 
-	" Debugging
-	" Plug 'puremourning/vimspector'
+    " Support for repeating actions of plugins using '.'
+    Plug 'tpope/vim-repeat'
 
-	" File browser
-	Plug 'preservim/nerdtree'
+    " Debugging
+    " Plug 'puremourning/vimspector'
 
-	" For commenting code using shortcuts
-	Plug 'preservim/nerdcommenter'
+    " File browser
+    Plug 'preservim/nerdtree'
 
-	" Enhanced support for character pairs (e.g. parentheses, brackets)
-	Plug 'tpope/vim-surround'
-	Plug 'jiangmiao/auto-pairs'
+    " For commenting code using shortcuts
+    Plug 'preservim/nerdcommenter'
 
-	" Colorized parentheses
-	Plug 'frazrepo/vim-rainbow'
+    " Enhanced support for character pairs (e.g. parentheses, brackets)
+    Plug 'tpope/vim-surround'
+    Plug 'jiangmiao/auto-pairs'
 
-	" Linter (recognizes syntax errors in code)
-	" Plug 'dense-analysis/ale'
+    " Colorized parentheses
+    Plug 'frazrepo/vim-rainbow'
 
-	" Git diff in sign column
-	Plug 'airblade/vim-gitgutter'
+    " Linter (recognizes syntax errors in code)
+    " Plug 'dense-analysis/ale'
 
-	" Git wrapper for vim
-	Plug 'tpope/vim-fugitive'
+    " Git diff in sign column
+    Plug 'airblade/vim-gitgutter'
 
-	Plug 'vim-scripts/taglist.vim'
+    " Git wrapper for vim
+    Plug 'tpope/vim-fugitive'
 
-	" Status line
-	Plug 'itchyny/lightline.vim'
+    Plug 'vim-scripts/taglist.vim'
 
-	" Integration of ALE (linter) into lightline (status line)
-	" Plug 'maximbaz/lightline-ale'
+    " Status line
+    Plug 'itchyny/lightline.vim'
 
-	" Colorize css color codes (e.g. #689d6a)
-	Plug 'ap/vim-css-color'
+    " Integration of ALE (linter) into lightline (status line)
+    " Plug 'maximbaz/lightline-ale'
 
-	" Autocompletion
-	Plug 'ycm-core/YouCompleteMe', { 'do': './install.py' }
-	" Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-	" Plug 'neoclide/coc.nvim', {'branch': 'release'}
+    " Colorize css color codes (e.g. #689d6a)
+    Plug 'ap/vim-css-color'
 
-	" Enhanced rust support
-	" Plug 'rust-lang/rust.vim'
+    " Autocompletion
+    Plug 'ycm-core/YouCompleteMe', { 'do': './install.py' }
+    " Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+    " Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
-	" Markdown preview
-	Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install' }
+    " Enhanced rust support
+    " Plug 'rust-lang/rust.vim'
 
-	" Latex preview
-	Plug 'xuhdev/vim-latex-live-preview'
+    " Markdown preview
+    Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install' }
 
-	" Enhanced latex support
-	Plug 'lervag/vimtex'
+    " Latex preview
+    Plug 'xuhdev/vim-latex-live-preview'
 
-	" Snippets
-	Plug 'SirVer/ultisnips'
-	Plug 'honza/vim-snippets'
+    " Enhanced latex support
+    Plug 'lervag/vimtex'
 
-	" CSV support
-	Plug 'zhaocai/csv.vim'
+    " Snippets
+    Plug 'SirVer/ultisnips'
+    Plug 'honza/vim-snippets'
+
+    " CSV support
+    Plug 'zhaocai/csv.vim'
 call plug#end()
 nnoremap <silent> K :call <SID>show_documentation()<CR>
 
@@ -301,7 +337,7 @@ let g:NERDTreeBookmarksFile=stdpath('data') . '/NERDTreeBookmarks'
 
 " Exit Vim if NERDTree is the only window left.
 autocmd BufEnter * if tabpagenr('$') == 1 && winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() |
-	\ quit | endif
+    \ quit | endif
 
 " Shortcuts
 " nnoremap <C-n> :NERDTree<CR>
@@ -335,23 +371,23 @@ let g:gitgutter_enabled = 1
 
 " Compact git status for statusline
 function! GitStatus()
-	let [a,m,r] = GitGutterGetHunkSummary()
-	if (a == 0 && m == 0 && r == 0)
-		return printf('')
-	elseif (a != 0 && m == 0 && r == 0)
-		return printf('+%d', a)
-	elseif (a == 0 && m != 0 && r == 0)
-		return printf('~%d', m)
-	elseif (a != 0 && m != 0 && r == 0)
-		return printf('+%d ~%d', a, m)
-	elseif (a == 0 && m == 0 && r != 0)
-		return printf('-%d', r)
-	elseif (a != 0 && m == 0 && r != 0)
-		return printf('+%d -%d', a, r)
-	elseif (a == 0 && m != 0 && r != 0)
-		return printf('~%d -%d', m, r)
-	elseif (a != 0 && m != 0 && r != 0)
-		return printf('+%d ~%d -%d', a, m, r)
+    let [a,m,r] = GitGutterGetHunkSummary()
+    if (a == 0 && m == 0 && r == 0)
+        return printf('')
+    elseif (a != 0 && m == 0 && r == 0)
+        return printf('+%d', a)
+    elseif (a == 0 && m != 0 && r == 0)
+        return printf('~%d', m)
+    elseif (a != 0 && m != 0 && r == 0)
+        return printf('+%d ~%d', a, m)
+    elseif (a == 0 && m == 0 && r != 0)
+        return printf('-%d', r)
+    elseif (a != 0 && m == 0 && r != 0)
+        return printf('+%d -%d', a, r)
+    elseif (a == 0 && m != 0 && r != 0)
+        return printf('~%d -%d', m, r)
+    elseif (a != 0 && m != 0 && r != 0)
+        return printf('+%d ~%d -%d', a, m, r)
 endfunction
 
 " Disable all key mappings
@@ -365,40 +401,40 @@ nmap ( <Plug>(GitGutterPrevHunk)
 " Lightline {{{1
 " --------------------------------------------------------------------------
 let g:lightline = {
-	\ 'colorscheme': 'gruvbox',
-	\ 'active': {
-	\ 	'left': [ [ 'mode', 'paste' ],
-	\             [ 'gitstatus', 'readonly', 'filename', 'modified' ] ],
-	\ 	'right': [ [ 'linter_checking', 'linter_errors', 'linter_warnings', 'linter_infos', 'linter_ok' ],
-	\              [ 'percent', 'lineinfo' ],
-	\              [ 'fileformat', 'fileencoding', 'filetype', 'gitbranch' ] ]
-	\ },
-	\ 'component_function': {
-	\	'gitbranch': 'FugitiveHead',
-	\ 	'gitstatus': 'GitStatus',
-	\	'fileformat': 'LightlineFileformat',
-	\	'fileencoding': 'LightlineFileencoding',
-	\	'filetype': 'LightlineFiletype'
-	\ },
-	\ }
+    \ 'colorscheme': 'gruvbox',
+    \ 'active': {
+    \     'left': [ [ 'mode', 'paste' ],
+    \             [ 'gitstatus', 'readonly', 'filename', 'modified' ] ],
+    \     'right': [ [ 'linter_checking', 'linter_errors', 'linter_warnings', 'linter_infos', 'linter_ok' ],
+    \              [ 'percent', 'lineinfo' ],
+    \              [ 'fileformat', 'fileencoding', 'filetype', 'gitbranch' ] ]
+    \ },
+    \ 'component_function': {
+    \    'gitbranch': 'FugitiveHead',
+    \     'gitstatus': 'GitStatus',
+    \    'fileformat': 'LightlineFileformat',
+    \    'fileencoding': 'LightlineFileencoding',
+    \    'filetype': 'LightlineFiletype'
+    \ },
+    \ }
 
 let g:lightline.component_expand = {
-	\ 'tabs': 'lightline#tabs',
-	\ 'linter_checking': 'lightline#ale#checking',
-	\ 'linter_infos': 'lightline#ale#infos',
-	\ 'linter_warnings': 'lightline#ale#warnings',
-	\ 'linter_errors': 'lightline#ale#errors',
-	\ 'linter_ok': 'lightline#ale#ok',
-	\ }
+    \ 'tabs': 'lightline#tabs',
+    \ 'linter_checking': 'lightline#ale#checking',
+    \ 'linter_infos': 'lightline#ale#infos',
+    \ 'linter_warnings': 'lightline#ale#warnings',
+    \ 'linter_errors': 'lightline#ale#errors',
+    \ 'linter_ok': 'lightline#ale#ok',
+    \ }
 
 let g:lightline.component_type = {
-	\ 'linter_checking': 'right',
-	\ 'linter_infos': 'right',
-	\ 'linter_warnings': 'warning',
-	\ 'linter_errors': 'error',
-	\ 'linter_ok': 'right',
-	\ 'lineinfo': 'right',
-	\ }
+    \ 'linter_checking': 'right',
+    \ 'linter_infos': 'right',
+    \ 'linter_warnings': 'warning',
+    \ 'linter_errors': 'error',
+    \ 'linter_ok': 'right',
+    \ 'lineinfo': 'right',
+    \ }
 
 function! LightlineFileformat()
   return winwidth(0) > 70 ? &fileformat : ''
