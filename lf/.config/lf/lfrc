@@ -246,7 +246,7 @@ map o open
 map O open-alternative
 map <c-o> open-alternative
 map <enter> open
-map m new-instance
+map ö new-instance
 
 # To create a symlink first copy/cut a file and
 # the use the create-symlink command:
