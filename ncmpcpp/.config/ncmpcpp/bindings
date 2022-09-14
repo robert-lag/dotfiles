@@ -363,6 +363,13 @@
 #def_key "f"
 #	find_item_forward
 
+# General {{{1
+def_key "e"
+ edit_directory_name
+
+def_key "e"
+ edit_playlist_name
+
 # Playlist {{{1
 def_key "space"
   add_item_to_playlist
