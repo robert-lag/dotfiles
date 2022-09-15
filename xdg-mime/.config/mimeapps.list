@@ -30,7 +30,8 @@ x-scheme-hander/mailto=mail.desktop
 x-scheme-handler/mid=mail.desktop
 message/rfc822=mail.desktop
 
+x-scheme-handler/notion=notion-app.desktop
+
 [Added Associations]
-x-scheme-handler/eclipse+command=_usr_lib_dbeaver_.desktop
 
 [Removed Associations]
