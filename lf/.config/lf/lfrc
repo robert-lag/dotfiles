@@ -67,7 +67,7 @@ cmd chmod ${{
 }}
 
 cmd new-instance ${{
-    $TERMINAL -e $SHELL -c "lf" &
+    $TERMINAL -e $SHELL -c "lf" 1>/dev/null 2>&1 &
 }}
 
 # Fzf-finder and movement {{{2
@@ -84,7 +84,9 @@ cmd fzf-jump ${{
 # Cut files {{{2
 # Add to cut/copied files
 cmd cut-add %{{
-    files=$(lf -remote load | tail -n +2)
+    # workaround for bug in current version
+    # files=$(lf -remote load | tail -n +2)
+    files=$(cat "$XDG_DATA_HOME/lf/files" | tail -n +2)
     newline=$'\n'
 
     # change to $fx to add current file when no toggled
@@ -94,17 +96,24 @@ cmd cut-add %{{
     else
         new_files=$fx
     fi
+
     # remove empty lines from the file list, because they keep messing
     # up the selection.
     new_files=$(echo "$new_files" | sed --quiet -e '/^$/d' -e 'p')
 
-    lf -remote "save${newline}move${newline}${new_files}${newline}"
+    # the above line doesn't work in the current version of lf
+    # the bottom line is a workaround for this bug
+    # lf -remote "save${newline}move${newline}${new_files}${newline}"
+    echo "move${newline}${new_files}${newline}" > "$XDG_DATA_HOME/lf/files"
+
     lf -remote "send $id unselect${newline}send $id sync"
 }}
 
 # Remove from cut/copied files
 cmd cut-remove %{{
-    files=$(lf -remote load)
+    # workaround for bug in current version
+    # files=$(lf -remote load)
+    files=$(cat "$XDG_DATA_HOME/lf/files")
     operation=$(echo "$files" | head -n1)
 
     if [ "$operation" != "move" ]; then
@@ -128,7 +137,10 @@ cmd cut-remove %{{
     fi
     new_files=$(echo "$new_files" | sed --quiet -e '/^$/d' -e 'p')
 
-    lf -remote "save${newline}move${newline}${new_files}${newline}"
+    # the above line doesn't work in the current version of lf
+    # the bottom line is a workaround for this bug
+    # lf -remote "save${newline}move${newline}${new_files}${newline}"
+    echo "move${newline}${new_files}${newline}" > "$XDG_DATA_HOME/lf/files"
     lf -remote "send $id unselect${newline}send $id sync"
 }}
 
@@ -189,7 +201,10 @@ cmd dragon-dl %dragon-dl
 cmd link %{{
 	# Get all selected files and their current mode
 	# (copy or move)
-	load=$(lf -remote 'load')
+
+    # workaround for bug in current version
+    load=$(cat "$XDG_DATA_HOME/lf/files")
+	# load=$(lf -remote 'load')
 	mode=$(echo "$load" | sed -n '1p')
 	select_files_list=$(echo "$load" | sed '1d')
 
