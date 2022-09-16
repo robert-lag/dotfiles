@@ -64,6 +64,7 @@ export NPM_CONFIG_USERCONFIG="$XDG_CONFIG_HOME/npm/npmrc"
 export GOPATH="$XDG_DATA_HOME/go"
 export SSB_HOME="$XDG_DATA_HOME/zoom"
 export LEIN_HOME="$XDG_DATA_HOME/lein"
+export DIALOGRC="$XDG_CONFIG_HOME/dialog/dialogrc"
 
 # Might cause errors for VSCodium / VSCode (original path: ~/.vscode-oss)
 export VSCODE_PORTABLE="$XDG_DATA_HOME/vscode"
@@ -88,7 +89,7 @@ export XSECURELOCK_WAIT_TIME_MS=5000
 export DFT_TAB_WIDTH=4
 
 # Source icons list for file manager (lf)
-LF_ICONS=$(sed ~/.config/diricons \
+LF_ICONS=$(sed ~/.config/diricons  \
             -e '/^[ \t]*#/d'       \
             -e '/^[ \t]*$/d'       \
             -e 's/[ \t]\+/=/g'     \
