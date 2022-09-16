@@ -1,57 +1,64 @@
-# -----------------------------------------------
-# General
-# -----------------------------------------------
+#           _     _       _
+#  _____  _| |__ | | ____| |
+# / __\ \/ / '_ \| |/ / _` |
+# \__ \>  <| | | |   < (_| |
+# |___/_/\_\_| |_|_|\_\__,_|
+#
+# Contains the hotkeys of the system
+#
+
+#---System Control---# {{{1
+# Restart hotkey damon
+super + shift + x
+  killandnotify "sxhkd" "Config reloaded" && sxhkd &
+
+super + shift + {r, s}
+  prompt {"Are you sure you would like to reboot?" "sudo reboot", "Are you sure you would like to shutdown" "sudo shutdown"}
+
+# Lock the screen
+super + shift + e
+  betterlockscreen -l
+
+super + shift + c
+  toggleprogram "picom" "--experimental-backends"
+
+#---Script Keys---# {{{1
+super + {x, u, t, p}
+  {dmonitor "DisplayPort-0" "DisplayPort-1" "HDMI-A-0", updatepackages, notifytorrents, cpcolor}
+
+super + {b, c, e}
+  {bookmenu -p "Select a bookmark" -b ~/.config/bookmenu/browser -co $BROWSER, bookmenu -p "Select a config" -b ~/.config/bookmenu/configs -co "$TERMINAL -e nvim"}
+
+super + e
+  dmusic
+
+super + v
+  dvideospace
+
+F7
+  toggletouch
+
+# Media Controls {{{2
+super + F5
+  playerctl -p "mpd" stop
+
+super + F6
+  playerctl -p "mpd" previous
+
+super + F7
+  playerctl -p "mpd" play-pause
+
+super + F8
+  playerctl -p "mpd" next
+
+# Brightness {{{2
+
+# Volume {{{2
+
+
+#---Application Launchers---# {{{1
+super + d
+  dmenu_run
 
 super + Return
-	$TERMINAL
-
-super + o ; {b,m,v,p}
-	{$BROWSER,thunderbird,vscodium,$TERMINAL -e ncmpcpp}
-
-super + d
-	dmenu_run
-
-# Lock screen
-super + shift + x
-	xautolock -locknow
-
-super + q
-	kill
-
-# super + shift + q ; {l,e,h,r,s,shift+s}
-	# {xautolock -locknow, }
-
-XF86Audio{Prev,Next}
-	mpc -q {prev,next}
-
-@XF86LaunchA
-	scrot -s -e 'image_viewer $f'
-
-XF86LaunchB
-	xdotool selectwindow | xsel -bi
-
-# super + {_,shift + }{h,j,k,l}
-	# bspc node -{f,s} {west,south,north,east}
-
-# {_,shift + ,super + }XF86MonBrightness{Down,Up}
-	# bright {-1,-10,min,+1,+10,max}
-
-# super + shift + equal
-	# sxiv -rt "$HOME/image"
-
-# super + {h,j,k,l}
-	# bspc node -f {west,south,north,east}
-
-# super + alt + {0-9}
-	# mpc -q seek {0-9}0%
-
-# super + {alt,ctrl,alt + ctrl} + XF86Eject
-	# sudo systemctl {suspend,reboot,poweroff}
-
-# -----------------------------------------------
-# i3wm
-# -----------------------------------------------
-
-# restart i3 inplace (preserves your layout/session)
-super + shift + r
-	i3-msg restart
+  $TERMINAL
