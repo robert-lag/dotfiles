@@ -1,3 +1,4 @@
+-- vim:foldmethod=marker
 local awful = require("awful")
 local gears = require("gears")
 local wibox = require("wibox")
@@ -392,12 +393,12 @@ awful.screen.connect_for_each_screen(function(s)
     function awful.widget.taglist.taglist_label(tag, args, tb)
       local text, bg, bg_image, icon, other_args =
         original_taglist_label(tag, args, tb)
-    
+
       -- Hide tags 11, 12 and 13
       if tag.index == 11 or tag.index == 12 or tag.index == 13 then
           text = ""
       end
-    
+
       return text, bg, bg_image, icon, other_args
     end
 
@@ -438,8 +439,8 @@ awful.screen.connect_for_each_screen(function(s)
                 widget = wibox.container.margin
             },
             id = 'message',
-            fg = xrdb.color0,
-            bg = xrdb.color3,
+            fg = xrdb.color3,
+            bg = darker(xrdb.color8, -5),
             widget = wibox.container.background
         },
         layout = wibox.layout.ratio.horizontal

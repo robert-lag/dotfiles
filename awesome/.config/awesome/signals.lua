@@ -3,6 +3,21 @@ local beautiful = require("beautiful")
 local gears = require("gears")
 local wibox = require("wibox")
 
+-- Helper functions {{{1
+
+local function getBorderWidthOfTiledClient(client)
+    -- use tiled_clients so that other floating windows don't affect the count
+    -- but iterate over clients instead of tiled_clients as tiled_clients doesn't include maximized windows
+    local s = client.screen
+    local only_one = #s.tiled_clients == 1
+
+    if (only_one and not client.floating) or client.maximized then
+        return 0
+    else
+        return beautiful.border_width
+    end
+end
+
 -- Show or hide titlebar in the specified window
 local function setTitlebar(client, showBar)
     if showBar then
@@ -13,9 +28,11 @@ local function setTitlebar(client, showBar)
         client.border_width = 0
     else
         awful.titlebar.hide(client)
-        client.border_width = beautiful.border_width
+        client.border_width = getBorderWidthOfTiledClient(client)
     end
 end
+
+-- Signals {{{1
 
 -- Signal function to execute when a new client appears
 client.connect_signal("manage", function (c)
@@ -75,7 +92,10 @@ client.connect_signal("mouse::enter", function(c)
     c:emit_signal("request::activate", "mouse_enter", {raise = false})
 end)
 
-client.connect_signal("focus", function(c) c.border_color = beautiful.border_focus end)
+client.connect_signal("focus", function(c)
+    client.border_width = getBorderWidthOfTiledClient(c)
+    c.border_color = beautiful.border_focus
+end)
 client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_normal end)
 
 tag.connect_signal("property::layout", function(t)

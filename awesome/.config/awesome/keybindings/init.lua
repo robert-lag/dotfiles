@@ -96,7 +96,7 @@ globalkeys = gears.table.join(
     awful.key({ }, "XF86Search", function() awful.spawn("dmenu_run") end,
               {description = "show application launcher", group = "launcher"}),
     awful.key({ modkey }, "o", nil, function()
-        show_message("(b)rowser | (m)ail | (v)scodium | music (p)layer | (n)otes | (g)imp | (y)outube | (t)erminal")
+        show_message("(b)rowser | (m)ail | (v)scodium | music (p)layer | (n)otes | (g)imp | (y)outube | (s)ignal | (t)erminal")
         keygrabber.run(function(mods, key, action)
             if key == "Super_L" and action == "release" then
                 -- Continue to wait after the Super key was released
@@ -104,15 +104,16 @@ globalkeys = gears.table.join(
             end
 
             local app_shortcuts = {
-                b = "firefox",
+                b = os.getenv("BROWSER") or "firefox",
                 m = "thunderbird",
                 n = "notion-app",
                 v = "vscodium",
                 p = terminal .. " -e ncmpcpp",
                 g = "gimp",
                 y = "gtk-youtube-viewer",
-                t = "st",
-                Return = "st",
+                s = "signal-desktop",
+                t = terminal,
+                Return = terminal,
             }
 
             if action == "press" then
