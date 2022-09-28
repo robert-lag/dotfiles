@@ -1,0 +1,1 @@
+ACTION=="change", SUBSYSTEM=="drm", ENV{DISPLAY}=":0", ENV{XAUTHORITY}="/home/robert/.Xauthority", RUN+="/bin/su robert --command '/home/robert/.local/bin/update-monitors' &"
