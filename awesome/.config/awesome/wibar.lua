@@ -26,7 +26,7 @@ local cpu_widget = wibox.widget {
     fg = xrdb.color4,
     widget = wibox.container.background,
     buttons = gears.table.join(
-            awful.button({ }, 1, function() awful.spawn(string.format("%s -e htop", terminal)) end)
+        awful.button({ }, 1, function() awful.spawn(string.format("%s -e htop", terminal)) end)
     )
 }
 
@@ -95,6 +95,99 @@ volume_widget_timer:connect_signal("timeout", update_volume_widget)
 volume_widget_timer:start()
 
 -- Battery Widget {{{1
+
+local battery_popup = awful.popup {
+    widget = {
+        {
+            {
+                {
+                    {
+                        id = 'icon',
+                        text = '',
+                        align = 'center',
+                        valign = 'center',
+                        font = "monospace 25",
+                        widget = wibox.widget.textbox,
+                    },
+                    id = 'inner',
+                    fg = xrdb.color2,
+                    widget = wibox.container.background
+                },
+                id = 'graph',
+                thickness = 8,
+                bg = xrdb.color8,
+                colors = { xrdb.color2 },
+                value = 40,
+                min_value = 0,
+                max_value = 100,
+                rounded_edge = true,
+                forced_width = 100,
+                forced_height = 100,
+                start_angle = 1.5 * math.pi,
+                widget = wibox.container.arcchart
+            },
+            {
+                opacity = 0,
+                forced_width = 0,
+                forced_height = 20,
+                widget = wibox.widget.separator
+            },
+            {
+                {
+                    id = 'label',
+                    text = 'Battery: ',
+                    align = 'left',
+                    valign = 'center',
+                    widget = wibox.widget.textbox,
+                },
+                {
+                    id = 'value',
+                    text = '100%',
+                    align = 'right',
+                    valign = 'center',
+                    widget = wibox.widget.textbox,
+                },
+                id = 'percentage',
+                forced_width = 120,
+                widget = wibox.layout.align.horizontal
+            },
+            {
+                {
+                    id = 'label',
+                    text = 'Time left: ',
+                    align = 'left',
+                    valign = 'center',
+                    widget = wibox.widget.textbox,
+                },
+                {
+                    id = 'value',
+                    text = '1h',
+                    align = 'right',
+                    valign = 'center',
+                    widget = wibox.widget.textbox,
+                },
+                id = 'timeleft',
+                forced_width = 120,
+                widget = wibox.layout.align.horizontal
+            },
+            id = 'inner',
+            layout = wibox.layout.fixed.vertical,
+        },
+        margins = 10,
+        widget  = wibox.container.margin
+    },
+    border_color = xrdb.color8,
+    border_width = 2,
+    offset = { y = 5, x = 10 },
+    shape = function(cr, width, height)
+        gears.shape.rounded_rect(cr, width, height, 8)
+    end,
+    visible      = false,
+    ontop        = true,
+    hide_on_right_click = true,
+    opacity      = 0.85,
+}
+
 local battery_widget_ui = wibox.widget {
     {
         {
@@ -116,7 +209,16 @@ local battery_widget_ui = wibox.widget {
         spacing = 5,
         layout = wibox.layout.fixed.horizontal,
     },
-    widget = wibox.container.background
+    widget = wibox.container.background,
+    buttons = gears.table.join(
+        awful.button({ }, 1, function()
+            if battery_popup.visible then
+                battery_popup.visible = false
+            else
+                battery_popup:move_next_to(mouse.current_widget_geometry)
+            end
+        end)
+    )
 }
 
 -- Create the battery widget:
@@ -127,18 +229,18 @@ local battery_widget = battery_widget {
     widget_template = battery_widget_ui
 }
 
-
 local was_discharging = false
 local brightness_reduced_warning = false
 local brightness_reduced_critical = false
 
--- When UPower updates the battery status, the widget is notified
--- and calls a signal you need to connect to:
+-- Update widget {{{2
 battery_widget:connect_signal('upower::update', function (widget, device)
     local battery_icon
+    local battery_color = xrdb.color2
+    local time_left
     if device.state == 1 then
-        -- Device is charging
-        widget.fg = xrdb.color2
+        -- Device is charging (state 1)
+        time_left = device.time_to_full / 3600
 
         -- Set the brightness to maximum after plugging in the cable
         if was_discharging then
@@ -146,16 +248,13 @@ battery_widget:connect_signal('upower::update', function (widget, device)
             was_discharging = false
         end
 
-        if device.percentage < 100 then
-            battery_icon = ""
-        else
-            battery_icon = ""
-        end
+        battery_icon = ""
 
         brightness_reduced_warning = false
         brightness_reduced_critical = false
-    else
-        -- Device is discharging
+    elseif device.state == 2 then
+        -- Device is discharging (state 2)
+        time_left = device.time_to_empty / 3600
 
         was_discharging = true
 
@@ -199,17 +298,33 @@ battery_widget:connect_signal('upower::update', function (widget, device)
         end
 
         if device.percentage <= 5 then
-            widget.fg = xrdb.color1
+            battery_color = xrdb.color1
         elseif device.percentage <= 20 then
-            widget.fg = xrdb.color3
-        else
-            widget.fg = xrdb.color2
+            battery_color = xrdb.color3
         end
     end
 
+    if device.state == 4 then
+        -- Device is fully charged (state 4)
+        battery_popup.widget.inner.timeleft.visible = false
+        battery_icon = ""
+    else
+        battery_popup.widget.inner.timeleft.visible = true
+    end
+
+
+    widget.fg = battery_color
+    battery_popup.widget.inner.graph.colors = { battery_color }
+    battery_popup.widget.inner.graph.inner.fg = battery_color
+
     widget.inner.icon.text = string.format('%s', battery_icon)
     widget.inner.number.text = string.format("%2d%%", device.percentage)
+    battery_popup.widget.inner.graph.inner.icon.text = string.format('%s', battery_icon)
+    battery_popup.widget.inner.graph.value = device.percentage
+    battery_popup.widget.inner.percentage.value.text = string.format("%2d%%", device.percentage)
+    battery_popup.widget.inner.timeleft.value.text = string.format("%.1fh", time_left)
 end)
+-- }}}2
 
 -- Wifi widget {{{1
 local connected_to_ethernet = true
@@ -293,7 +408,7 @@ awful.widget.watch(
 )
 -- Calendar widget {{{1
 calendar_popup = awful.widget.calendar_popup.month({
-    opacity = 0.8,
+    opacity = 0.85,
     margin = 5,
     week_numbers = true,
     style_month = {
@@ -370,45 +485,33 @@ end)
 -- }}}1
 -- Setup Mouse Bindings {{{1
 local taglist_buttons = gears.table.join(
-                    awful.button({ }, 1, function(t) t:view_only() end),
-                    awful.button({ modkey }, 1, function(t)
-                                              if client.focus then
-                                                  client.focus:move_to_tag(t)
-                                              end
-                                          end),
-                    awful.button({ }, 3, awful.tag.viewtoggle),
-                    awful.button({ modkey }, 3, function(t)
-                                              if client.focus then
-                                                  client.focus:toggle_tag(t)
-                                              end
-                                          end),
-                    awful.button({ }, 4, function(t) awful.tag.viewnext(t.screen) end),
-                    awful.button({ }, 5, function(t) awful.tag.viewprev(t.screen) end)
-                )
+    awful.button({ }, 1, function(t) t:view_only() end),
+    awful.button({ modkey }, 1, function(t)
+        if client.focus then
+            client.focus:move_to_tag(t)
+        end
+    end),
+    awful.button({ }, 3, awful.tag.viewtoggle),
+    awful.button({ modkey }, 3, function(t)
+        if client.focus then
+            client.focus:toggle_tag(t)
+        end
+    end),
+    awful.button({ }, 4, function(t) awful.tag.viewnext(t.screen) end),
+    awful.button({ }, 5, function(t) awful.tag.viewprev(t.screen) end)
+)
 
 local tasklist_buttons = gears.table.join(
-                     awful.button({ }, 1, function(c)
-                                            c.fullscreen = not c.fullscreen
-                                          end),
-                     awful.button({ }, 4, function()
-                                              awful.client.focus.byidx(1)
-                                          end),
-                     awful.button({ }, 5, function()
-                                              awful.client.focus.byidx(-1)
-                                          end))
-
--- Set Wallpaper {{{1
-local function set_wallpaper(s)
-    -- Wallpaper
-    if beautiful.wallpaper then
-        local wallpaper = beautiful.wallpaper
-        -- If wallpaper is a function, call it with the screen
-        if type(wallpaper) == "function" then
-            wallpaper = wallpaper(s)
-        end
-        gears.wallpaper.maximized(wallpaper, s, true)
-    end
-end
+    awful.button({ }, 1, function(c)
+        c.fullscreen = not c.fullscreen
+    end),
+    awful.button({ }, 4, function()
+        awful.client.focus.byidx(1)
+    end),
+    awful.button({ }, 5, function()
+        awful.client.focus.byidx(-1)
+    end)
+)
 
 -- Don't show the icons of the apps in the tasklist (= the bar at the top)
 beautiful.tasklist_disable_icon = true
@@ -419,9 +522,6 @@ beautiful.tasklist_disable_icon = true
 -- Create a wibox for each screen and add it {{{1
 local index_of_screen = 1
 awful.screen.connect_for_each_screen(function(s)
-    -- Wallpaper
-    -- set_wallpaper(s)
-
     -- Each screen has its own tag table {{{2
     for i = 1, 10 do
         awful.tag.add(tostring(i), {

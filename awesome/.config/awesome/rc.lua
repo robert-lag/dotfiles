@@ -140,3 +140,5 @@ require("rules")
 -- {{{ Signals
 require("signals")
 -- }}}
+
+awful.spawn("setbg")
