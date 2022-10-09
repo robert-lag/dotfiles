@@ -2,19 +2,25 @@
 -- found (e.g. lgi). If LuaRocks is not installed, do nothing.
 pcall(require, "luarocks.loader")
 
--- Standard awesome library
-local gears = require("gears")
-local awful = require("awful")
+-- {{{ Library calls
+awful = require("awful")
 require("awful.autofocus")
--- Widget and layout library
-local wibox = require("wibox")
--- Theme handling library
-local beautiful = require("beautiful")
-local menubar = require("menubar")
+gears = require("gears")
+wibox = require("wibox")
+beautiful = require("beautiful")
+xresources = require("beautiful.xresources")
+xrdb = xresources.get_current_theme()
+menubar = require("menubar")
 -- local hotkeys_popup = require("awful.hotkeys_popup")
 -- Enable hotkeys help widget for VIM and other apps
 -- when client with a matching name is opened:
 -- require("awful.hotkeys_popup.keys")
+
+-- }}}
+
+-- {{{ Helper functions
+require("helper-functions")
+-- }}}
 
 -- {{{ Error handling
 -- Check if awesome encountered an error during startup and fell back to
