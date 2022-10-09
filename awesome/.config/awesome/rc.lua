@@ -16,10 +16,6 @@ local menubar = require("menubar")
 -- when client with a matching name is opened:
 -- require("awful.hotkeys_popup.keys")
 
-image_path = "/home/robert/.config/awesome/images/"
-
-middle_widgets = {}
-
 -- {{{ Error handling
 -- Check if awesome encountered an error during startup and fell back to
 -- another config (This code will only ever execute for the fallback config)
@@ -59,6 +55,10 @@ editor_cmd = terminal .. " -e " .. editor
 -- However, you can use another modifier like Mod1, but it may interact with others.
 modkey = "Mod4"
 
+image_path = "/home/robert/.config/awesome/images/"
+
+middle_widgets = {}
+
 -- Table of layouts to cover with awful.layout.inc, order matters.
 awful.layout.layouts = {
     awful.layout.suit.tile,
@@ -78,6 +78,8 @@ awful.layout.layouts = {
     -- awful.layout.suit.corner.sw,
     -- awful.layout.suit.corner.se,
 }
+
+awful.mouse.snap.edge_enabled = false
 -- }}}
 
 -- {{{ Menu

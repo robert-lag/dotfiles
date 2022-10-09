@@ -79,6 +79,15 @@ theme.menu_width  = dpi(350)
 theme.menu_font = "monospace 20"
 theme.menu_border_color = xrdb.color8
 
+-- Calendar {{{1
+-- theme.calendar_month_border_width = 2
+-- theme.calendar_month_bg = xrdb.color0
+theme.calendar_style_month = {
+    -- shape = function(cr,w,h) gears.shape.rounded_rect(cr,w,h, 5) end,
+    border_width = 1,
+    border_color = darker(xrdb.color8, 0)
+},
+
 -- You can add as many variables as
 -- you wish and access them by using
 -- beautiful.variable in your rc.lua

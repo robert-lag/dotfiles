@@ -19,6 +19,14 @@ local function darker(color_value, darker_n)
     return result
 end
 
+local function hexdecode(hex)
+   return (hex:gsub("%x%x", function(digits) return string.char(tonumber(digits, 16)) end))
+end
+
+local function hexencode(str)
+   return (str:gsub(".", function(char) return string.format("%2x", char:byte()) end))
+end
+
 -- CPU Widget {{{1
 local cpu_widget = wibox.widget {
     {
@@ -49,7 +57,7 @@ local cpu_widget = wibox.widget {
     )
 }
 
-function update_cpu_widget()
+local function update_cpu_widget()
     awful.spawn.easy_async_with_shell("top -bn2 | grep '%Cpu' | tail -1 | grep -P '(....|...) id,'|awk '{print 100-$8 }'", function(out)
         cpu_widget.inner.number.text = string.format("%2d%%",math.floor(out))
     end)
@@ -88,7 +96,7 @@ local volume_widget = wibox.widget {
     widget = wibox.container.background
 }
 
-function update_volume_widget()
+local function update_volume_widget()
     awful.spawn.easy_async_with_shell("get-volume", function(out)
         local volume = tonumber(out)
         if volume <= 0 then
@@ -310,7 +318,83 @@ awful.widget.watch(
     end,
     wifi_widget
 )
+-- Calendar widget {{{1
+calendar_popup = awful.widget.calendar_popup.month({
+    opacity = 0.8,
+    margin = 5,
+    week_numbers = true,
+    style_month = {
+        shape = function(cr,w,h) gears.shape.rounded_rect(cr,w,h, 5) end,
+        border_width = 2,
+        border_color = darker(xrdb.color8, 0)
+    },
+    style_focus = {
+        shape = function(cr,w,h) gears.shape.rounded_rect(cr,w,h, 5) end,
+        border_width = 1,
+        border_color = darker(xrdb.color8, -20)
+    },
+    style_weeknumber = {
+        fg_color = darker(xrdb.color8, -30)
+    }
+})
 
+local textclock = wibox.widget {
+    {
+        {
+            id = "icon",
+            text = "󰀀",
+            align = "left",
+            valign = "center",
+            font = "ClockFaceFatRectSolid 15",
+            widget = wibox.widget.textbox,
+        },
+        {
+            id = "clock",
+            format = "%H:%M",
+            widget = wibox.widget.textclock(),
+        },
+        id = 'inner',
+        spacing = 5,
+        layout = wibox.layout.fixed.horizontal,
+    },
+    fg = xrdb.color3,
+    widget = wibox.container.background,
+    buttons = gears.table.join(
+        awful.button({ }, 1, function()
+            calendar_popup:call_calendar(0, "tr", awful.screen.focused())
+            calendar_popup:toggle()
+        end)
+    )
+}
+
+textclock.inner.clock:connect_signal("button::press", function()
+    textclock.inner.clock:force_update()
+end)
+
+local function update_clock_icon(time)
+    local hour_string, minute_string = time:match("^([0-9]+):([0-9]+)$")
+    local hour = tonumber(hour_string) % 12
+    local minute = tonumber(minute_string)
+
+    -- Get icon (for every 5th minute)
+    local textclock_icon = 0xf3b08080 + 12 * hour + (minute//5)
+
+    if hour > 10 or (hour == 10 and minute >= 40) then
+        textclock_icon = textclock_icon + 192*2
+    elseif hour > 5 or (hour == 5 and minute >= 20) then
+        textclock_icon = textclock_icon + 192
+    end
+
+    textclock.inner.icon.text = hexdecode(string.format("%x",textclock_icon))
+end
+
+update_clock_icon(textclock.inner.clock.text)
+
+textclock.inner.clock:connect_signal("widget::redraw_needed", function()
+    update_clock_icon(textclock.inner.clock.text)
+end)
+
+-- }}}1
 -- Setup Mouse Bindings {{{1
 local taglist_buttons = gears.table.join(
                     awful.button({ }, 1, function(t) t:view_only() end),
@@ -333,10 +417,10 @@ local tasklist_buttons = gears.table.join(
                      awful.button({ }, 1, function(c)
                                             c.fullscreen = not c.fullscreen
                                           end),
-                     awful.button({ }, 4, function ()
+                     awful.button({ }, 4, function()
                                               awful.client.focus.byidx(1)
                                           end),
-                     awful.button({ }, 5, function ()
+                     awful.button({ }, 5, function()
                                               awful.client.focus.byidx(-1)
                                           end))
 
@@ -466,14 +550,7 @@ awful.screen.connect_for_each_screen(function(s)
                     cpu_widget,
                     volume_widget,
                     battery_widget,
-                    {
-                        {
-                            format = '%b %d, %H:%M',
-                            widget = wibox.widget.textclock(),
-                        },
-                        fg = xrdb.color3,
-                        widget = wibox.container.background
-                    },
+                    textclock,
                     {
                         {
                             widget = wibox.widget.systray(),
