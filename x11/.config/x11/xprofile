@@ -47,8 +47,9 @@ xrandr --output HDMI1 --auto --left-of eDP1 &
 # Set keyboard settings
 setxkbmap -layout at,us \
 	-variant nodeadkeys,dvorak \
-	-option "grp:alt_shift_toggle" \
-	-option "caps:swapescape" &
+	-option "grp:alt_shift_toggle" \    # Toggle layout with Alt+Shift
+	-option "kpdl:dot" \                # Replace comma with dot on numpad
+	-option "caps:swapescape" &         # Swap CAPS and ESC keys
 
 # setup lock screen (xautolock will also be called by suspend@USER.service)
 xautolock -detectsleep -resetsaver \
