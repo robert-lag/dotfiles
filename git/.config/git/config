@@ -31,3 +31,5 @@
     cmd = nvim -d $LOCAL $BASE $REMOTE $MERGED -c '$wincmd w' -c 'wincmd J'
 [diff]
     external = difft
+[pull]
+	rebase = false
