@@ -96,7 +96,7 @@ globalkeys = gears.table.join(
     awful.key({ }, "XF86Search", function() awful.spawn("dmenu_run") end,
               {description = "show application launcher", group = "launcher"}),
     awful.key({ modkey }, "o", nil, function()
-        show_message("(b)rowser | (m)ail | (v)scodium | music (p)layer | (n)otes | (g)imp | (y)outube | (s)ignal | (t)erminal")
+        show_message("(b)rowser | (m)ail | (v)scodium | music (p)layer | (n)otes | ne(w)s | (g)imp | (y)outube | (s)ignal | (t)erminal")
         keygrabber.run(function(mods, key, action)
             if key == "Super_L" and action == "release" then
                 -- Continue to wait after the Super key was released
@@ -112,6 +112,7 @@ globalkeys = gears.table.join(
                 g = "gimp",
                 y = "gtk-youtube-viewer",
                 s = "signal-desktop",
+                w = terminal .. " -e newsboat",
                 t = terminal,
                 Return = terminal,
             }
