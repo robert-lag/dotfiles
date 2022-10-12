@@ -238,8 +238,8 @@ battery_widget:connect_signal('upower::update', function (widget, device)
     local battery_icon
     local battery_color = xrdb.color2
     local time_left
-    if device.state == 1 then
-        -- Device is charging (state 1)
+    if device.state == 1 or device.state == 5 then
+        -- Device is charging (state 1) or pending charging (state 5)
         time_left = device.time_to_full / 3600
 
         -- Set the brightness to maximum after plugging in the cable
@@ -311,7 +311,6 @@ battery_widget:connect_signal('upower::update', function (widget, device)
     else
         battery_popup.widget.inner.timeleft.visible = true
     end
-
 
     widget.fg = battery_color
     battery_popup.widget.inner.graph.colors = { battery_color }
