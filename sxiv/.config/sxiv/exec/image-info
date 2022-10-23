@@ -1,0 +1,6 @@
+#!/bin/sh
+# $1 = path to image file
+# $2 = image width
+# $3 = image height
+
+echo "$(basename "$1") [$2x$3]"

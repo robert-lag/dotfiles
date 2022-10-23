@@ -32,6 +32,13 @@ dmenu.selbackground:        black_light
 dmenu.selforeground:        yellow_dark
 
 !! ---------------------------------------------------------------------------
+!! sxiv Appearance
+!! ---------------------------------------------------------------------------
+Sxiv.font:                 monospace:pixelsize=16
+Sxiv.background:           black_dark
+Sxiv.foreground:           cyan_light
+
+!! ---------------------------------------------------------------------------
 !! URxvt Appearance
 !! ---------------------------------------------------------------------------
 !! Font
