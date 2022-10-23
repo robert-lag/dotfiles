@@ -7,11 +7,19 @@
 # vi: ft=config
 
 # General {{{1
-set statusbar-h-padding 0
-set statusbar-v-padding 0
 set page-padding 1
 set selection-clipboard clipboard
 set scroll-page-aware 1
+
+set window-title-home-tilde 1
+
+set statusbar-basename 1
+
+set statusbar-h-padding 0
+set statusbar-v-padding 0
+
+set recolor 1
+set recolor-keephue 1
 
 # Keybindings {{{1
 map u scroll half-up
@@ -29,23 +37,25 @@ map <C--> zoom out
 # Colors {{{1
 set default-bg "#232323"
 
-set index-bg "#282828"
 set index-fg "#ebdbb2"
-set index-active-bg "#d79921"
-set index-active-fg "#282828"
+set index-bg "#282828"
+set index-active-fg "#fabd2f"
+set index-active-bg "#282828"
 
 set statusbar-fg "#ebdbb2"
-set statusbar-bg "#282828"
+set statusbar-bg "#28282800"
 
-set notification-bg "#b8bb26"
-set notification-fg "#282828"
+set notification-fg "#d79921"
+set notification-bg "#282828"
 
-set notification-error-bg "#fb4934"
+set notification-warning-fg "#282828"
+set notification-warning-bg "#d79921"
+
 set notification-error-fg "#282828"
+set notification-error-bg "#fb4934"
 
 set highlight-color "#fabd2f"
 set highlight-active-color "#fabd2f"
 
-set recolor "true"
 set recolor-lightcolor "#282828"
 set recolor-darkcolor "#ebdbb2"
