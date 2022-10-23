@@ -96,6 +96,7 @@ volume_widget_timer:start()
 
 -- Battery Widget {{{1
 
+-- Popup {{{2
 local battery_popup = awful.popup {
     widget = {
         {
@@ -188,6 +189,7 @@ local battery_popup = awful.popup {
     opacity      = 0.85,
 }
 
+-- Widget {{{2
 local battery_widget_ui = wibox.widget {
     {
         {
@@ -229,11 +231,11 @@ local battery_widget = battery_widget {
     widget_template = battery_widget_ui
 }
 
+-- Update widget {{{2
 local was_discharging = false
 local brightness_reduced_warning = false
 local brightness_reduced_critical = false
 
--- Update widget {{{2
 battery_widget:connect_signal('upower::update', function (widget, device)
     local battery_icon
     local battery_color = xrdb.color2
@@ -406,25 +408,169 @@ awful.widget.watch(
     wifi_widget
 )
 -- Calendar widget {{{1
-calendar_popup = awful.widget.calendar_popup.month({
-    opacity = 0.85,
-    margin = 5,
-    week_numbers = true,
-    style_month = {
-        shape = function(cr,w,h) gears.shape.rounded_rect(cr,w,h, 5) end,
-        border_width = 2,
-        border_color = darker(xrdb.color8, 0)
-    },
-    style_focus = {
-        shape = function(cr,w,h) gears.shape.rounded_rect(cr,w,h, 5) end,
-        border_width = 1,
-        border_color = darker(xrdb.color8, -20)
-    },
-    style_weeknumber = {
-        fg_color = darker(xrdb.color8, -30)
-    }
-})
 
+-- Popup {{{2
+local styles = {}
+local function rounded_shape(size, partial)
+    if partial then
+        return function(cr, width, height)
+                   gears.shape.partially_rounded_rect(cr, width, height,
+                        false, true, false, true, 5)
+               end
+    else
+        return function(cr, width, height)
+                   gears.shape.rounded_rect(cr, width, height, size)
+               end
+    end
+end
+styles.month = {
+    padding      = 10,
+    shape        = rounded_shape(5),
+}
+styles.normal  = {
+    shape    = rounded_shape(5),
+}
+styles.focus = {
+    fg_color = xrdb.color0,
+    bg_color = xrdb.color3,
+    markup   = function(t) return '<b>' .. t .. '</b>' end,
+    shape    = rounded_shape(5, true),
+}
+styles.header = {
+    fg_color = xrdb.color3,
+    markup   = function(t) return '<b>' .. t .. '</b>' end,
+    shape    = rounded_shape(10),
+}
+styles.weekday = {
+    -- fg_color = xrdb.color6,
+    markup   = function(t) return '<b>' .. t .. '</b>' end,
+}
+styles.weeknumber = {
+    fg_color = darker(xrdb.color7, 60),
+}
+styles.weekend = {
+    bg_color = darker(xrdb.color0, -10),
+}
+
+local function decorate_cell(widget, flag, date)
+    -- Replace flag 'monthheader' with 'header'
+    if flag=='monthheader' and not styles.monthheader then
+        flag = 'header'
+    end
+
+    -- Get style for current cell
+    local props = styles[flag] or {}
+    local weekend_props = styles['weekend']
+
+    local default = {
+        shape = rounded_shape(5),
+        border_color = xrdb.color8,
+        border_width = 0,
+        fg_color = xrdb.color15,
+        bg_color = xrdb.color0 .. "00",
+        padding = 4,
+        markup   = function(t) return t end,
+    }
+
+    local result_props = default
+
+    -- Different 'normal' style for weekends
+    local d = {year=date.year, month=(date.month or 1), day=(date.day or 1)}
+    local weekday = tonumber(os.date('%w', os.time(d)))
+
+    if (weekday==0 or weekday==6) and flag=='normal' then
+        -- awful.spawn(string.format("notify-send '%d %s'", weekday, flag))
+        result_props.shape          = weekend_props.shape or props.shape or default.shape
+        result_props.border_color   = weekend_props.border_color or props.border_color or default.border_color
+        result_props.border_width   = weekend_props.border_width or props.border_width or default.border_width
+        result_props.fg_color       = weekend_props.fg_color or props.fg_color or default.fg_color
+        result_props.bg_color       = weekend_props.bg_color or props.bg_color or default.bg_color
+        result_props.padding        = weekend_props.padding or props.padding or default.padding
+        result_props.markup         = weekend_props.markup or props.markup or default.markup
+    else
+        result_props.shape          = props.shape or default.shape
+        result_props.border_color   = props.border_color or default.border_color
+        result_props.border_width   = props.border_width or default.border_width
+        result_props.fg_color       = props.fg_color or default.fg_color
+        result_props.bg_color       = props.bg_color or default.bg_color
+        result_props.padding        = props.padding or default.padding
+        result_props.markup         = props.markup or default.markup
+    end
+
+    -- Apply style
+    if widget.get_text and widget.set_markup then
+        widget:set_markup(result_props.markup(widget:get_text()))
+    end
+
+    local ret = wibox.widget {
+        {
+            widget,
+            margins = result_props.padding + result_props.border_width,
+            widget  = wibox.container.margin
+        },
+        shape              = result_props.shape,
+        shape_border_color = result_props.border_color,
+        shape_border_width = result_props.border_width,
+        fg                 = result_props.fg_color,
+        bg                 = result_props.bg_color,
+        widget             = wibox.container.background
+    }
+    return ret
+end
+
+local calendar_popup = awful.popup {
+    widget = {
+        {
+            {
+                id = "icon",
+                text = "󰀀",
+                align = "center",
+                valign = "center",
+                font = "ClockFaceFatSolid 50",
+                widget = wibox.widget.textbox,
+            },
+            {
+                id = "value",
+                refresh = 1,
+                format = "%H:%M:%S",
+                font = "Monospace 25",
+                align = "center",
+                widget = wibox.widget.textclock(),
+            },
+            {
+                forced_width = 0,
+                forced_height = 20,
+                color = darker(xrdb.color0, -40),
+                widget = wibox.widget.separator
+            },
+            {
+                date = os.date('*t'),
+                week_numbers = true,
+                spacing = 10,
+                fn_embed = decorate_cell,
+                widget = wibox.widget.calendar.month
+            },
+            id = 'inner',
+            layout = wibox.layout.fixed.vertical,
+        },
+        margins = 10,
+        widget  = wibox.container.margin
+    },
+    border_color = xrdb.color8,
+    border_width = 2,
+    offset = { y = 5, x = 10 },
+    shape = function(cr, width, height)
+        gears.shape.rounded_rect(cr, width, height, 8)
+    end,
+    visible      = false,
+    ontop        = true,
+    hide_on_right_click = true,
+    opacity      = 0.85,
+    fg = xrdb.color3,
+    bg = xrdb.color0,
+}
+
+-- Widget {{{2
 local textclock = wibox.widget {
     {
         {
@@ -448,17 +594,17 @@ local textclock = wibox.widget {
     widget = wibox.container.background,
     buttons = gears.table.join(
         awful.button({ }, 1, function()
-            calendar_popup:call_calendar(0, "tr", awful.screen.focused())
-            calendar_popup:toggle()
+            if calendar_popup.visible then
+                calendar_popup.visible = false
+            else
+                calendar_popup:move_next_to(mouse.current_widget_geometry)
+            end
         end)
     )
 }
 
-textclock.inner.clock:connect_signal("button::press", function()
-    textclock.inner.clock:force_update()
-end)
-
-local function update_clock_icon(time)
+-- Update widget {{{2
+local function get_clock_icon(time)
     local hour_string, minute_string = time:match("^([0-9]+):([0-9]+)$")
     local hour = tonumber(hour_string) % 12
     local minute = tonumber(minute_string)
@@ -472,14 +618,21 @@ local function update_clock_icon(time)
         textclock_icon = textclock_icon + 192
     end
 
-    textclock.inner.icon.text = hexdecode(string.format("%x",textclock_icon))
+    return hexdecode(string.format("%x",textclock_icon))
 end
 
-update_clock_icon(textclock.inner.clock.text)
+calendar_popup.widget.inner.icon.text = get_clock_icon(textclock.inner.clock.text)
+textclock.inner.icon.text = get_clock_icon(textclock.inner.clock.text)
 
 textclock.inner.clock:connect_signal("widget::redraw_needed", function()
-    update_clock_icon(textclock.inner.clock.text)
+    calendar_popup.widget.inner.icon.text = get_clock_icon(textclock.inner.clock.text)
+    textclock.inner.icon.text = get_clock_icon(textclock.inner.clock.text)
 end)
+
+textclock.inner.clock:connect_signal("button::press", function()
+    textclock.inner.clock:force_update()
+end)
+-- }}}2
 
 -- }}}1
 -- Setup Mouse Bindings {{{1
