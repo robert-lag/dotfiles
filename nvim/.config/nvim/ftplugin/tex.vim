@@ -1,5 +1,11 @@
 set wrap linebreak
+
 set foldmethod=marker
+
+" Set tabstop to 2 and use spaces
+set tabstop=2
+set shiftwidth=2
+set softtabstop=2
 set expandtab
 
 vmap <D-j> gj
