@@ -217,6 +217,7 @@ local battery_widget_ui = wibox.widget {
             if battery_popup.visible then
                 battery_popup.visible = false
             else
+                hide_popups()
                 battery_popup:move_next_to(mouse.current_widget_geometry)
             end
         end)
@@ -597,6 +598,7 @@ local textclock = wibox.widget {
             if calendar_popup.visible then
                 calendar_popup.visible = false
             else
+                hide_popups()
                 calendar_popup:move_next_to(mouse.current_widget_geometry)
             end
         end)
@@ -817,4 +819,10 @@ function hide_message()
     for _, middle_widget in ipairs(middle_widgets) do
         middle_widget:ajust_ratio(2, 1, 0, 0)
     end
+end
+
+-- Hide popups {{{1
+function hide_popups()
+    calendar_popup.visible = false
+    battery_popup.visible = false
 end
