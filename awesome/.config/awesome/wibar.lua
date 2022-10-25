@@ -329,6 +329,147 @@ end)
 -- }}}2
 
 -- Wifi widget {{{1
+
+-- Popup {{{2
+local wifi_popup = awful.popup {
+    widget = {
+        {
+            {
+                {
+                    {
+                        id = 'icon',
+                        text = '',
+                        align = 'center',
+                        valign = 'center',
+                        font = 'Monospace 18',
+                        widget = wibox.widget.textbox,
+                    },
+                    {
+                        id = 'value',
+                        markup = '<b>Not Connected</b>',
+                        align = 'center',
+                        valign = 'center',
+                        font = 'Monospace 14',
+                        widget = wibox.widget.textbox,
+                    },
+                    id = 'inner',
+                    widget = wibox.layout.fixed.horizontal,
+                },
+                id = 'connected',
+                fg = xrdb.color6,
+                widget = wibox.container.background,
+            },
+            {
+                forced_width = 0,
+                forced_height = 20,
+                color = darker(xrdb.color0, -40),
+                widget = wibox.widget.separator
+            },
+            {
+                {
+                    id = 'icon',
+                    text = '直',
+                    align = 'left',
+                    valign = 'center',
+                    font = 'Monospace 15',
+                    forced_width = 25,
+                    widget = wibox.widget.textbox,
+                },
+                {
+                    id = 'label',
+                    text = 'Signal: ',
+                    align = 'left',
+                    valign = 'center',
+                    widget = wibox.widget.textbox,
+                },
+                {
+                    id = 'value',
+                    text = '- dBm',
+                    align = 'right',
+                    valign = 'center',
+                    widget = wibox.widget.textbox,
+                },
+                id = 'signal',
+                forced_width = 200,
+                widget = wibox.layout.align.horizontal
+            },
+            {
+                {
+                    id = 'icon',
+                    text = '祝',
+                    align = 'left',
+                    valign = 'center',
+                    font = 'Monospace 15',
+                    forced_width = 25,
+                    widget = wibox.widget.textbox,
+                },
+                {
+                    id = 'label',
+                    text = 'Upload: ',
+                    align = 'left',
+                    valign = 'center',
+                    widget = wibox.widget.textbox,
+                },
+                {
+                    id = 'value',
+                    text = '- MBit/s',
+                    align = 'right',
+                    valign = 'center',
+                    widget = wibox.widget.textbox,
+                },
+                id = 'upload',
+                forced_width = 200,
+                widget = wibox.layout.align.horizontal
+            },
+            {
+                {
+                    id = 'icon',
+                    text = '',
+                    align = 'left',
+                    valign = 'center',
+                    font = 'Monospace 15',
+                    forced_width = 25,
+                    widget = wibox.widget.textbox,
+                },
+                {
+                    id = 'label',
+                    text = 'Download: ',
+                    align = 'left',
+                    valign = 'center',
+                    widget = wibox.widget.textbox,
+                },
+                {
+                    id = 'value',
+                    text = '- MBit/s',
+                    align = 'right',
+                    valign = 'center',
+                    widget = wibox.widget.textbox,
+                },
+                id = 'download',
+                forced_width = 200,
+                widget = wibox.layout.align.horizontal
+            },
+            id = 'inner',
+            layout = wibox.layout.fixed.vertical,
+        },
+        margins = 10,
+        widget  = wibox.container.margin
+    },
+    border_color = xrdb.color8,
+    border_width = 2,
+    offset = { y = 5, x = 10 },
+    shape = function(cr, width, height)
+        gears.shape.rounded_rect(cr, width, height, 8)
+    end,
+    visible      = false,
+    ontop        = true,
+    hide_on_right_click = true,
+    opacity      = 0.85,
+    fg = xrdb.color7,
+    bg = xrdb.color0,
+}
+
+-- Widget {{{2
 local connected_to_ethernet = true
 local current_wifi = ""
 local wifi_ui_collapsed = false
@@ -358,17 +499,24 @@ local wifi_widget = wibox.widget {
     widget = wibox.container.background,
     buttons = gears.table.join(
             awful.button({ }, 1, function()
-                if connected_to_ethernet then
-                    awful.spawn("notify-send --expire-time 4000 --icon=~/.local/share/dunst/icons/lan.png -- 'Ethernet'")
+                if wifi_popup.visible then
+                    wifi_popup.visible = false
                 else
-                    awful.spawn(string.format("notify-send --expire-time 4000 --icon=~/.local/share/dunst/icons/wifi.png -- '%s'", current_wifi))
+                    hide_popups()
+                    wifi_popup:move_next_to(mouse.current_widget_geometry)
                 end
+                -- if connected_to_ethernet then
+                --     awful.spawn("notify-send --expire-time 4000 --icon=~/.local/share/dunst/icons/lan.png -- 'Ethernet'")
+                -- else
+                --     awful.spawn(string.format("notify-send --expire-time 4000 --icon=~/.local/share/dunst/icons/wifi.png -- '%s'", current_wifi))
+                -- end
             end),
             awful.button({ }, 2, function() awful.spawn("dmenu-wlan-scanner") end),
             awful.button({ }, 3, function() awful.spawn(string.format("%s -e %s -c 'iwctl station wlan0 show; iwctl'", terminal, shell)) end)
     )
 }
 
+-- Update widget {{{2
 awful.widget.watch(
     "iw dev wlan0 link", 5,
     function(widget, stdout, stderr, exitreason, exitcode)
@@ -378,19 +526,28 @@ awful.widget.watch(
 
         local wifi = string.match(stdout, "SSID:.*\n")
         local index_1, index_2 = string.find(stdout, "SSID: [^\n]*")
-        local wifi_signal = string.match(stdout, "signal:.*\n")
         local index_3, index_4 = string.find(stdout, "signal: [^\n]*")
         local index_5, index_6 = string.find(stdout, "tx bitrate:%s%d+%p+%d+%s%a+%p%a")
+        local index_7, index_8 = string.find(stdout, "rx bitrate:%s%d+%p+%d+%s%a+%p%a")
 
         if ( wifi == '' or wifi == nil ) then
             widget.inner.icon.text = "睊"
             current_wifi = ""
+            wifi_popup.widget.inner.connected.value.markup = "<b>Not Connected</b>"
+            wifi_popup.widget.inner.download.value.text = "- Mbit/s"
+            wifi_popup.widget.inner.upload.value.text = "- Mbit/s"
+            wifi_popup.widget.inner.signal.value.text = "- dBm"
         else
             wifi = string.sub(stdout, index_1+6, index_2)
-            wifi_signal = string.sub(stdout, index_3+8, index_4-1)
-            wifi_bitrate = string.sub(stdout, index_5+12, index_6)
+            wifi_signal = string.sub(stdout, index_3+8, index_4)
+            wifi_bitrate_tx = string.sub(stdout, index_5+12, index_6)
+            wifi_bitrate_rx = string.sub(stdout, index_7+12, index_8)
             widget.inner.icon.text = "直"
             current_wifi = wifi
+            wifi_popup.widget.inner.connected.inner.value.markup = "<b>" .. wifi .. "</b>"
+            wifi_popup.widget.inner.download.value.text = wifi_bitrate_rx
+            wifi_popup.widget.inner.upload.value.text = wifi_bitrate_tx
+            wifi_popup.widget.inner.signal.value.text = wifi_signal
         end
     end,
     wifi_widget
@@ -404,10 +561,16 @@ awful.widget.watch(
         else
             connected_to_ethernet = true
             widget.inner.icon.text = ""
+            wifi_popup.widget.inner.connected.inner.value.markup = "<b>Ethernet</b>"
+            wifi_popup.widget.inner.download.value.text = "- Mbit/s"
+            wifi_popup.widget.inner.upload.value.text = "- Mbit/s"
+            wifi_popup.widget.inner.signal.value.text = "- dBm"
         end
     end,
     wifi_widget
 )
+-- }}}2
+
 -- Calendar widget {{{1
 
 -- Popup {{{2
@@ -728,10 +891,24 @@ awful.screen.connect_for_each_screen(function(s)
         screen  = s,
         filter  = awful.widget.tasklist.filter.focused,
         buttons = tasklist_buttons,
-        style    = {
+        style   = {
             shape  = function(cr,w,h) gears.shape.rounded_rect(cr,w,h, 4) end,
             align = "center"
         },
+        -- widget_template = {
+        --     {
+        --         {
+        --             id     = 'text_role',
+        -- 
+        --             widget = wibox.widget.textbox,
+        --         },
+        --         left  = 10,
+        --         right = 10,
+        --         widget = wibox.container.margin
+        --     },
+        --     id     = 'background_role',
+        --     widget = wibox.container.background,
+        -- },
     }
 
     -- Create the middle Widget {{{2
