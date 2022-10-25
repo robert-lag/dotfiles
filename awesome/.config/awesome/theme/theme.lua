@@ -58,6 +58,9 @@ theme.border_marked = xrdb.color10
 -- Example:
 --theme.taglist_bg_focus = "#ff0000"
 
+-- Tasklist {{{1
+theme.tasklist_font = "Monospace Bold 10"
+
 -- Tooltip {{{1
 theme.tooltip_fg = theme.fg_normal
 theme.tooltip_bg = theme.bg_normal
