@@ -1,6 +1,192 @@
 local battery_widget = require("battery-widget")
 
 -- CPU Widget {{{1
+
+-- Popup {{{2
+local name_column_width = 150
+local usage_column_width = 50
+local cpu_popup = awful.popup {
+    widget = {
+        {
+            {
+                {
+                    {
+                        id = 'icon',
+                        text = '',
+                        align = 'left',
+                        valign = 'center',
+                        font = "Monospace 20",
+                        forced_width = 25,
+                        widget = wibox.widget.textbox,
+                    },
+                    {
+                        text = 'CPU',
+                        align = 'left',
+                        valign = 'center',
+                        font = 'Monospace Bold 15',
+                        widget = wibox.widget.textbox,
+                    },
+                    widget = wibox.layout.fixed.horizontal,
+                },
+                fg = xrdb.color4,
+                widget = wibox.container.background,
+            },
+            {
+                opacity = 0,
+                forced_width = 0,
+                forced_height = 10,
+                widget = wibox.widget.separator
+            },
+            {
+                {
+                    id = 'label',
+                    markup = '<b>Total usage:</b> ',
+                    align = 'left',
+                    valign = 'center',
+                    widget = wibox.widget.textbox,
+                },
+                {
+                    id = 'value',
+                    text = '0%',
+                    align = 'right',
+                    valign = 'center',
+                    widget = wibox.widget.textbox,
+                },
+                id = 'total_usage',
+                forced_width = 120,
+                widget = wibox.layout.align.horizontal
+            },
+            {
+                forced_width = 0,
+                forced_height = 20,
+                color = darker(xrdb.color0, -40),
+                widget = wibox.widget.separator
+            },
+            {
+                {
+                    {
+                        markup = '<b>Command</b>',
+                        valign = 'center',
+                        forced_width = name_column_width,
+                        widget = wibox.widget.textbox,
+                    },
+                    fg = xrdb.color4,
+                    widget = wibox.container.background
+                },
+                {
+                    {
+                        markup = '<b>Usage</b>',
+                        valign = 'center',
+                        align = 'right',
+                        forced_width = usage_column_width,
+                        widget = wibox.widget.textbox,
+                    },
+                    fg = xrdb.color4,
+                    widget = wibox.container.background
+                },
+                {
+                    id = 'name_1',
+                    markup = '-',
+                    valign = 'center',
+                    forced_width = name_column_width,
+                    widget = wibox.widget.textbox,
+                },
+                {
+                    id = 'usage_1',
+                    markup = '-',
+                    valign = 'center',
+                    align = 'right',
+                    forced_width = usage_column_width,
+                    widget = wibox.widget.textbox,
+                },
+                {
+                    id = 'name_2',
+                    markup = '-',
+                    valign = 'center',
+                    forced_width = name_column_width,
+                    widget = wibox.widget.textbox,
+                },
+                {
+                    id = 'usage_2',
+                    markup = '-',
+                    valign = 'center',
+                    align = 'right',
+                    forced_width = usage_column_width,
+                    widget = wibox.widget.textbox,
+                },
+                {
+                    id = 'name_3',
+                    markup = '-',
+                    valign = 'center',
+                    forced_width = name_column_width,
+                    widget = wibox.widget.textbox,
+                },
+                {
+                    id = 'usage_3',
+                    markup = '-',
+                    valign = 'center',
+                    align = 'right',
+                    forced_width = usage_column_width,
+                    widget = wibox.widget.textbox,
+                },
+                {
+                    id = 'name_4',
+                    markup = '-',
+                    valign = 'center',
+                    forced_width = name_column_width,
+                    widget = wibox.widget.textbox,
+                },
+                {
+                    id = 'usage_4',
+                    markup = '-',
+                    valign = 'center',
+                    align = 'right',
+                    forced_width = usage_column_width,
+                    widget = wibox.widget.textbox,
+                },
+                {
+                    id = 'name_5',
+                    markup = '-',
+                    valign = 'center',
+                    forced_width = name_column_width,
+                    widget = wibox.widget.textbox,
+                },
+                {
+                    id = 'usage_5',
+                    markup = '-',
+                    valign = 'center',
+                    align = 'right',
+                    forced_width = usage_column_width,
+                    widget = wibox.widget.textbox,
+                },
+                id = 'usage_grid',
+                forced_num_cols = 2,
+                forced_num_rows = 2,
+                homogeneous = false,
+                expand = true,
+                layout = wibox.layout.grid,
+            },
+            id = 'inner',
+            layout = wibox.layout.fixed.vertical
+        },
+        margins = 10,
+        widget  = wibox.container.margin
+    },
+    border_color = xrdb.color8,
+    border_width = 2,
+    offset = { y = 5, x = 10 },
+    shape = function(cr, width, height)
+        gears.shape.rounded_rect(cr, width, height, 8)
+    end,
+    visible      = false,
+    ontop        = true,
+    hide_on_right_click = true,
+    opacity      = 0.85,
+    fg = xrdb.color7,
+    bg = xrdb.color0,
+}
+
+-- Widget {{{2
 local cpu_widget = wibox.widget {
     {
         {
@@ -26,13 +212,41 @@ local cpu_widget = wibox.widget {
     fg = xrdb.color4,
     widget = wibox.container.background,
     buttons = gears.table.join(
-        awful.button({ }, 1, function() awful.spawn(string.format("%s -e htop", terminal)) end)
+        awful.button({ }, 1, function()
+            if cpu_popup.visible then
+                cpu_popup.visible = false
+            else
+                hide_popups()
+                cpu_popup:move_next_to(mouse.current_widget_geometry)
+            end
+        end),
+        awful.button({ }, 3, function() awful.spawn(string.format("%s -e htop", terminal)) end)
     )
 }
 
+-- Update widget {{{2
 local function update_cpu_widget()
-    awful.spawn.easy_async_with_shell("top -bn2 | grep '%Cpu' | tail -1 | grep -P '(....|...) id,'|awk '{print 100-$8 }'", function(out)
-        cpu_widget.inner.number.text = string.format("%2d%%",math.floor(out))
+    awful.spawn.easy_async_with_shell("top -b -n2 | grep '%Cpu' | tail -1 | grep -P '(....|...) id,'|awk '{print 100-$8 }'", function(out)
+        local usage = string.format("%2d%%",math.floor(out))
+        cpu_widget.inner.number.text = usage
+        cpu_popup.widget.inner.total_usage.value.text = usage
+    end)
+    awful.spawn.easy_async_with_shell("top -b -n2 -w 200 | grep -A 5 '%CPU' | tail -5 | awk '{print $9,$12 }'", function(out)
+        result = {}
+        for match in string.gmatch(out, '[^ \n]+') do
+            table.insert(result, match)
+        end
+
+        cpu_popup.widget.inner.usage_grid.usage_1.text = result[1] .. "%"
+        cpu_popup.widget.inner.usage_grid.name_1.text = result[2]
+        cpu_popup.widget.inner.usage_grid.usage_2.text = result[3] .. "%"
+        cpu_popup.widget.inner.usage_grid.name_2.text = result[4]
+        cpu_popup.widget.inner.usage_grid.usage_3.text = result[5] .. "%"
+        cpu_popup.widget.inner.usage_grid.name_3.text = result[6]
+        cpu_popup.widget.inner.usage_grid.usage_4.text = result[7] .. "%"
+        cpu_popup.widget.inner.usage_grid.name_4.text = result[8]
+        cpu_popup.widget.inner.usage_grid.usage_5.text = result[9] .. "%"
+        cpu_popup.widget.inner.usage_grid.name_5.text = result[10]
     end)
 end
 
@@ -41,6 +255,7 @@ update_cpu_widget()
 cpu_widget_timer = timer({ timeout = 4.0 })
 cpu_widget_timer:connect_signal("timeout", update_cpu_widget)
 cpu_widget_timer:start()
+-- }}}2
 
 -- Volume Widget {{{1
 local volume_widget = wibox.widget {
@@ -136,7 +351,7 @@ local battery_popup = awful.popup {
             {
                 {
                     id = 'label',
-                    text = 'Battery: ',
+                    markup = '<b>Battery:</b> ',
                     align = 'left',
                     valign = 'center',
                     widget = wibox.widget.textbox,
@@ -155,7 +370,7 @@ local battery_popup = awful.popup {
             {
                 {
                     id = 'label',
-                    text = 'Time left: ',
+                    markup = '<b>Time left:</b> ',
                     align = 'left',
                     valign = 'center',
                     widget = wibox.widget.textbox,
@@ -187,6 +402,8 @@ local battery_popup = awful.popup {
     ontop        = true,
     hide_on_right_click = true,
     opacity      = 0.85,
+    fg = xrdb.color7,
+    bg = xrdb.color0,
 }
 
 -- Widget {{{2
@@ -337,14 +554,6 @@ local wifi_popup = awful.popup {
             {
                 {
                     {
-                        id = 'icon',
-                        text = '',
-                        align = 'center',
-                        valign = 'center',
-                        font = 'Monospace 18',
-                        widget = wibox.widget.textbox,
-                    },
-                    {
                         id = 'value',
                         markup = '<b>Not Connected</b>',
                         align = 'center',
@@ -377,7 +586,7 @@ local wifi_popup = awful.popup {
                 },
                 {
                     id = 'label',
-                    text = 'Signal: ',
+                    markup = '<b>Signal:</b> ',
                     align = 'left',
                     valign = 'center',
                     widget = wibox.widget.textbox,
@@ -405,7 +614,7 @@ local wifi_popup = awful.popup {
                 },
                 {
                     id = 'label',
-                    text = 'Upload: ',
+                    markup = '<b>Upload:</b> ',
                     align = 'left',
                     valign = 'center',
                     widget = wibox.widget.textbox,
@@ -433,7 +642,7 @@ local wifi_popup = awful.popup {
                 },
                 {
                     id = 'label',
-                    text = 'Download: ',
+                    markup = '<b>Download:</b> ',
                     align = 'left',
                     valign = 'center',
                     widget = wibox.widget.textbox,
@@ -895,20 +1104,6 @@ awful.screen.connect_for_each_screen(function(s)
             shape  = function(cr,w,h) gears.shape.rounded_rect(cr,w,h, 4) end,
             align = "center"
         },
-        -- widget_template = {
-        --     {
-        --         {
-        --             id     = 'text_role',
-        -- 
-        --             widget = wibox.widget.textbox,
-        --         },
-        --         left  = 10,
-        --         right = 10,
-        --         widget = wibox.container.margin
-        --     },
-        --     id     = 'background_role',
-        --     widget = wibox.container.background,
-        -- },
     }
 
     -- Create the middle Widget {{{2
@@ -1000,6 +1195,8 @@ end
 
 -- Hide popups {{{1
 function hide_popups()
+    cpu_popup.visible = false
     calendar_popup.visible = false
     battery_popup.visible = false
+    wifi_popup.visible = false
 end
