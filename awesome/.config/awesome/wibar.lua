@@ -895,19 +895,19 @@ local calendar_popup = awful.popup {
     widget = {
         {
             {
-                id = "icon",
-                text = "󰀀",
-                align = "center",
-                valign = "center",
-                font = "ClockFaceFatSolid 50",
+                id = 'icon',
+                text = '󰀀',
+                align = 'center',
+                valign = 'center',
+                font = 'ClockFaceFatSolid 50',
                 widget = wibox.widget.textbox,
             },
             {
-                id = "value",
+                id = 'value',
                 refresh = 1,
-                format = "%H:%M:%S",
-                font = "Monospace 25",
-                align = "center",
+                format = '%H:%M:%S',
+                font = 'Monospace 25',
+                align = 'center',
                 widget = wibox.widget.textclock(),
             },
             {
@@ -917,6 +917,7 @@ local calendar_popup = awful.popup {
                 widget = wibox.widget.separator
             },
             {
+                id = 'calendar',
                 date = os.date('*t'),
                 week_numbers = true,
                 spacing = 10,
@@ -999,6 +1000,7 @@ calendar_popup.widget.inner.icon.text = get_clock_icon(textclock.inner.clock.tex
 textclock.inner.icon.text = get_clock_icon(textclock.inner.clock.text)
 
 textclock.inner.clock:connect_signal("widget::redraw_needed", function()
+    calendar_popup.widget.inner.calendar.date = os.date('*t')
     calendar_popup.widget.inner.icon.text = get_clock_icon(textclock.inner.clock.text)
     textclock.inner.icon.text = get_clock_icon(textclock.inner.clock.text)
 end)
