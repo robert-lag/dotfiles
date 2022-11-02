@@ -1,5 +1,3 @@
-local awful = require("awful")
-local gears = require("gears")
 local hotkeys_popup = require("awful.hotkeys_popup")
 -- Enable hotkeys help widget for VIM and other apps
 -- when client with a matching name is opened:
@@ -135,14 +133,17 @@ globalkeys = gears.table.join(
     -- Volume {{{2
     awful.key({ }, "XF86AudioMute", function()
         awful.spawn("volume-notification toggle_mute")
+        set_volume_sliders()
         update_volume_widget()
     end, {description = "(un)mute volume", group = "volume"}),
     awful.key({ }, "XF86AudioRaiseVolume", function()
         awful.spawn("volume-notification inc")
+        set_volume_sliders()
         update_volume_widget()
     end, {description = "raise volume", group = "volume"}),
     awful.key({ }, "XF86AudioLowerVolume", function()
         awful.spawn("volume-notification dec")
+        set_volume_sliders()
         update_volume_widget()
     end, {description = "lower volume", group = "volume"}),
 

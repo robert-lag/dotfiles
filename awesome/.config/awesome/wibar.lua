@@ -258,6 +258,119 @@ cpu_widget_timer:start()
 -- }}}2
 
 -- Volume Widget {{{1
+
+-- Popup {{{2
+local slider_height = 12
+local volume_popup_width = 250
+local volume_popup = awful.popup {
+    widget = {
+        {
+            {
+                {
+                    {
+                        id = 'icon',
+                        text = '墳',
+                        align = 'center',
+                        valign = 'center',
+                        font = 'Monospace 15',
+                        forced_width = 25,
+                        widget = wibox.widget.textbox,
+                    },
+                    id = 'margins',
+                    right = 10,
+                    widget = wibox.container.margin
+                },
+                {
+                    id = 'slider',
+                    bar_shape = function(cr, width, height)
+                        gears.shape.rounded_rect(cr, width, height, 2)
+                    end,
+                    bar_color = darker(xrdb.color8, -20),
+                    bar_active_color = xrdb.color5,
+                    bar_height = 4,
+                    handle_shape = gears.shape.circle,
+                    handle_color = xrdb.color5,
+                    handle_width = slider_height,
+                    forced_height = slider_height,
+                    widget = wibox.widget.slider,
+                },
+                {
+                    id = 'value',
+                    markup = ' 0%',
+                    align = 'right',
+                    valign = 'center',
+                    widget = wibox.widget.textbox,
+                },
+                id = 'volume',
+                forced_width = volume_popup_width,
+                widget = wibox.layout.align.horizontal
+            },
+            {
+                opacity = 0,
+                forced_width = 0,
+                forced_height = 8,
+                widget = wibox.widget.separator
+            },
+            {
+                {
+                    {
+                        id = 'icon',
+                        text = ' ',
+                        align = 'center',
+                        valign = 'center',
+                        font = 'Monospace 15',
+                        forced_width = 25,
+                        widget = wibox.widget.textbox,
+                    },
+                    id = 'margins',
+                    right = 10,
+                    widget = wibox.container.margin
+                },
+                {
+                    id = 'slider',
+                    bar_shape = function(cr, width, height)
+                        gears.shape.rounded_rect(cr, width, height, 2)
+                    end,
+                    bar_color = darker(xrdb.color8, -20),
+                    bar_active_color = xrdb.color5,
+                    bar_height = 4,
+                    handle_shape = gears.shape.circle,
+                    handle_color = xrdb.color5,
+                    handle_width = slider_height,
+                    forced_height = slider_height,
+                    widget = wibox.widget.slider,
+                },
+                {
+                    id = 'value',
+                    markup = ' 0%',
+                    align = 'right',
+                    valign = 'center',
+                    widget = wibox.widget.textbox,
+                },
+                id = 'microphone',
+                forced_width = volume_popup_width,
+                widget = wibox.layout.align.horizontal
+            },
+            id = 'inner',
+            layout = wibox.layout.fixed.vertical,
+        },
+        margins = 10,
+        widget  = wibox.container.margin
+    },
+    border_color = xrdb.color8,
+    border_width = 2,
+    offset = { y = 5, x = 10 },
+    shape = function(cr, width, height)
+        gears.shape.rounded_rect(cr, width, height, 8)
+    end,
+    visible      = false,
+    ontop        = true,
+    opacity      = 0.85,
+    fg = xrdb.color7,
+    bg = xrdb.color0,
+}
+
+-- Widget {{{2
 local volume_widget = wibox.widget {
     {
         {
@@ -265,7 +378,7 @@ local volume_widget = wibox.widget {
             text = '墳',
             align = 'center',
             valign = 'center',
-            font = "monospace 15",
+            font = "Monospace 15",
             forced_width = 20,
             widget = wibox.widget.textbox,
         },
@@ -281,33 +394,113 @@ local volume_widget = wibox.widget {
         layout = wibox.layout.fixed.horizontal,
     },
     fg = xrdb.color5,
-    widget = wibox.container.background
+    widget = wibox.container.background,
+    buttons = gears.table.join(
+        awful.button({ }, 1, function()
+            if volume_popup.visible then
+                volume_popup.visible = false
+            else
+                hide_popups()
+                volume_popup:move_next_to(mouse.current_widget_geometry)
+            end
+        end)
+    )
 }
 
+-- Update widget {{{2
+local volume_slider_initialized = false
+local microphone_slider_initialized = false
 function update_volume_widget()
     awful.spawn.easy_async_with_shell("get-volume", function(out)
         local volume = tonumber(out)
         if volume <= 0 then
             volume_widget.inner.icon.text = 'ﱝ'
+            volume_popup.widget.inner.volume.margins.icon.text = 'ﱝ'
         else
             volume_widget.inner.icon.text = '墳'
+            volume_popup.widget.inner.volume.margins.icon.text = '墳'
         end
         volume_widget.inner.number.text = string.format("%2d%%", volume)
+        volume_popup.widget.inner.volume.value.text = string.format(" %2d%%", volume)
+    end)
+    awful.spawn.easy_async_with_shell("get-microphone-volume", function(out)
+        local mic_volume = tonumber(out)
+        if mic_volume <= 0 then
+            volume_popup.widget.inner.microphone.margins.icon.text = ''
+        else
+            volume_popup.widget.inner.microphone.margins.icon.text = ''
+        end
+        volume_popup.widget.inner.microphone.value.text = string.format(" %2d%%", mic_volume)
+    end)
+end
+
+local manual_set_of_volume_slider = false
+local manual_set_of_microphone_slider = false
+
+local function set_volume_slider_without_signal(value)
+    manual_set_of_volume_slider = true
+    volume_popup.widget.inner.volume.slider.value = value
+end
+
+local function set_microphone_slider_without_signal(value)
+    manual_set_of_microphone_slider = true
+    volume_popup.widget.inner.microphone.slider.value = value
+end
+
+function set_volume_sliders()
+    awful.spawn.easy_async_with_shell("get-volume", function(out)
+        local volume = tonumber(out)
+        volume_popup.widget.inner.volume.value.text = string.format(" %2d%%", volume)
+        set_volume_slider_without_signal(volume)
+    end)
+    awful.spawn.easy_async_with_shell("get-microphone-volume", function(out)
+        local mic_volume = tonumber(out)
+        volume_popup.widget.inner.microphone.value.text = string.format(" %2d%%", mic_volume)
+        volume_popup.widget.inner.microphone.slider.value = mic_volume
+        set_microphone_slider_without_signal(mic_volume)
     end)
 end
 
 update_volume_widget()
+set_volume_sliders()
 
-volume_widget:connect_signal("button::press", function()
-            -- awful.spawn("notify-send 'Hello world'")
-            awful.spawn("pactl set-sink-mute @DEFAULT_SINK@ toggle")
-            update_volume_widget()
-        end)
+volume_popup.widget.inner.volume.slider:connect_signal("property::value", function(widget, new_value)
+    if manual_set_of_volume_slider then
+        manual_set_of_volume_slider = false
+        return
+    end
 
+    awful.spawn(string.format("pactl set-sink-volume @DEFAULT_SINK@ %d%%", new_value))
+    awful.spawn("pactl set-sink-mute @DEFAULT_SINK@ 0")
+    update_volume_widget()
+end)
+volume_popup.widget.inner.microphone.slider:connect_signal("property::value", function(widget, new_value)
+    if manual_set_of_microphone_slider then
+        manual_set_of_microphone_slider = false
+        return
+    end
+
+    awful.spawn(string.format("pactl set-source-volume @DEFAULT_SOURCE@ %d%%", new_value))
+    awful.spawn("pactl set-source-mute @DEFAULT_SOURCE@ 0")
+    update_volume_widget()
+end)
+
+volume_popup.widget.inner.volume.margins.icon:connect_signal("button::press", function()
+    awful.spawn("pactl set-sink-mute @DEFAULT_SINK@ toggle")
+    update_volume_widget()
+    set_volume_sliders()
+end)
+
+volume_popup.widget.inner.microphone.margins.icon:connect_signal("button::press", function()
+    awful.spawn("pactl set-source-mute @DEFAULT_SOURCE@ toggle")
+    update_volume_widget()
+    set_volume_sliders()
+end)
 
 volume_widget_timer = timer({ timeout = 10.0 })
 volume_widget_timer:connect_signal("timeout", update_volume_widget)
 volume_widget_timer:start()
+-- }}}2
 
 -- Battery Widget {{{1
 
@@ -441,7 +634,7 @@ local battery_widget_ui = wibox.widget {
     )
 }
 
--- Create the battery widget:
+-- Create the battery widget
 local battery_widget = battery_widget {
     screen = screen,
     use_display_device = true,
@@ -548,6 +741,7 @@ end)
 -- Wifi widget {{{1
 
 -- Popup {{{2
+local wifi_popup_width = 220
 local wifi_popup = awful.popup {
     widget = {
         {
@@ -599,7 +793,7 @@ local wifi_popup = awful.popup {
                     widget = wibox.widget.textbox,
                 },
                 id = 'signal',
-                forced_width = 200,
+                forced_width = wifi_popup_width,
                 widget = wibox.layout.align.horizontal
             },
             {
@@ -627,7 +821,7 @@ local wifi_popup = awful.popup {
                     widget = wibox.widget.textbox,
                 },
                 id = 'upload',
-                forced_width = 200,
+                forced_width = wifi_popup_width,
                 widget = wibox.layout.align.horizontal
             },
             {
@@ -655,7 +849,7 @@ local wifi_popup = awful.popup {
                     widget = wibox.widget.textbox,
                 },
                 id = 'download',
-                forced_width = 200,
+                forced_width = wifi_popup_width,
                 widget = wibox.layout.align.horizontal
             },
             id = 'inner',
@@ -1198,6 +1392,7 @@ end
 -- Hide popups {{{1
 function hide_popups()
     cpu_popup.visible = false
+    volume_popup.visible = false
     calendar_popup.visible = false
     battery_popup.visible = false
     wifi_popup.visible = false
