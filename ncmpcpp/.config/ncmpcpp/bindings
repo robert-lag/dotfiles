@@ -365,10 +365,11 @@
 
 # General {{{1
 def_key "e"
- edit_directory_name
-
+  edit_directory_name
 def_key "e"
- edit_playlist_name
+  edit_playlist_name
+def_key "P"
+  pause
 
 # Playlist {{{1
 def_key "space"
@@ -438,8 +439,8 @@ def_key "f"
 def_key "f"
   change_browse_mode
 
-def_key "P"
-  show_playlist
+def_key "p"
+  show_playlist_editor
 
 # Movement {{{1
 def_key "j"
