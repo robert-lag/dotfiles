@@ -146,18 +146,29 @@ cmd cut-remove %{{
 
 # Archive bindings {{{2
 cmd unarchive ${{
+    lf -remote "send $id echo Unzipping $f"
 	case "$f" in
-		*.zip) unzip "$f" ;;
-		*.rar) unrar "$f" ;;
-		*.tar.gz) tar -xzvf "$f" ;;
-		*.tar.bz2) tar -xjvf "$f" ;;
-		*.tar) tar -xvf "$f" ;;
-		*) echo "Unsupported format" ;;
+		# *.zip) unzip "$f" 2>&1 1>/dev/null && success=true || success=false ;;
+		*.rar) unrar "$f" 2>&1 1>/dev/null && success=true || success=false ;;
+		*.tar.gz) tar -xzvf "$f" 2>&1 1>/dev/null && success=true || success=false ;;
+		*.tar.bz2) tar -xjvf "$f" 2>&1 1>/dev/null && success=true || success=false ;;
+		*.tar) tar -xvf "$f" 2>&1 1>/dev/null && success=true || success=false ;;
+		*) echo "Unsupported format"; success=false;;
 	esac
+
+    if [ "$success" ]; then
+        lf -remote "send $id echo Unzipping Complete"
+    else
+        lf -remote "send $id echo Unzipping Error"
+    fi
 }}
 
 cmd zip ${{
-	apack "$(basename "$f").zip" "$(basename "$f")"
+    lf -remote "send $id echo Unzipping $f"
+    apack "$(basename "$f").zip" "$(basename "$f")" 2>&1 1>/dev/null
+      && lf -remote "send $id echo Unzipping Complete"
+      || lf -remote "send $id echo Unzipping Error"
+	lf -remote "send clear"
 }}
 
 # Trash files {{{2
