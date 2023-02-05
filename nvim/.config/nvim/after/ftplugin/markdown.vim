@@ -1,3 +1,5 @@
+syntax on
+
 " Set that wrapping only takes place between words and not in the middle of a
 " word
 set wrap linebreak
@@ -18,6 +20,6 @@ highlight ZettelkastenNoteLink ctermfg=11
 call matchadd("ZettelkastenNoteLink", "\[\[[a-zA-Z0-9]*\]\]")
 
 " Highlight metadata in zettelkasten notes
+syntax region ZettelkastenMetadata start="\n\@<!---[ \\t]*$" end="^---[ \\t]*$"
 highlight ZettelkastenMetadata ctermfg=7
-call matchadd("ZettelkastenMetadata", "^[A-Za-z]\\+: \.\\+")
 
