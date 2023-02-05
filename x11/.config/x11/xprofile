@@ -27,7 +27,8 @@ redshift &
 # dwmblocks &
 
 # Opacity effects
-picom -b --experimental-backends
+# picom -b -experimental-backends
+picom -b
 
 # Hide mouse cursor when typing
 xbanish &
@@ -45,11 +46,14 @@ xdotool key --clearmodifiers Num_Lock &
 xrandr --output HDMI1 --auto --left-of eDP1 &
 
 # Set keyboard settings
+# - Toggle layout with Alt+Shift
+# - Replace comma with dot on numpad
+# - Swap CAPS and ESC keys
 setxkbmap -layout at,us \
 	-variant nodeadkeys,dvorak \
-	-option "grp:alt_shift_toggle" \    # Toggle layout with Alt+Shift
-	-option "kpdl:dot" \                # Replace comma with dot on numpad
-	-option "caps:swapescape" &         # Swap CAPS and ESC keys
+	-option "grp:alt_shift_toggle" \
+	-option "kpdl:dot" \
+	-option "caps:swapescape" &
 
 # Setup key bindings for AltGr
 xmodmap -e "keycode 28 = t T t T asciitilde"
@@ -58,6 +62,7 @@ xmodmap -e "keycode 39 = s S s S braceright"
 xmodmap -e "keycode 40 = d D d D bracketleft"
 xmodmap -e "keycode 41 = f F f F bracketright"
 xmodmap -e "keycode 42 = g G g G backslash"
+xmodmap -e "keycode 56 = b B b B backslash"
 
 # setup lock screen (xautolock will also be called by suspend@USER.service)
 xautolock -detectsleep -resetsaver \
@@ -70,6 +75,9 @@ xautolock -detectsleep -resetsaver \
 
 # Syncthing (for syncing folders with computers/smartphones)
 syncthing -no-browser -no-restart -logflags=0 &
+
+# Apply cursor theme (workaround for bug in awesome wm)
+xsetroot -cursor_name left_ptr &
 
 # Startup applications
 firefox &
