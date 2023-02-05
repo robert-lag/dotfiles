@@ -923,7 +923,7 @@ local wifi_widget = wibox.widget {
 awful.widget.watch(
     "iw dev wlan0 link", 5,
     function(widget, stdout, stderr, exitreason, exitcode)
-        if connected_to_ethernet then
+        if connected_to_ethernet == true then
             return
         end
 
@@ -936,7 +936,7 @@ awful.widget.watch(
         if ( wifi == '' or wifi == nil ) then
             widget.inner.icon.text = "睊"
             current_wifi = ""
-            wifi_popup.widget.inner.connected.value.markup = "<b>Not Connected</b>"
+            wifi_popup.widget.inner.connected.inner.value.markup = "<b>Not Connected</b>"
             wifi_popup.widget.inner.download.value.text = "- Mbit/s"
             wifi_popup.widget.inner.upload.value.text = "- Mbit/s"
             wifi_popup.widget.inner.signal.value.text = "- dBm"
@@ -1267,14 +1267,19 @@ awful.screen.connect_for_each_screen(function(s)
         screen = s,
     })
 
+    awful.tag.add(" ", {
+        layout = awful.layout.layouts[1],
+        screen = s,
+    })
+
     -- Hide specific tags {{{2
     local original_taglist_label = awful.widget.taglist.taglist_label
     function awful.widget.taglist.taglist_label(tag, args, tb)
       local text, bg, bg_image, icon, other_args =
         original_taglist_label(tag, args, tb)
 
-      -- Hide tags 11, 12 and 13
-      if tag.index == 11 or tag.index == 12 or tag.index == 13 then
+      -- Hide tags 11, 12, 13 and 14
+      if tag.index == 11 or tag.index == 12 or tag.index == 13 or tag.index == 14 then
           text = ""
       end
 

@@ -16,6 +16,20 @@ globalkeys = gears.table.join(
               {description = "go back", group = "tag"}),
     awful.key({ modkey,           }, "x", function() awful.spawn("xautolock -locknow") end,
               {description = "lock screen", group = "screen"}),
+    awful.key({ modkey }, "-",
+              function ()
+                    local screen = awful.screen.focused()
+                    local tag = screen.tags[14]
+
+                    if screen.selected_tag == tag then
+                        awful.tag.history.restore(screen, 1)
+                    else
+                        if tag then
+                           tag:view_only()
+                        end
+                    end
+              end,
+              {description = "view tag  (#14)", group = "tag"}),
 
     -- Focus screen {{{2
     awful.key({ modkey }, "Escape", function () awful.screen.focus_relative( 1) end,
@@ -182,6 +196,12 @@ globalkeys = gears.table.join(
     -- Screenshot {{{2
     awful.key({ modkey }, "Print", function() awful.spawn("screenshot") end,
               {description = "create a screenshot", group = "screenshot"}),
+    awful.key({ modkey, "Shift" }, "Print", function() awful.spawn("screenshot all") end,
+              {description = "create a screenshot of the whole screen", group = "screenshot"}),
+
+    -- Color Picker {{{2
+    awful.key({ modkey }, "c", function() awful.spawn("color-picker") end,
+              {description = "copy a color to the clipboard", group = "other"}),
 
     -- Scratchpads {{{2
     awful.key({ modkey }, ",", function ()
@@ -257,44 +277,44 @@ globalkeys = gears.table.join(
                 end
             end
         end
-    end, {description = "toggle math scratchpad",   group = "scratchpad"}),
-    awful.key({ modkey }, "-", function ()
-        local focused_screen = awful.screen.focused()
-        local tag = focused_screen.tags[13]
-        if tag then
-            awful.tag.viewtoggle(tag)
-
-            if tag.selected then
-                for _, c in ipairs(client.get()) do
-                    if c.instance == "dropdown-music" then
-                        -- Move scratchpad to current screen
-                        c:move_to_tag(tag)
-
-                        -- Hide the tags on all the other screens
-                        for current_screen in screen do
-                            if current_screen.index ~= focused_screen.index then
-                                current_tag = current_screen.tags[13]
-
-                                if current_tag.selected then
-                                    awful.tag.viewtoggle(current_tag)
-                                end
-                            end
-                        end
-
-                        -- Center the client
-                        local screen_geometry = awful.screen.focused().geometry
-                        c.x = screen_geometry.x + screen_geometry.width / 2 - c.width / 2
-                        c.y = screen_geometry.y + screen_geometry.height / 2 - c.height / 2
-
-                        -- Focus scratchpad
-                        client.focus = c
-
-                        c:raise()
-                    end
-                end
-            end
-        end
-    end, {description = "toggle music scratchpad",   group = "scratchpad"})
+    end, {description = "toggle math scratchpad",   group = "scratchpad"})
+    -- awful.key({ modkey }, "-", function ()
+    --     local focused_screen = awful.screen.focused()
+    --     local tag = focused_screen.tags[13]
+    --     if tag then
+    --         awful.tag.viewtoggle(tag)
+    -- 
+    --         if tag.selected then
+    --             for _, c in ipairs(client.get()) do
+    --                 if c.instance == "dropdown-music" then
+    --                     -- Move scratchpad to current screen
+    --                     c:move_to_tag(tag)
+    -- 
+    --                     -- Hide the tags on all the other screens
+    --                     for current_screen in screen do
+    --                         if current_screen.index ~= focused_screen.index then
+    --                             current_tag = current_screen.tags[13]
+    -- 
+    --                             if current_tag.selected then
+    --                                 awful.tag.viewtoggle(current_tag)
+    --                             end
+    --                         end
+    --                     end
+    -- 
+    --                     -- Center the client
+    --                     local screen_geometry = awful.screen.focused().geometry
+    --                     c.x = screen_geometry.x + screen_geometry.width / 2 - c.width / 2
+    --                     c.y = screen_geometry.y + screen_geometry.height / 2 - c.height / 2
+    -- 
+    --                     -- Focus scratchpad
+    --                     client.focus = c
+    -- 
+    --                     c:raise()
+    --                 end
+    --             end
+    --         end
+    --     end
+    -- end, {description = "toggle music scratchpad",   group = "scratchpad"})
 )
 -- }}}1
 
@@ -318,11 +338,11 @@ clientkeys = gears.table.join(
         {description = "toggle fullscreen", group = "client"}),
 
     -- Minimize / Maximize {{{2
-    awful.key({ modkey,           }, "n", function (c)
-        -- The client currently has the input focus, so it cannot be
-        -- minimized, since minimized clients can't have the focus.
-        c.minimized = true
-    end , {description = "minimize", group = "client"}),
+    -- awful.key({ modkey,           }, "n", function (c)
+    --     -- The client currently has the input focus, so it cannot be
+    --     -- minimized, since minimized clients can't have the focus.
+    --     c.minimized = true
+    -- end , {description = "minimize", group = "client"}),
     awful.key({ modkey,           }, "b", function (c)
         c.maximized = not c.maximized
         c:raise()

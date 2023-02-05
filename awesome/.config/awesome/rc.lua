@@ -16,6 +16,8 @@ menubar = require("menubar")
 -- when client with a matching name is opened:
 -- require("awful.hotkeys_popup.keys")
 
+image_path = "/home/robert/.config/awesome/images/"
+
 -- }}}
 
 -- {{{ Helper functions

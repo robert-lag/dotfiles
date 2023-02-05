@@ -61,7 +61,7 @@ awful.rules.rules = {
 
     -- ncmpcpp {{{1
     { rule = { instance = "ncmpcpp" },
-      properties = { screen = 1, tag = "10" }
+      properties = { screen = 1, tag = " " }
     },
 
     -- Scratchpads {{{1

@@ -58,6 +58,17 @@ theme.border_marked = xrdb.color10
 -- Example:
 --theme.taglist_bg_focus = "#ff0000"
 
+-- Taglist {{{1
+
+-- Generate taglist squares
+local taglist_square_size = dpi(4)
+theme.taglist_squares_sel = theme_assets.taglist_squares_sel(
+    taglist_square_size, theme.fg_normal
+)
+theme.taglist_squares_unsel = theme_assets.taglist_squares_unsel(
+    taglist_square_size, theme.bg_normal
+)
+
 -- Tasklist {{{1
 theme.tasklist_font = "Monospace Bold 10"
 
@@ -118,15 +129,6 @@ theme.icon_theme = nil
 -- Generate Awesome icon:    placement = awful.placement.bottom_right,
 theme.awesome_icon = theme_assets.awesome_icon(
     theme.menu_height, theme.bg_focus, theme.fg_focus
-)
-
--- Generate taglist squares {{{1
-local taglist_square_size = dpi(4)
-theme.taglist_squares_sel = theme_assets.taglist_squares_sel(
-    taglist_square_size, theme.fg_normal
-)
-theme.taglist_squares_unsel = theme_assets.taglist_squares_unsel(
-    taglist_square_size, theme.bg_normal
 )
 
 -- Try to determine if we are running light or dark colorscheme {{{1
