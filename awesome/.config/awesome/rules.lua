@@ -59,6 +59,11 @@ awful.rules.rules = {
       properties = { tag = "1" }
     },
 
+    -- Thunderbird {{{1
+    { rule = { class = "thunderbird" },
+      properties = { tag = "10" }
+    },
+
     -- ncmpcpp {{{1
     { rule = { instance = "ncmpcpp" },
       properties = { screen = 1, tag = " " }
