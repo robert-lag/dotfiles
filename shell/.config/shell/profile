@@ -47,6 +47,7 @@ export XDG_CACHE_HOME="$HOME/.cache"
 export ZETTELKASTEN_DIR="$HOME/zettelkasten"
 export SCRNSHOT_DIR="$HOME/pictures/screenshots"
 export LOCKSCREEN_DIR="$XDG_DATA_HOME/lockscreen/"
+export BLOG_DIR="$HOME/data/_user/programming/html/projects/blog/public/"
 
 # ~/ cleanup
 export XINITRC="$XDG_CONFIG_HOME/x11/xinitrc"
@@ -65,6 +66,10 @@ export GOPATH="$XDG_DATA_HOME/go"
 export SSB_HOME="$XDG_DATA_HOME/zoom"
 export LEIN_HOME="$XDG_DATA_HOME/lein"
 export DIALOGRC="$XDG_CONFIG_HOME/dialog/dialogrc"
+export R_ENVIRON_USER="$XDG_CONFIG_HOME/r/.Renviron"
+
+# This is a custom variable that is called in ~/.config/shell/.aliasrc
+export FREEPLANE_DATA_HOME="$XDG_DATA_HOME/freeplane"
 
 # Might cause errors for VSCodium / VSCode (original path: ~/.vscode-oss)
 export VSCODE_PORTABLE="$XDG_DATA_HOME/vscode"
@@ -84,6 +89,9 @@ export XSECURELOCK_SHOW_USERNAME=0
 export XSECURELOCK_DISCARD_FIRST_KEYPRESS=1
 export XSECURELOCK_DIM_TIME_MS=1000
 export XSECURELOCK_WAIT_TIME_MS=5000
+
+# Use Java 17
+export JAVA_HOME="/usr/lib/jvm/java-17-openjdk"
 
 # Difftastic settings
 export DFT_TAB_WIDTH=4

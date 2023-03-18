@@ -43,8 +43,11 @@ alias \
     p="pacman" \
     z="zathura"
 
+# Set data dir of freeplane
+alias freeplane="freeplane -U $FREEPLANE_DATA_HOME"
+
 # Other
 alias lf='lf-ueberzug'
-alias yt='youtube-dl --add-metadata --ignore-errors'    # Download video
-alias yta='yt --extract-audio'                          # Download only audio
+alias yt='yt-dlp --add-metadata --ignore-errors'    # Download video
+alias yta='yt --extract-audio'                      # Download only audio
 alias dla='youtube-dl-and-normalize-file'
