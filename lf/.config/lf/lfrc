@@ -26,28 +26,11 @@ set mouse true
 
 # General {{{2
 cmd open ${{
-    case $(file --mime-type "$f" -bL) in
-        text/*|application/json) $EDITOR "$f";;
-        application/x-sc) sc-im "$f";;
-        application/x-freeplane) freeplane-java-11 "$f" ;;
-        *) xdg-open "$f" & ;;
-    esac
+    open-file "$f"
 }}
 
 cmd open-alternative ${{
-	file_ext="${f##*.}"
-
-	if [ "$file_ext" = "desktop" ]; then
-		open-desktop-file "$f"
-	else
-		case $(file --mime-type "$f" -bL) in
-			application/pdf) devour okular "$f" ;;
-			image/*) devour gimp "$f" ;;
-			text/html) firefox "$f" & ;;
-			application/x-freeplane) freeplane-java-11 "$f" ;;
-			*) $EDITOR "$f";;
-		esac
-	fi
+    open-file -a "$f"
 }}
 
 cmd mkdir $mkdir -p "$(echo $* | tr ' ' '\ ')"
@@ -55,15 +38,15 @@ cmd mkdir $mkdir -p "$(echo $* | tr ' ' '\ ')"
 cmd mkfile $$EDITOR $1
 
 cmd chmod ${{
-  printf "Mode Bits: "
-  read ans
+    printf "Mode Bits: "
+    read ans
 
-  for file in "$fx"
-  do
-    chmod $ans $file
-  done
+    for file in "$fx"
+    do
+        chmod $ans $file
+    done
 
-  lf -remote 'send reload'
+    lf -remote 'send reload'
 }}
 
 cmd new-instance ${{
