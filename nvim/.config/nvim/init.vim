@@ -309,6 +309,9 @@ call plug#begin(system('echo -n "${XDG_DATA_HOME:-$HOME/.local/share}/nvim/plugg
     " Markdown preview
     Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install' }
 
+    " Markdown Table Of Contents generator
+    Plug 'mzlogin/vim-markdown-toc'
+
     " Latex preview
     Plug 'xuhdev/vim-latex-live-preview'
 
@@ -574,6 +577,13 @@ let g:mkdp_preview_options = {
     \ 'content_editable': v:false,
     \ 'disable_filename': 0
     \ }
+
+" --------------------------------------------------------------------------
+" Markdown Table Of Contents Generator {{{1
+" --------------------------------------------------------------------------
+let g:vmt_fence_text = 'TOC'
+let g:vmt_fence_closing_text = '/TOC'
+let g:vmt_list_item_char = '-'
 
 " --------------------------------------------------------------------------
 " Latex Preview {{{1
