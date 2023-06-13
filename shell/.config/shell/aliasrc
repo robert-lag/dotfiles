@@ -43,8 +43,10 @@ alias \
     p="pacman" \
     z="zathura"
 
-# Set data dir of freeplane
+# ~/ cleanup
 alias freeplane="freeplane -U $FREEPLANE_DATA_HOME"
+alias mvn="mvn -gs $MVN_SETTINGS_HOME"
+alias vscodium="vscodium --extensions-dir $VSCODE_DATA_HOME"
 
 # Other
 alias lf='lf-ueberzug'

@@ -29,7 +29,7 @@ export PATH="$PATH:${$(find $HOME/.local/bin -type d -printf %p:)%%:}"
 
 # Default programs
 export EDITOR="nvim"
-export VISUAL="vscodium"
+export VISUAL="nvim"
 export SUDO_EDITOR="nvim"
 export TERMINAL="st"
 export BROWSER="firefox"
@@ -67,12 +67,17 @@ export SSB_HOME="$XDG_DATA_HOME/zoom"
 export LEIN_HOME="$XDG_DATA_HOME/lein"
 export DIALOGRC="$XDG_CONFIG_HOME/dialog/dialogrc"
 export R_ENVIRON_USER="$XDG_CONFIG_HOME/r/.Renviron"
+export GRADLE_USER_HOME="$XDG_DATA_HOME/gradle"
+export RANDFILE="$XDG_CACHE_HOME/openssl/rnd"
+export WINEPREFIX="$XDG_DATA_HOME/wineprefixes/default"
 
-# This is a custom variable that is called in ~/.config/shell/.aliasrc
+# custom variables called in ~/.config/shell/.aliasrc
 export FREEPLANE_DATA_HOME="$XDG_DATA_HOME/freeplane"
+export MVN_SETTINGS_HOME="$XDG_CONFIG_HOME/maven/settings.xml"
+export VSCODE_DATA_HOME="$XDG_DATA_HOME/vscode"
 
 # Might cause errors for VSCodium / VSCode (original path: ~/.vscode-oss)
-export VSCODE_PORTABLE="$XDG_DATA_HOME/vscode"
+export VSCODE_PORTABLE="$VSCODE_DATA_HOME"
 
 # This line will break some DMs (e.g. LightDM, SLiM)
 # export XAUTHORITY="$XDG_RUNTIME_DIR/Xauthority"
