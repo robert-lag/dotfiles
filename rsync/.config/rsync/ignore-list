@@ -4,6 +4,8 @@
 /.config/
 .dendron/
 .eclipse/
+.ghc/
+.ghidra/
 .freeplane/
 .gradle/
 .hplip/
@@ -13,8 +15,13 @@
 .sane/
 .swt/
 .vimgolf/
+.vscode-oss/
+.vscode-R/
+.wine/
 downloads/
 Downloads/
+
+cache/
 
 programming/**/build/
 programming/**/Build/
