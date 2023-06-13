@@ -16,3 +16,7 @@ end
 function hexencode(str)
    return (str:gsub(".", function(char) return string.format("%2x", char:byte()) end))
 end
+
+function show_msg(format, variable)
+    awful.spawn(string.format("notify-send '" .. format .. "'", variable))
+end

@@ -12,11 +12,11 @@ local cpu_popup = awful.popup {
                 {
                     {
                         id = 'icon',
-                        text = '',
+                        text = '',
                         align = 'left',
                         valign = 'center',
                         font = "Monospace 20",
-                        forced_width = 25,
+                        forced_width = 30,
                         widget = wibox.widget.textbox,
                     },
                     {
@@ -191,11 +191,11 @@ local cpu_widget = wibox.widget {
     {
         {
             id = 'icon',
-            text = '',
+            text = '',
             align = 'left',
             valign = 'center',
             font = "monospace 15",
-            forced_width = 15,
+            forced_width = 20,
             widget = wibox.widget.textbox,
         },
         {
@@ -413,12 +413,17 @@ local microphone_slider_initialized = false
 function update_volume_widget()
     awful.spawn.easy_async_with_shell("get-volume", function(out)
         local volume = tonumber(out)
+
+        if volume == nil then
+            return
+        end
+
         if volume <= 0 then
-            volume_widget.inner.icon.text = 'ﱝ'
-            volume_popup.widget.inner.volume.margins.icon.text = 'ﱝ'
+            volume_widget.inner.icon.text = '󰝟'
+            volume_popup.widget.inner.volume.margins.icon.text = '󰝟'
         else
-            volume_widget.inner.icon.text = '墳'
-            volume_popup.widget.inner.volume.margins.icon.text = '墳'
+            volume_widget.inner.icon.text = '󰕾'
+            volume_popup.widget.inner.volume.margins.icon.text = '󰕾'
         end
         volume_widget.inner.number.text = string.format("%2d%%", volume)
         volume_popup.widget.inner.volume.value.text = string.format(" %2d%%", volume)
@@ -426,9 +431,9 @@ function update_volume_widget()
     awful.spawn.easy_async_with_shell("get-microphone-volume", function(out)
         local mic_volume = tonumber(out)
         if mic_volume <= 0 then
-            volume_popup.widget.inner.microphone.margins.icon.text = ''
+            volume_popup.widget.inner.microphone.margins.icon.text = '󰍭'
         else
-            volume_popup.widget.inner.microphone.margins.icon.text = ''
+            volume_popup.widget.inner.microphone.margins.icon.text = '󰍬'
         end
         volume_popup.widget.inner.microphone.value.text = string.format(" %2d%%", mic_volume)
     end)
@@ -512,7 +517,7 @@ local battery_popup = awful.popup {
                 {
                     {
                         id = 'icon',
-                        text = '',
+                        text = '󰁹',
                         align = 'center',
                         valign = 'center',
                         font = "monospace 25",
@@ -604,7 +609,7 @@ local battery_widget_ui = wibox.widget {
     {
         {
             id = 'icon',
-            text = '',
+            text = '󰁹',
             align = 'left',
             valign = 'center',
             font = "monospace 15",
@@ -661,7 +666,7 @@ battery_widget:connect_signal('upower::update', function (widget, device)
             was_discharging = false
         end
 
-        battery_icon = ""
+        battery_icon = "󰂄"
 
         brightness_reduced_warning = false
         brightness_reduced_critical = false
@@ -672,42 +677,42 @@ battery_widget:connect_signal('upower::update', function (widget, device)
         was_discharging = true
 
         if device.percentage <= 5 then
-            battery_icon = ""
+            battery_icon = "󰂃"
             if not brightness_reduced_critical then
                 awful.spawn("set-max-brightness 10")
                 awful.spawn("notify-send --urgency critical --icon=~/.local/share/dunst/icons/battery-alert.png -- 'Very Low Battery'")
                 brightness_reduced_critical = true
             end
         elseif device.percentage <= 10 then
-            battery_icon = ""
+            battery_icon = "󰁺"
             if not brightness_reduced_warning then
                 awful.spawn("set-max-brightness 50")
                 awful.spawn("notify-send --icon=~/.local/share/dunst/icons/battery-alert.png -- 'Low Battery'")
                 brightness_reduced_warning = true
             end
         elseif device.percentage <= 20 then
-            battery_icon = ""
+            battery_icon = "󰁻"
             if not brightness_reduced_warning then
                 awful.spawn("set-max-brightness 50")
                 awful.spawn("notify-send --icon=~/.local/share/dunst/icons/battery-alert.png -- 'Low Battery'")
                 brightness_reduced_warning = true
             end
         elseif device.percentage <= 30 then
-            battery_icon = ""
+            battery_icon = "󰁼"
         elseif device.percentage <= 40 then
-            battery_icon = ""
+            battery_icon = "󰁽"
         elseif device.percentage <= 50 then
-            battery_icon = ""
+            battery_icon = "󰁾"
         elseif device.percentage <= 60 then
-            battery_icon = ""
+            battery_icon = "󰁿"
         elseif device.percentage <= 70 then
-            battery_icon = ""
+            battery_icon = "󰂀"
         elseif device.percentage <= 80 then
-            battery_icon = ""
+            battery_icon = "󰂁"
         elseif device.percentage <= 90 then
-            battery_icon = ""
+            battery_icon = "󰂂"
         else
-            battery_icon = ""
+            battery_icon = "󰁹"
         end
 
         if device.percentage <= 5 then
@@ -771,7 +776,7 @@ local wifi_popup = awful.popup {
             {
                 {
                     id = 'icon',
-                    text = '直',
+                    text = '󰒢',
                     align = 'left',
                     valign = 'center',
                     font = 'Monospace 15',
@@ -799,7 +804,7 @@ local wifi_popup = awful.popup {
             {
                 {
                     id = 'icon',
-                    text = '祝',
+                    text = '󰕒',
                     align = 'left',
                     valign = 'center',
                     font = 'Monospace 15',
@@ -827,7 +832,7 @@ local wifi_popup = awful.popup {
             {
                 {
                     id = 'icon',
-                    text = '',
+                    text = '󰇚',
                     align = 'left',
                     valign = 'center',
                     font = 'Monospace 15',
@@ -880,7 +885,7 @@ local wifi_widget = wibox.widget {
     {
         {
             id = 'icon',
-            text = '睊',
+            text = '󰌗',
             align = 'left',
             valign = 'center',
             forced_width = 20,
@@ -934,7 +939,7 @@ awful.widget.watch(
         local index_7, index_8 = string.find(stdout, "rx bitrate:%s%d+%p+%d+%s%a+%p%a")
 
         if ( wifi == '' or wifi == nil ) then
-            widget.inner.icon.text = "睊"
+            widget.inner.icon.text = "󰖪"
             current_wifi = ""
             wifi_popup.widget.inner.connected.inner.value.markup = "<b>Not Connected</b>"
             wifi_popup.widget.inner.download.value.text = "- Mbit/s"
@@ -945,7 +950,7 @@ awful.widget.watch(
             wifi_signal = string.sub(stdout, index_3+8, index_4)
             wifi_bitrate_tx = string.sub(stdout, index_5+12, index_6)
             wifi_bitrate_rx = string.sub(stdout, index_7+12, index_8)
-            widget.inner.icon.text = "直"
+            widget.inner.icon.text = "󰖩"
             current_wifi = wifi
             wifi_popup.widget.inner.connected.inner.value.markup = "<b>" .. wifi .. "</b>"
             wifi_popup.widget.inner.download.value.text = wifi_bitrate_rx
@@ -963,7 +968,7 @@ awful.widget.watch(
             connected_to_ethernet = false
         else
             connected_to_ethernet = true
-            widget.inner.icon.text = ""
+            widget.inner.icon.text = "󰌗"
             wifi_popup.widget.inner.connected.inner.value.markup = "<b>Ethernet</b>"
             wifi_popup.widget.inner.download.value.text = "- Mbit/s"
             wifi_popup.widget.inner.upload.value.text = "- Mbit/s"

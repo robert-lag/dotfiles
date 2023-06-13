@@ -52,34 +52,63 @@ globalkeys = gears.table.join(
         end
     end, {description = "restore minimized", group = "client"}),
     awful.key({ modkey,           }, "ö", nil, function ()
-        show_message("(d)efault | (e)qual | (s)quare")
+        show_message("(d)efault | (e)qual | (s)quare | (v)ertical")
         keygrabber.run(function(mods, key, action)
             if key == "Super_L" and action == "release" then
                 -- Continue to wait after the Super key was released
                 return
             end
 
+
+
             local master_width_factor = {
                 e = 0.5,
                 d = 0.6,
                 s = 0.5,
+                v = 0.5,
             }
 
             local master_count = {
                 e = 1,
                 d = 1,
                 s = 2,
+                v = 2,
+            }
+
+            local master_height_factor = {
+                e = 0.5,
+                d = 0.5,
+                s = 0.5,
+                v = 0.9,
             }
 
             if action == "press" then
                 hide_message()
-                if key ~= "Escape" then
-                    if master_width_factor[key] == nil then
-                        awful.spawn("notify-send -t 1500 'Key not assigned'")
-                    else
-                        awful.tag.selected().master_width_factor = master_width_factor[key]
-                        awful.tag.selected().master_count = master_count[key]
-                        awful.tag.selected().column_count = 1
+
+                local selected_tag = awful.tag.selected()
+                if selected_tag == nil then
+                    awful.spawn("notify-send -t 1500 'No tag selected'")
+                else
+                    if key ~= "Escape" then
+                        if master_width_factor[key] == nil then
+                            awful.spawn("notify-send -t 1500 'Key not assigned'")
+                        else
+                            local number_of_clients = 0
+                            for _ in pairs(selected_tag:clients()) do
+                                number_of_clients = number_of_clients + 1
+                            end
+
+                            if number_of_clients < 2 then
+                                awful.spawn("notify-send -t 1500 'Open at least 2 clients on this tag'")
+                            else
+                                selected_tag.master_width_factor = master_width_factor[key]
+                                selected_tag.master_count = master_count[key]
+                                selected_tag.column_count = 1
+
+                                -- Change the height factor of the master client
+                                awful.client.setwfact(master_height_factor[key], awful.client.getmaster())
+                            end
+                        end
                     end
                 end
             end
