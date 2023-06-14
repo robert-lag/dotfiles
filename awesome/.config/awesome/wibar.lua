@@ -725,7 +725,7 @@ battery_widget:connect_signal('upower::update', function (widget, device)
     if device.state == 4 then
         -- Device is fully charged (state 4)
         battery_popup.widget.inner.timeleft.visible = false
-        battery_icon = ""
+        battery_icon = "󰁹"
     else
         battery_popup.widget.inner.timeleft.visible = true
     end
