@@ -249,6 +249,41 @@ cnoremap w!! execute 'silent! write !sudo tee % >/dev/null' <bar> edit!
 
 " }}}1
 
+" Content search functions {{{1
+" function! HandleURL()
+"   let s:uri = matchstr(getline("."), '[a-z]*:\/\/[^ >,;()]*')
+"   let s:uri = shellescape(s:uri, 1)
+"   echom s:uri
+"   if s:uri != ""
+"         silent exec "!xdg-open '".s:uri."'"
+"     :redraw!
+"   else
+"     echo "No URI found in line."
+"   endif
+" endfunction
+" 
+" nmap <leader>z yiW:!xdg-open <c-r>" &<cr>
+" 
+" function! HandleNoteLink()
+"     let lineList = getline(1, '$')
+"     let fileString = join(lineList, "\n")
+"     let moreIdsToGo = v:true
+"     let l:startIndex = 0
+" 
+"     while (moreIdsToGo)
+"         let l:uri = matchstrpos(fileString, '\[\[[a-zA-Z0-9]*\]\]', startIndex)
+"         echom l:uri[0]
+"         echom l:uri[1]
+"         echom l:uri[2]
+"         echom len(fileString)
+"         let l:startIndex = l:uri[2]
+"         if l:uri[2] >= len(fileString)
+"             let moreIdsToGo = v:false
+"         endif
+"     endwhile
+" endfunction
+" }}}1
+
 " --------------------------------------------------------------------------
 " Plugins {{{1
 " --------------------------------------------------------------------------
@@ -262,12 +297,6 @@ call plug#begin(system('echo -n "${XDG_DATA_HOME:-$HOME/.local/share}/nvim/plugg
     " Support for repeating actions of plugins using '.'
     Plug 'tpope/vim-repeat'
 
-    " Debugging
-    " Plug 'puremourning/vimspector'
-
-    " File browser
-    Plug 'preservim/nerdtree'
-
     " For commenting code using shortcuts
     Plug 'preservim/nerdcommenter'
 
@@ -278,33 +307,26 @@ call plug#begin(system('echo -n "${XDG_DATA_HOME:-$HOME/.local/share}/nvim/plugg
     " Colorized parentheses
     Plug 'frazrepo/vim-rainbow'
 
-    " Linter (recognizes syntax errors in code)
-    " Plug 'dense-analysis/ale'
-
     " Git diff in sign column
     Plug 'airblade/vim-gitgutter'
 
     " Git wrapper for vim
+    " Needed for git support in lightline
     Plug 'tpope/vim-fugitive'
 
-    Plug 'vim-scripts/taglist.vim'
+    " Enables the viewing of 'tags' in a source code file
+    " This makes it possible to easily jump between function definitions
+    " and get a good overview of a source file in a short amount of time
+    " Plug 'vim-scripts/taglist.vim'
 
     " Status line
     Plug 'itchyny/lightline.vim'
-
-    " Integration of ALE (linter) into lightline (status line)
-    " Plug 'maximbaz/lightline-ale'
 
     " Colorize css color codes (e.g. #689d6a)
     Plug 'ap/vim-css-color'
 
     " Autocompletion
     Plug 'ycm-core/YouCompleteMe', { 'do': './install.py' }
-    " Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-    " Plug 'neoclide/coc.nvim', {'branch': 'release'}
-
-    " Enhanced rust support
-    " Plug 'rust-lang/rust.vim'
 
     " Markdown preview
     Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install' }
@@ -325,28 +347,8 @@ call plug#begin(system('echo -n "${XDG_DATA_HOME:-$HOME/.local/share}/nvim/plugg
     " CSV support
     Plug 'zhaocai/csv.vim'
 call plug#end()
-nnoremap <silent> K :call <SID>show_documentation()<CR>
 
 " }}}1
-
-" --------------------------------------------------------------------------
-" NERDTree {{{1
-" --------------------------------------------------------------------------
-" Start NERDTree and put the cursor back in the other window.
-"autocmd VimEnter * NERDTree | wincmd p
-
-" Change bookmarks file location
-let g:NERDTreeBookmarksFile=stdpath('data') . '/NERDTreeBookmarks'
-
-" Exit Vim if NERDTree is the only window left.
-autocmd BufEnter * if tabpagenr('$') == 1 && winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() |
-    \ quit | endif
-
-" Shortcuts
-" nnoremap <C-n> :NERDTree<CR>
-nnoremap <leader>ee :NERDTreeToggle<CR>
-nnoremap <leader>er :NERDTreeFocus<CR>
-nnoremap <leader>ef :NERDTreeFind<CR>
 
 " --------------------------------------------------------------------------
 " NERDCommenter {{{1
@@ -463,41 +465,9 @@ let g:lightline#ale#indicator_ok = ""
 nnoremap <silent> <leader>t :TlistToggle<CR>
 
 " --------------------------------------------------------------------------
-" ALE {{{1
-" --------------------------------------------------------------------------
-
-" " Keybindings for navigating between error and warnings
-" nmap <silent> <C-k> <Plug>(ale_previous_wrap)
-" nmap <silent> <C-j> <Plug>(ale_next_wrap)
-" 
-" " Keybindings for refactoring
-" nnoremap <silent> <leader>at :ALEToggle<CR>
-" nnoremap <silent> <leader>ad :ALEGoToDefinition<CR>
-" nnoremap <silent> <leader>af :ALEFindReferences<CR>
-" nnoremap <silent> <leader>aa :ALECodeAction<CR>
-" nnoremap <silent> <leader>ar :ALERename<CR>
-" 
-" " let g:ale_sign_error = '>>'
-" " let g:ale_sign_warning = '--'
-" 
-" highlight ALEErrorSign ctermbg=9
-" highlight link ALEStyleErrorSign ALEErrorSign
-" highlight ALEError ctermbg=1
-" highlight link ALEStyleError ALEError
-" 
-" highlight ALEWarningSign ctermbg=3
-" highlight link ALEStyleWarningSign ALEWarningSign
-" highlight ALEWarning ctermbg=8
-" highlight link ALEStyleWarning ALEWarning
-" 
-" highlight link ALEInfoSign ALEWarningSign
-" highlight link ALEStyleInfoSign ALEInfoSign
-" highlight link ALEInfo ALEWarning
-
-" --------------------------------------------------------------------------
 " YouCompleteMe {{{1
 " --------------------------------------------------------------------------
-" let g:ycm_autoclose_preview_window_after_completion = 1
+let g:ycm_autoclose_preview_window_after_completion = 1
 
 " Turn off automatic popups during typing
 " let g:ycm_auto_trigger = 0
@@ -506,52 +476,24 @@ nnoremap <silent> <leader>t :TlistToggle<CR>
 " let g:ycm_auto_hover = ''
 
 " Toggle documentation at cursor location
-" nmap <leader>s <plug>(YCMHover)
-
-
-
+nmap <leader>s <plug>(YCMHover)
 
 " Use preview popup instead of preview window
-" set previewpopup=height:15,width:80,highlight:PMenu
-" set completeopt+=popup
-" set completepopup=height:20,width:80,border:off,highlight:PMenu
+"set previewpopup=height:15,width:80,highlight:PMenu
+"set completeopt+=popup
+"set completepopup=height:20,width:80,border:off,highlight:PMenu
 
 " Minimum chars to type for identifer-based completion shows
 "let g:ycm_min_num_of_chars_for_completion = 99
 
 " Get keywords/identifiers of database of current programming language
-"let g:ycm_seed_identifiers_with_syntax = 1
+let g:ycm_seed_identifiers_with_syntax = 1
 
 " Limit the number of suggestion shown to increase performance...
 " ...in semantic-based enginea (as-you-type popup)
-" let g:ycm_max_num_candidates = 50
+let g:ycm_max_num_candidates = 50
 " ...in identifer-based engine (popup after typing for example '.')
-" let g:ycm_max_num_identifier_candidates = 10
-
-" --------------------------------------------------------------------------
-" Coc.nvim {{{1
-" --------------------------------------------------------------------------
-" inoremap <silent><expr> <TAB>
-"       \ pumvisible() ? "\<C-n>" :
-"       \ <SID>check_back_space() ? "\<TAB>" :
-"       \ coc#refresh()
-" inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
-" 
-" function! s:check_back_space() abort
-"   let col = col('.') - 1
-"   return !col || getline('.')[col - 1]  =~# '\s'
-" endfunction
-
-" --------------------------------------------------------------------------
-" Vimspector {{{1
-" --------------------------------------------------------------------------
-" let g:vimspector_enable_mappings = 'HUMAN'
-" 
-" " mnemonic 'di' = 'debug inspect'
-" " for normal mode - the word under the cursor
-" nmap <Leader>di <Plug>VimspectorBalloonEval
-" " for visual mode, the visually selected text
-" xmap <Leader>di <Plug>VimspectorBalloonEval
+let g:ycm_max_num_identifier_candidates = 10
 
 " --------------------------------------------------------------------------
 " vim-rainbow {{{1
@@ -614,41 +556,6 @@ let g:tex_conceal='abdmg'
 " --------------------------------------------------------------------------
 let g:csv_highlight_column = 'y'
 
-
-
-" function! HandleURL()
-"   let s:uri = matchstr(getline("."), '[a-z]*:\/\/[^ >,;()]*')
-"   let s:uri = shellescape(s:uri, 1)
-"   echom s:uri
-"   if s:uri != ""
-"         silent exec "!xdg-open '".s:uri."'"
-"     :redraw!
-"   else
-"     echo "No URI found in line."
-"   endif
-" endfunction
-" 
-" nmap <leader>z yiW:!xdg-open <c-r>" &<cr>
-" 
-" function! HandleNoteLink()
-"     let lineList = getline(1, '$')
-"     let fileString = join(lineList, "\n")
-"     let moreIdsToGo = v:true
-"     let l:startIndex = 0
-" 
-"     while (moreIdsToGo)
-"         let l:uri = matchstrpos(fileString, '\[\[[a-zA-Z0-9]*\]\]', startIndex)
-"         echom l:uri[0]
-"         echom l:uri[1]
-"         echom l:uri[2]
-"         echom len(fileString)
-"         let l:startIndex = l:uri[2]
-"         if l:uri[2] >= len(fileString)
-"             let moreIdsToGo = v:false
-"         endif
-"     endwhile
-" endfunction
-"
 " --------------------------------------------------------------------------
 " UltiSnips {{{1
 " --------------------------------------------------------------------------
@@ -657,7 +564,3 @@ let g:UltiSnipsJumpForwardTrigger="<C-j>"
 let g:UltiSnipsJumpBackwardTrigger="<C-k>"
 let g:UltiSnipsSnippetDirectories=["UltiSnips", "my_snippets"]
 
-" --------------------------------------------------------------------------
-" Deoplete {{{1
-" --------------------------------------------------------------------------
-let g:deoplete#enable_at_startup = 1
