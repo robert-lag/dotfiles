@@ -1,7 +1,14 @@
----------------------------------------------
--- Awesome theme which follows xrdb config --
---   by Yauhen Kirylau                    --
----------------------------------------------
+--     _
+--    / \__      _____  ___  ___  _ __ ___   ___
+--   / _ \ \ /\ / / _ \/ __|/ _ \| '_ ` _ \ / _ \
+--  / ___ \ V  V /  __/\__ \ (_) | | | | | |  __/
+-- /_/   \_\_/\_/ \___||___/\___/|_| |_| |_|\___|
+--  _____ _
+-- |_   _| |__   ___ _ __ ___   ___
+--   | | | '_ \ / _ \ '_ ` _ \ / _ \
+--   | | | | | |  __/ | | | | |  __/
+--   |_| |_| |_|\___|_| |_| |_|\___|
+--
 
 local theme_assets = require("beautiful.theme_assets")
 local xresources = require("beautiful.xresources")
@@ -30,7 +37,7 @@ local theme = dofile(themes_path.."default/theme.lua")
 -- General {{{1
 theme.font          = "monospace 10"
 
-theme.bg_normal     = darker(xrdb.color8, 10)
+theme.bg_normal     = xrdb.color8
 theme.bg_focus      = xrdb.color8
 theme.bg_urgent     = xrdb.color9
 theme.bg_minimize   = xrdb.background
@@ -60,14 +67,14 @@ theme.border_marked = xrdb.color10
 
 -- Taglist {{{1
 
--- Generate taglist squares
-local taglist_square_size = dpi(4)
-theme.taglist_squares_sel = theme_assets.taglist_squares_sel(
-    taglist_square_size, theme.fg_normal
-)
-theme.taglist_squares_unsel = theme_assets.taglist_squares_unsel(
-    taglist_square_size, theme.bg_normal
-)
+theme.taglist_border_color = theme.fg_focus
+theme.taglist_bg_normal = theme.bg_normal
+theme.taglist_fg_hover = theme.fg_focus
+theme.taglist_bg_hover = darker(theme.bg_normal, 10)
+
+-- Unset taglist squares
+theme.taglist_squares_sel = nil
+theme.taglist_squares_unsel = nil
 
 -- Tasklist {{{1
 theme.tasklist_font = "Monospace Bold 10"

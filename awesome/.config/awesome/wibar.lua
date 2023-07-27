@@ -1249,11 +1249,12 @@ beautiful.tasklist_disable_icon = true
 -- Create a wibox for each screen and add it {{{1
 local index_of_screen = 1
 awful.screen.connect_for_each_screen(function(s)
-    -- Each screen has its own tag table {{{2
+    -- Create tags {{{2
     for i = 1, 10 do
         awful.tag.add(tostring(i), {
             layout = awful.layout.layouts[1],
             screen = s,
+            selected = (i == 1)     -- Select first tag
         })
     end
 
@@ -1277,28 +1278,81 @@ awful.screen.connect_for_each_screen(function(s)
         screen = s,
     })
 
-    -- Hide specific tags {{{2
-    local original_taglist_label = awful.widget.taglist.taglist_label
-    function awful.widget.taglist.taglist_label(tag, args, tb)
-      local text, bg, bg_image, icon, other_args =
-        original_taglist_label(tag, args, tb)
-
-      -- Hide tags 11, 12, 13 and 14
-      if tag.index == 11 or tag.index == 12 or tag.index == 13 or tag.index == 14 then
-          text = ""
-      end
-
-      return text, bg, bg_image, icon, other_args
-    end
-
     -- Create a promptbox for each screen {{{2
     s.mypromptbox = awful.widget.prompt()
 
     -- Create a taglist widget {{{2
     s.mytaglist = awful.widget.taglist {
         screen  = s,
-        filter  = awful.widget.taglist.filter.noempty,
-        buttons = taglist_buttons
+        filter  = function(t)
+            -- Hide empty tags and tags 11 - 14
+            return awful.widget.taglist.filter.noempty(t) and
+                   t.index ~= 11 and
+                   t.index ~= 12 and
+                   t.index ~= 13 and
+                   t.index ~= 14
+        end,
+        buttons = taglist_buttons,
+        widget_template = {
+            {
+                {
+                    id = "bottom_border",
+                    widget = wibox.widget.separator,
+                    forced_height = 2,
+                    thickness = 2,
+                    forced_width = 5,
+                    orientation = "horizontal",
+                    color = beautiful.taglist_border_color
+                },
+                {
+                    {
+                        id = 'text_role',
+                        widget = wibox.widget.textbox,
+                    },
+                    left  = 5,
+                    right = 5,
+                    top = 4,
+                    bottom = 4,
+                    id = 'text_margin_role',
+                    widget = wibox.container.margin
+                },
+                layout = wibox.layout.fixed.vertical,
+            },
+            id     = 'background_role',
+            widget = wibox.container.background,
+
+            -- Add support for hover colors
+            create_callback = function(self, tag, _, _)
+                if tag.selected then
+                    self:get_children_by_id("bottom_border")[1].color = beautiful.taglist_border_color
+                else
+                    self:get_children_by_id("bottom_border")[1].color = beautiful.taglist_bg_normal
+                end
+
+                self:connect_signal('mouse::enter', function()
+                    if self.bg ~= beautiful.taglist_bg_hover then
+                        self.fg_backup = self.fg
+                        self.bg_backup = self.bg
+                        self.has_color_backup = true
+                    end
+                    self.fg = beautiful.taglist_fg_hover
+                    self.bg = beautiful.taglist_bg_hover
+                end)
+                self:connect_signal('mouse::leave', function()
+                    if self.has_color_backup then
+                        self.fg = self.fg_backup
+                        self.bg = self.bg_backup
+                    end
+                end)
+            end,
+            update_callback = function(self, tag, _, _)
+                if tag.selected then
+                    self:get_children_by_id("bottom_border")[1].color = beautiful.taglist_border_color
+                else
+                    self:get_children_by_id("bottom_border")[1].color = beautiful.taglist_bg_normal
+                end
+            end,
+        },
     }
 
     -- Create a tasklist widget {{{2
@@ -1312,7 +1366,7 @@ awful.screen.connect_for_each_screen(function(s)
         },
     }
 
-    -- Create the middle Widget {{{2
+    -- Create the middle widget {{{2
     middle_widgets[index_of_screen] = wibox.widget {
         s.mytasklist,
         {
