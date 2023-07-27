@@ -46,7 +46,7 @@ xdotool key --clearmodifiers Num_Lock &
 xrandr --output HDMI1 --auto --left-of eDP1 &
 
 # Set keyboard settings
-setup-keyboard &
+setup-keyboard
 
 # setup lock screen (xautolock will also be called by suspend@USER.service)
 xautolock -detectsleep -resetsaver \
