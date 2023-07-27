@@ -10,11 +10,12 @@ awful.rules.rules = {
                      buttons = clientbuttons,
                      screen = awful.screen.preferred,
                      size_hints_honor = false,
-                     placement = awful.placement.no_overlap+awful.placement.no_offscreen
+                     placement = awful.placement.no_overlap + awful.placement.no_offscreen
      }
     },
 
     -- Floating clients {{{1
+
     { rule_any = {
         instance = {
           "DTA",  -- Firefox addon DownThemAll.
@@ -26,8 +27,8 @@ awful.rules.rules = {
           "Blueman-manager",
           "Gpick",
           "Kruler",
-          "MessageWin",  -- kalarm.
-          "Tor Browser", -- Needs a fixed window size to avoid fingerprinting by screen size.
+          "MessageWin",     -- kalarm.
+          "Tor Browser",    -- Needs a fixed window size to avoid fingerprinting by screen size.
           "Wpa_gui",
           "veromix",
           "xtightvncviewer"},
@@ -35,16 +36,16 @@ awful.rules.rules = {
         -- Note that the name property shown in xprop might be set slightly after creation of the client
         -- and the name shown there might not match defined rules here.
         name = {
-          "Event Tester",  -- xev.
+          "Event Tester",   -- xev.
         },
         role = {
-          "AlarmWindow",  -- Thunderbird's calendar.
+          "AlarmWindow",    -- Thunderbird's calendar.
           "ConfigManager",  -- Thunderbird's about:config.
-          "pop-up",       -- e.g. Google Chrome's (detached) Developer Tools.
+          "pop-up",         -- e.g. Google Chrome's (detached) Developer Tools.
         }
       }, properties = { floating = true }
     },
-
+ 
     -- Fullscreen clients {{{1
     { rule_any = {
         class = {
@@ -67,6 +68,15 @@ awful.rules.rules = {
     -- ncmpcpp {{{1
     { rule = { instance = "ncmpcpp" },
       properties = { screen = 1, tag = " " }
+    },
+
+    -- Zoom Notifications {{{1
+    { rule = { name = "zoom" },
+      properties = {
+        floating = true,
+        titlebars_enabled = false,
+        requests_no_titlebar = true,
+      }
     },
 
     -- Scratchpads {{{1

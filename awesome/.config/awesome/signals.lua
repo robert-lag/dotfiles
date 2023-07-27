@@ -6,7 +6,9 @@ local function getBorderWidthOfTiledClient(client)
     local s = client.screen
     local only_one = #s.tiled_clients == 1
 
-    if (only_one and not client.floating) or client.maximized then
+    -- A client should have a border only if it isn't floating and if at least
+    -- one other non-floating client is shown next to it
+    if (only_one and not client.floating) or client.floating or client.maximized then
         return 0
     else
         return beautiful.border_width
@@ -49,7 +51,7 @@ end)
 
 -- Add a titlebar if titlebars_enabled is set to true in the rules
 client.connect_signal("request::titlebars", function(c)
-    -- buttons for the titlebar
+    -- Buttons for the titlebar
     local buttons = gears.table.join(
         awful.button({ }, 1, function()
             c:emit_signal("request::activate", "titlebar", {raise = true})
@@ -97,7 +99,7 @@ client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_n
 tag.connect_signal("property::layout", function(t)
     -- Show titlebars on tags with the floating layout
     for _, c in pairs(t:clients()) do
-        if t.layout == awful.layout.suit.floating or c.floating and not c.fullscreen then
+        if ((t.layout == awful.layout.suit.floating or c.floating)) and not c.requests_no_titlebar and not c.fullscreen then
             setTitlebar(c, true)
 
             -- Make rounded borders around clients
@@ -111,7 +113,7 @@ tag.connect_signal("property::layout", function(t)
 end)
 
 client.connect_signal("property::size", function (c)
-    if (c.floating or (c.first_tag ~= nil and c.first_tag.layout == awful.layout.suit.floating)) and not c.fullscreen then
+    if (c.floating or (c.first_tag ~= nil and c.first_tag.layout == awful.layout.suit.floating)) and not c.requests_no_titlebar and not c.fullscreen then
         gears.timer.delayed_call(function()
             -- Show titlebar
             setTitlebar(c, true)
