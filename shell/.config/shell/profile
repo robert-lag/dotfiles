@@ -36,6 +36,7 @@ export BROWSER="firefox"
 export COLORTERM="truecolor"
 export PAGER="less"
 export WM="awesome"
+export DIFFPROG="nvimdiff"  # For pacdiff
 
 
 # XDG directories
@@ -115,7 +116,7 @@ export LF_ICONS
 # --------------------------------------------------
 # Start graphical server if i3 is not already running
 if [ "$(tty)" = "/dev/tty1" ]; then
-	pgrep -x i3 || exec startx "$XINITRC"
+	pgrep -x i3 || exec startx
 fi
 
 # Set theme for tty
