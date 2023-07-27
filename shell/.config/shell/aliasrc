@@ -48,6 +48,9 @@ alias freeplane="freeplane -U $FREEPLANE_DATA_HOME"
 alias mvn="mvn -gs $MVN_SETTINGS_HOME"
 alias vscodium="vscodium --extensions-dir $VSCODE_DATA_HOME"
 
+# GTK4 themes for specific applications
+alias nautilus="nautilus-arc-dark-gtk4"
+
 # Other
 alias lf='lf-ueberzug'
 alias yt='yt-dlp --add-metadata --ignore-errors'    # Download video
