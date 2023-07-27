@@ -1,5 +1,6 @@
 # General
 *.log
+.uuid
 
 # vim data files
 vim/.vim/.netrwhist
