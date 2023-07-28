@@ -1,5 +1,7 @@
 # Dotfiles
 
+![Desktop](./.images/desktop-gruvbox.png)
+
 These are the dotfiles (= configuration files) that I use for my Arch Linux
 system. They are separated into folders that specify the program that uses them
 or their purpose. Inside them you'll find the location the files should be added
