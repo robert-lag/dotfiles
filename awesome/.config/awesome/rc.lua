@@ -110,7 +110,7 @@ systemmenu = {
 mymainmenu = awful.menu({
     { " lock", "xautolock -locknow", image_path.."placeholder.png" },
     { " system", systemmenu, image_path.."placeholder.png" },
-    { " awesome", awesomemenu, image_path.."placeholder.png" },
+    { "󰌢 awesome", awesomemenu, image_path.."placeholder.png" },
     { " terminal", terminal, image_path.."placeholder.png" },
 })
 -- }}}
@@ -143,4 +143,5 @@ require("rules")
 require("signals")
 -- }}}
 
+-- Set background image
 awful.spawn("setbg")
