@@ -15,6 +15,9 @@ The file `dotfiles/git/.config/git/config` should be applied to
 The deployment process can be automated using `stow` (see below for more
 information).
 
+Also, be aware that the dotfiles reference some of my scripts which can be found
+[here](https://github.com/robert-lag/scripts).
+
 ## Usage
 
 ### Clone repository
