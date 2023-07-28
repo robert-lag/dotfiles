@@ -38,7 +38,6 @@ export PAGER="less"
 export WM="awesome"
 export DIFFPROG="nvimdiff"  # For pacdiff
 
-
 # XDG directories
 export XDG_DATA_HOME="$HOME/.local/share"
 export XDG_CONFIG_HOME="$HOME/.config"
