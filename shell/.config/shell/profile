@@ -113,9 +113,9 @@ export LF_ICONS
 # --------------------------------------------------
 # Window manager
 # --------------------------------------------------
-# Start graphical server if i3 is not already running
 if [ "$(tty)" = "/dev/tty1" ]; then
-	pgrep -x i3 || exec startx
+    # Start graphical server
+	exec startx
 fi
 
 # Set theme for tty
