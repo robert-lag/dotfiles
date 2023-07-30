@@ -74,7 +74,7 @@ flash-lone-windows: 'always'
 
 rules:
   - window-class: St
-    default-opacity: 0.95
+    default-opacity: 0.9
 #
 #
 # Sway
