@@ -1,26 +1,23 @@
 ! Custom
 ! Original theme https://github.com/nathanbuchar/atom-one-dark-terminal
-! #define black_dark #282c34
-! #define black_light #5c6370
-#define black_dark #1e2127
-#define black_light #282c34
-#define red_dark #be5046
-#define red_light #e06c75
-#define green_dark #7a9f60
-#define green_light #98c379
-#define yellow_dark #d19a66
-#define yellow_light #e5c07b
-#define blue_dark #3b84c0
-#define blue_light #61afef
-#define magenta_dark #9a52af
-#define magenta_light #c678dd
-#define cyan_dark #3c909b
-#define cyan_light #56b6c2
-#define white_dark #828997
-#define white_light #abb2bf
-! #define white_light #dcdfe4
+#define black_dark #1E2127
+#define black_light #5C6370
+#define red_dark #E06C75
+#define red_light #E06C75
+#define green_dark #98C379
+#define green_light #98C379
+#define yellow_dark #D19A66
+#define yellow_light #D19A66
+#define blue_dark #61AFEF
+#define blue_light #61AFEF
+#define magenta_dark #C678DD
+#define magenta_light #C678DD
+#define cyan_dark #56B6C2
+#define cyan_light #56B6C2
+#define white_dark #ABB2BF
+#define white_light #FFFFFF
 
-*.foreground:       white_light
+*.foreground:       white_dark
 *.background:       black_dark
 !*.cursorColor:     #5C6370
 !*.highlightColor:  #3A3F4B
