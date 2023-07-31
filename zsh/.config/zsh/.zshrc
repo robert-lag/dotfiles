@@ -12,14 +12,14 @@ stty stop undef					# Disable ctrl-s to freeze terminal.
 setopt interactive_comments
 
 # Prompt
-PS1="%B%{$fg[cyan]%}%n@%M%{$fg[white]%}:%{$fg[yellow]%}%~%{$reset_color%}$%b "
+PS1="%B%{$fg[green]%}%n@%M%{$fg[white]%}:%{$fg[yellow]%}%~%{$reset_color%}$%b "
 
 # Show git information in right prompt
 autoload -Uz vcs_info
 precmd_vcs_info() { vcs_info }
 precmd_functions+=( precmd_vcs_info )
 setopt prompt_subst
-RPROMPT='%{$fg[cyan]%}${vcs_info_msg_0_}%{$reset_color%}'
+RPROMPT='%{$fg[green]%}${vcs_info_msg_0_}%{$reset_color%}'
 zstyle ':vcs_info:git:*' formats '%b'
 
 # History
