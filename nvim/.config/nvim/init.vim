@@ -116,49 +116,6 @@ autocmd BufWinEnter * silent! loadview
 
 " }}}1
 
-" --------------------------------------------------------------------------
-" Colors {{{1
-" --------------------------------------------------------------------------
-highlight! link SignColumn Background
-
-" Hide tilde ('~') symbols at end of files
-highlight NonText ctermfg=0 ctermbg=0
-
-" Popup menu (tooltip) colors
-highlight Pmenu ctermfg=15 ctermbg=8
-highlight PmenuSel ctermfg=15 ctermbg=6
-highlight PmenuSbar ctermfg=15 ctermbg=8
-highlight PmenuThumb ctermfg=15 ctermbg=15
-
-" Color of folds
-highlight Folded ctermfg=15 ctermbg=8
-
-" Color of concealed passages (like dollar signs at the beginning
-" and end of a formula in latex)
-highlight Conceal ctermfg=11 ctermbg=8
-
-" Color of misspelled words
-highlight SpellBad ctermfg=15 ctermbg=9
-
-" Color of line numbers
-highlight LineNr ctermfg=11 ctermbg=0
-highlight LineNrAbove ctermfg=240 ctermbg=0
-highlight LineNrBelow ctermfg=240 ctermbg=0
-
-" Show trailing whitespace
-highlight ExtraWhitespace ctermfg=15 ctermbg=8
-autocmd ColorScheme * highlight ExtraWhitespace
-autocmd BufEnter * match ExtraWhitespace /\s\+$/
-autocmd InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/
-autocmd InsertLeave * match ExtraWhiteSpace /\s\+$/
-
-" Diff colors
-highlight DiffDelete cterm=bold ctermfg=0 ctermbg=5
-highlight DiffText cterm=bold ctermfg=0 ctermbg=3
-highlight DiffAdd cterm=none ctermfg=0 ctermbg=6
-highlight DiffChange cterm=none ctermfg=0 ctermbg=4
-
-" }}}1
 
 " --------------------------------------------------------------------------
 " Key mappings {{{1
@@ -287,9 +244,14 @@ cnoremap w!! execute 'silent! write !sudo tee % >/dev/null' <bar> edit!
 " --------------------------------------------------------------------------
 " Plugins {{{1
 " --------------------------------------------------------------------------
+
+" --------------------------------------------------------------------------
+" Plugin List {{{2
+" --------------------------------------------------------------------------
 call plug#begin(system('echo -n "${XDG_DATA_HOME:-$HOME/.local/share}/nvim/plugged"'))
     " Colorschemes
     Plug 'lifepillar/vim-gruvbox8'
+    Plug 'joshdick/onedark.vim'
 
     " Show all available colors
     Plug 'guns/xterm-color-table.vim'
@@ -348,10 +310,10 @@ call plug#begin(system('echo -n "${XDG_DATA_HOME:-$HOME/.local/share}/nvim/plugg
     Plug 'zhaocai/csv.vim'
 call plug#end()
 
-" }}}1
+" }}}2
 
 " --------------------------------------------------------------------------
-" NERDCommenter {{{1
+" NERDCommenter {{{2
 " --------------------------------------------------------------------------
 
 " Add spaces after comment delimiters by default
@@ -367,7 +329,7 @@ let g:NERDCommentEmptyLines = 1
 let g:NERDToggleCheckAllLines = 1
 
 " --------------------------------------------------------------------------
-" GitGutter {{{1
+" GitGutter {{{2
 " --------------------------------------------------------------------------
 highlight GitGutterAdd guifg=#689d6a ctermfg=Green
 highlight GitGutterChange guifg=#d79921 ctermfg=Yellow
@@ -403,10 +365,10 @@ nmap ) <Plug>(GitGutterNextHunk)
 nmap ( <Plug>(GitGutterPrevHunk)
 
 " --------------------------------------------------------------------------
-" Lightline {{{1
+" Lightline {{{2
 " --------------------------------------------------------------------------
 let g:lightline = {
-    \ 'colorscheme': 'gruvbox',
+    \ 'colorscheme': 'xrdb',
     \ 'active': {
     \     'left': [ [ 'mode', 'paste' ],
     \             [ 'gitstatus', 'readonly', 'filename', 'modified' ] ],
@@ -460,12 +422,12 @@ let g:lightline#ale#indicator_errors = ""
 let g:lightline#ale#indicator_ok = ""
 
 " --------------------------------------------------------------------------
-" Taglist {{{1
+" Taglist {{{2
 " --------------------------------------------------------------------------
 nnoremap <silent> <leader>t :TlistToggle<CR>
 
 " --------------------------------------------------------------------------
-" YouCompleteMe {{{1
+" YouCompleteMe {{{2
 " --------------------------------------------------------------------------
 let g:ycm_autoclose_preview_window_after_completion = 1
 
@@ -496,13 +458,13 @@ let g:ycm_max_num_candidates = 50
 let g:ycm_max_num_identifier_candidates = 10
 
 " --------------------------------------------------------------------------
-" vim-rainbow {{{1
+" vim-rainbow {{{2
 " --------------------------------------------------------------------------
 autocmd FileType rust,c,cpp call rainbow#load()
 let g:rainbow_ctermfgs = ['lightblue', 'lightgreen', 'yellow', 'red', 'magenta']
 
 " --------------------------------------------------------------------------
-" Markdown Preview {{{1
+" Markdown Preview {{{2
 " --------------------------------------------------------------------------
 autocmd FileType markdown nmap <buffer> <leader>m :MarkdownPreview<CR>
 
@@ -521,14 +483,14 @@ let g:mkdp_preview_options = {
     \ }
 
 " --------------------------------------------------------------------------
-" Markdown Table Of Contents Generator {{{1
+" Markdown Table Of Contents Generator {{{2
 " --------------------------------------------------------------------------
 let g:vmt_fence_text = 'TOC'
 let g:vmt_fence_closing_text = '/TOC'
 let g:vmt_list_item_char = '-'
 
 " --------------------------------------------------------------------------
-" Latex Preview {{{1
+" Latex Preview {{{2
 " --------------------------------------------------------------------------
 autocmd FileType plaintex,tex nmap <buffer> <leader>m :LLPStartPreview<CR>
 
@@ -542,7 +504,7 @@ let g:livepreview_cursorhold_recompile = 0
 let g:livepreview_use_biber = 1
 
 " --------------------------------------------------------------------------
-" VimTex {{{1
+" VimTex {{{2
 " --------------------------------------------------------------------------
 let g:tex_flavor='latex'
 let g:vimtex_view_method='zathura'
@@ -552,15 +514,74 @@ set conceallevel=1
 let g:tex_conceal='abdmg'
 
 " --------------------------------------------------------------------------
-" csv.vim {{{1
+" csv.vim {{{2
 " --------------------------------------------------------------------------
 let g:csv_highlight_column = 'y'
 
 " --------------------------------------------------------------------------
-" UltiSnips {{{1
+" UltiSnips {{{2
 " --------------------------------------------------------------------------
 let g:UltiSnipsExpandTrigger="<leader><leader>"
 let g:UltiSnipsJumpForwardTrigger="<C-j>"
 let g:UltiSnipsJumpBackwardTrigger="<C-k>"
 let g:UltiSnipsSnippetDirectories=["UltiSnips", "my_snippets"]
 
+"
+" Onedark colorscheme {{{2
+" --------------------------------------------------------------------------
+
+let g:onedark_termcolors=256
+let g:onedark_color_overrides = {
+\ "background": {"gui": "#1e2127", "cterm": "0", "cterm16": "0" },
+\}
+
+colorscheme onedark
+
+" }}}1
+
+" --------------------------------------------------------------------------
+" Colors {{{1
+" --------------------------------------------------------------------------
+" Colors need to be defined after setting the colorscheme, so that
+" autocmd ColorScheme works correctly
+
+highlight! link SignColumn Background
+
+" Hide tilde ('~') symbols at end of files
+highlight NonText ctermfg=0 ctermbg=0
+
+" Popup menu (tooltip) colors
+highlight Pmenu ctermfg=15 ctermbg=8
+highlight PmenuSel ctermfg=15 ctermbg=6
+highlight PmenuSbar ctermfg=15 ctermbg=8
+highlight PmenuThumb ctermfg=15 ctermbg=15
+
+" Color of folds
+highlight Folded ctermfg=15 ctermbg=8
+
+" Color of concealed passages (like dollar signs at the beginning
+" and end of a formula in latex)
+highlight Conceal ctermfg=11 ctermbg=8
+
+" Color of misspelled words
+highlight SpellBad ctermfg=15 ctermbg=9
+
+" Color of line numbers
+highlight LineNr ctermfg=11 ctermbg=0
+highlight LineNrAbove ctermfg=240 ctermbg=0
+highlight LineNrBelow ctermfg=240 ctermbg=0
+
+" Show trailing whitespace
+highlight ExtraWhitespace ctermfg=15 ctermbg=8
+autocmd ColorScheme * highlight ExtraWhitespace
+autocmd BufEnter * match ExtraWhitespace /\s\+$/
+autocmd InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/
+autocmd InsertLeave * match ExtraWhiteSpace /\s\+$/
+
+" Diff colors
+highlight DiffDelete cterm=bold ctermfg=0 ctermbg=5
+highlight DiffText cterm=bold ctermfg=0 ctermbg=3
+highlight DiffAdd cterm=none ctermfg=0 ctermbg=6
+highlight DiffChange cterm=none ctermfg=0 ctermbg=4
+
+" }}}1

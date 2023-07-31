@@ -1,5 +1,5 @@
 " =============================================================================
-" Filename: autoload/lightline/colorscheme/gruvbox.vim
+" Filename: autoload/lightline/colorscheme/xrdb.vim
 " Author: robert
 " License: MIT License
 " Last Change: 2020/02/15 20:56:45.
@@ -8,10 +8,10 @@
 " ~/.local/share/nvim/plugged/lightline.vim/autoload/lightline/colorscheme/
 
 let s:term_red = 9
-let s:term_green = 14
-let s:term_yellow = 3
+let s:term_green = 10
+let s:term_yellow = 11
 let s:term_blue = 12
-let s:term_purple = 5
+let s:term_purple = 13
 let s:term_white = 15
 let s:term_black = 0
 let s:term_grey = 8
@@ -40,4 +40,4 @@ let s:p.tabline.right = [ s:p.normal.left[1] ]
 let s:p.normal.error = [ [ '#292c33', '#fb4934', s:mode_foreground, s:term_red ] ]
 let s:p.normal.warning = [ [ '#292c33', '#fabd2f', s:mode_foreground, s:term_yellow ] ]
 
-let g:lightline#colorscheme#gruvbox#palette = lightline#colorscheme#fill(s:p)
+let g:lightline#colorscheme#xrdb#palette = lightline#colorscheme#fill(s:p)
