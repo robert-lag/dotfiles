@@ -35,11 +35,11 @@ local theme = dofile(themes_path.."default/theme.lua")
 -- load vector assets' generators for this theme
 
 -- General {{{1
-theme.font          = "monospace 10"
+theme.font          = "Monospace 10"
 
-theme.bg_normal     = xrdb.color8
-theme.bg_focus      = xrdb.color8
-theme.bg_urgent     = xrdb.color9
+theme.bg_normal     = xrdb.color0
+theme.bg_focus      = xrdb.color0
+theme.bg_urgent     = xrdb.color1
 theme.bg_minimize   = xrdb.background
 theme.bg_systray    = theme.bg_normal
 
@@ -50,8 +50,8 @@ theme.fg_minimize   = darker(xrdb.color7, 50)
 
 theme.useless_gap   = dpi(0)
 theme.border_width  = dpi(3)
-theme.border_normal = darker(xrdb.color8, 10)
-theme.border_focus  = theme.bg_focus
+theme.border_normal = xrdb.color8
+theme.border_focus  = darker(theme.border_normal, -25)
 theme.border_marked = xrdb.color10
 
 -- There are other variable sets
@@ -79,6 +79,19 @@ theme.taglist_squares_unsel = nil
 
 -- Tasklist {{{1
 theme.tasklist_font = "Monospace Bold 10"
+theme.tasklist_bg_normal = theme.bg_normal
+theme.tasklist_bg_raised = darker(theme.tasklist_bg_normal, -20)
+theme.tasklist_fg_normal = theme.fg_normal
+theme.tasklist_fg_seperator = theme.fg_normal
+theme.tasklist_fg_focus = theme.fg_focus
+theme.tasklist_border_color = darker(theme.tasklist_bg_normal, -20)
+theme.tasklist_wifi = xrdb.color6
+theme.tasklist_cpu = xrdb.color4
+theme.tasklist_sound = xrdb.color5
+theme.tasklist_battery = xrdb.color2
+theme.tasklist_battery_warning = xrdb.color3
+theme.tasklist_battery_critical = xrdb.color1
+theme.tasklist_datetime = xrdb.color3
 
 -- Tooltip {{{1
 theme.tooltip_fg = theme.fg_normal
