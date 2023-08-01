@@ -9,7 +9,7 @@
 !! ---------------------------------------------------------------------------
 !! Colorscheme
 !! ---------------------------------------------------------------------------
-#include "./xresources.d/colorschemes/gruvbox-dark-custom3.xresources"
+#include "./xresources.d/colorschemes/one-dark.xresources"
 
 !! ---------------------------------------------------------------------------
 !! Cursor

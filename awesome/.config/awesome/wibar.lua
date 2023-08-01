@@ -28,7 +28,7 @@ local cpu_popup = awful.popup {
                     },
                     widget = wibox.layout.fixed.horizontal,
                 },
-                fg = xrdb.color4,
+                fg = beautiful.tasklist_cpu,
                 widget = wibox.container.background,
             },
             {
@@ -59,7 +59,7 @@ local cpu_popup = awful.popup {
             {
                 forced_width = 0,
                 forced_height = 20,
-                color = darker(xrdb.color0, -40),
+                color = beautiful.tasklist_fg_seperator,
                 widget = wibox.widget.separator
             },
             {
@@ -70,7 +70,7 @@ local cpu_popup = awful.popup {
                         forced_width = name_column_width,
                         widget = wibox.widget.textbox,
                     },
-                    fg = xrdb.color4,
+                    fg = beautiful.tasklist_cpu,
                     widget = wibox.container.background
                 },
                 {
@@ -81,7 +81,7 @@ local cpu_popup = awful.popup {
                         forced_width = usage_column_width,
                         widget = wibox.widget.textbox,
                     },
-                    fg = xrdb.color4,
+                    fg = beautiful.tasklist_cpu,
                     widget = wibox.container.background
                 },
                 {
@@ -172,7 +172,7 @@ local cpu_popup = awful.popup {
         margins = 10,
         widget  = wibox.container.margin
     },
-    border_color = xrdb.color8,
+    border_color = beautiful.tasklist_border_color,
     border_width = 2,
     offset = { y = 5, x = 10 },
     shape = function(cr, width, height)
@@ -182,8 +182,6 @@ local cpu_popup = awful.popup {
     ontop        = true,
     hide_on_right_click = true,
     opacity      = 0.85,
-    fg = xrdb.color7,
-    bg = xrdb.color0,
 }
 
 -- Widget {{{2
@@ -209,7 +207,7 @@ local cpu_widget = wibox.widget {
         spacing = 5,
         layout = wibox.layout.fixed.horizontal,
     },
-    fg = xrdb.color4,
+    fg = beautiful.tasklist_cpu,
     widget = wibox.container.background,
     buttons = gears.table.join(
         awful.button({ }, 1, function()
@@ -285,11 +283,11 @@ local volume_popup = awful.popup {
                     bar_shape = function(cr, width, height)
                         gears.shape.rounded_rect(cr, width, height, 2)
                     end,
-                    bar_color = darker(xrdb.color8, -20),
-                    bar_active_color = xrdb.color5,
+                    bar_color = beautiful.tasklist_bg_raised,
+                    bar_active_color = beautiful.tasklist_sound,
                     bar_height = 4,
                     handle_shape = gears.shape.circle,
-                    handle_color = xrdb.color5,
+                    handle_color = beautiful.tasklist_sound,
                     handle_width = slider_height,
                     forced_height = slider_height,
                     widget = wibox.widget.slider,
@@ -331,11 +329,11 @@ local volume_popup = awful.popup {
                     bar_shape = function(cr, width, height)
                         gears.shape.rounded_rect(cr, width, height, 2)
                     end,
-                    bar_color = darker(xrdb.color8, -20),
-                    bar_active_color = xrdb.color5,
+                    bar_color = beautiful.tasklist_bg_raised,
+                    bar_active_color = beautiful.tasklist_sound,
                     bar_height = 4,
                     handle_shape = gears.shape.circle,
-                    handle_color = xrdb.color5,
+                    handle_color = beautiful.tasklist_sound,
                     handle_width = slider_height,
                     forced_height = slider_height,
                     widget = wibox.widget.slider,
@@ -357,7 +355,7 @@ local volume_popup = awful.popup {
         margins = 10,
         widget  = wibox.container.margin
     },
-    border_color = xrdb.color8,
+    border_color = beautiful.tasklist_border_color,
     border_width = 2,
     offset = { y = 5, x = 10 },
     shape = function(cr, width, height)
@@ -366,8 +364,6 @@ local volume_popup = awful.popup {
     visible      = false,
     ontop        = true,
     opacity      = 0.85,
-    fg = xrdb.color7,
-    bg = xrdb.color0,
 }
 
 -- Widget {{{2
@@ -393,7 +389,7 @@ local volume_widget = wibox.widget {
         spacing = 5,
         layout = wibox.layout.fixed.horizontal,
     },
-    fg = xrdb.color5,
+    fg = beautiful.tasklist_sound,
     widget = wibox.container.background,
     buttons = gears.table.join(
         awful.button({ }, 1, function()
@@ -524,13 +520,13 @@ local battery_popup = awful.popup {
                         widget = wibox.widget.textbox,
                     },
                     id = 'inner',
-                    fg = xrdb.color2,
+                    fg = beautiful.tasklist_battery,
                     widget = wibox.container.background
                 },
                 id = 'graph',
                 thickness = 8,
-                bg = xrdb.color8,
-                colors = { xrdb.color2 },
+                bg = beautiful.tasklist_bg_raised,
+                colors = { beautiful.tasklist_battery },
                 value = 40,
                 min_value = 0,
                 max_value = 100,
@@ -590,7 +586,7 @@ local battery_popup = awful.popup {
         margins = 10,
         widget  = wibox.container.margin
     },
-    border_color = xrdb.color8,
+    border_color = beautiful.tasklist_border_color,
     border_width = 2,
     offset = { y = 5, x = 10 },
     shape = function(cr, width, height)
@@ -600,8 +596,6 @@ local battery_popup = awful.popup {
     ontop        = true,
     hide_on_right_click = true,
     opacity      = 0.85,
-    fg = xrdb.color7,
-    bg = xrdb.color0,
 }
 
 -- Widget {{{2
@@ -654,7 +648,7 @@ local brightness_reduced_critical = false
 
 battery_widget:connect_signal('upower::update', function (widget, device)
     local battery_icon
-    local battery_color = xrdb.color2
+    local battery_color = beautiful.tasklist_battery
     local time_left
     if device.state == 1 or device.state == 5 then
         -- Device is charging (state 1) or pending charging (state 5)
@@ -716,9 +710,9 @@ battery_widget:connect_signal('upower::update', function (widget, device)
         end
 
         if device.percentage <= 5 then
-            battery_color = xrdb.color1
+            battery_color = beautiful.tasklist_battery_critical
         elseif device.percentage <= 20 then
-            battery_color = xrdb.color3
+            battery_color = beautiful.tasklist_battery_warning
         end
     end
 
@@ -764,13 +758,13 @@ local wifi_popup = awful.popup {
                     widget = wibox.layout.fixed.horizontal,
                 },
                 id = 'connected',
-                fg = xrdb.color6,
+                fg = beautiful.tasklist_wifi,
                 widget = wibox.container.background,
             },
             {
                 forced_width = 0,
                 forced_height = 20,
-                color = darker(xrdb.color0, -40),
+                color = beautiful.tasklist_fg_seperator,
                 widget = wibox.widget.separator
             },
             {
@@ -863,7 +857,7 @@ local wifi_popup = awful.popup {
         margins = 10,
         widget  = wibox.container.margin
     },
-    border_color = xrdb.color8,
+    border_color = beautiful.tasklist_border_color,
     border_width = 2,
     offset = { y = 5, x = 10 },
     shape = function(cr, width, height)
@@ -873,8 +867,6 @@ local wifi_popup = awful.popup {
     ontop        = true,
     hide_on_right_click = true,
     opacity      = 0.85,
-    fg = xrdb.color7,
-    bg = xrdb.color0,
 }
 
 -- Widget {{{2
@@ -903,7 +895,7 @@ local wifi_widget = wibox.widget {
         spacing = 5,
         layout = wibox.layout.fixed.horizontal,
     },
-    fg = xrdb.color6,
+    fg = beautiful.tasklist_wifi,
     widget = wibox.container.background,
     buttons = gears.table.join(
             awful.button({ }, 1, function()
@@ -1003,25 +995,24 @@ styles.normal  = {
     shape    = rounded_shape(5),
 }
 styles.focus = {
-    fg_color = xrdb.color0,
-    bg_color = xrdb.color3,
+    fg_color = beautiful.tasklist_bg_normal,
+    bg_color = beautiful.tasklist_datetime,
     markup   = function(t) return '<b>' .. t .. '</b>' end,
     shape    = rounded_shape(5, true),
 }
 styles.header = {
-    fg_color = xrdb.color3,
+    fg_color = beautiful.tasklist_datetime,
     markup   = function(t) return '<b>' .. t .. '</b>' end,
     shape    = rounded_shape(10),
 }
 styles.weekday = {
-    -- fg_color = xrdb.color6,
     markup   = function(t) return '<b>' .. t .. '</b>' end,
 }
 styles.weeknumber = {
-    fg_color = darker(xrdb.color7, 60),
+    fg_color = darker(beautiful.tasklist_fg_normal, 50),
 }
 styles.weekend = {
-    bg_color = darker(xrdb.color0, -10),
+    bg_color = beautiful.tasklist_bg_raised,
 }
 
 local function decorate_cell(widget, flag, date)
@@ -1036,10 +1027,10 @@ local function decorate_cell(widget, flag, date)
 
     local default = {
         shape = rounded_shape(5),
-        border_color = xrdb.color8,
+        border_color = beautiful.tasklist_border_color,
         border_width = 0,
-        fg_color = xrdb.color15,
-        bg_color = xrdb.color0 .. "00",
+        fg_color = beautiful.tasklist_fg_normal,
+        bg_color = beautiful.tasklist_bg_normal .. "00",
         padding = 4,
         markup   = function(t) return t end,
     }
@@ -1112,7 +1103,7 @@ local calendar_popup = awful.popup {
             {
                 forced_width = 0,
                 forced_height = 20,
-                color = darker(xrdb.color0, -40),
+                color = beautiful.tasklist_fg_seperator,
                 widget = wibox.widget.separator
             },
             {
@@ -1129,7 +1120,7 @@ local calendar_popup = awful.popup {
         margins = 10,
         widget  = wibox.container.margin
     },
-    border_color = xrdb.color8,
+    border_color = beautiful.tasklist_border_color,
     border_width = 2,
     offset = { y = 5, x = 10 },
     shape = function(cr, width, height)
@@ -1139,8 +1130,7 @@ local calendar_popup = awful.popup {
     ontop        = true,
     hide_on_right_click = true,
     opacity      = 0.85,
-    fg = xrdb.color3,
-    bg = xrdb.color0,
+    fg = beautiful.tasklist_datetime,
 }
 
 -- Widget {{{2
@@ -1163,7 +1153,7 @@ local textclock = wibox.widget {
         spacing = 5,
         layout = wibox.layout.fixed.horizontal,
     },
-    fg = xrdb.color3,
+    fg = beautiful.tasklist_datetime,
     widget = wibox.container.background,
     buttons = gears.table.join(
         awful.button({ }, 1, function()
@@ -1382,8 +1372,8 @@ awful.screen.connect_for_each_screen(function(s)
                 widget = wibox.container.margin
             },
             id = 'message',
-            fg = xrdb.color3,
-            bg = darker(xrdb.color8, -5),
+            fg = beautiful.tasklist_fg_focus,
+            bg = beautiful.tasklist_bg_normal,
             widget = wibox.container.background
         },
         layout = wibox.layout.ratio.horizontal
@@ -1429,8 +1419,8 @@ awful.screen.connect_for_each_screen(function(s)
                 left = 8,
                 widget = wibox.container.margin
             },
-            bg = xrdb.color8,
-            fg = xrdb.color7,
+            bg = beautiful.tasklist_bg_normal,
+            fg = beautiful.tasklist_fg_seperator,
             widget = wibox.container.background
         },
     }
