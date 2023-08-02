@@ -1219,9 +1219,6 @@ local taglist_buttons = gears.table.join(
 )
 
 local tasklist_buttons = gears.table.join(
-    awful.button({ }, 1, function(c)
-        c.fullscreen = not c.fullscreen
-    end),
     awful.button({ }, 4, function()
         awful.client.focus.byidx(1)
     end),
