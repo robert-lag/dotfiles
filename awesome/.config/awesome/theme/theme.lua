@@ -54,6 +54,8 @@ theme.border_normal = xrdb.color8
 theme.border_focus  = darker(theme.border_normal, -25)
 theme.border_marked = xrdb.color10
 
+theme.master_width_factor = 0.6
+
 -- There are other variable sets
 -- overriding the default one when
 -- defined, the sets are:
@@ -99,11 +101,13 @@ theme.tooltip_bg = theme.bg_normal
 
 -- Systray {{{1
 theme.systray_icon_spacing = 5
-theme.bg_systray = xrdb.color8
+theme.bg_systray = theme.tasklist_bg_normal
 
-theme.titlebar_bg_normal = darker(xrdb.color8, 5)
-
-theme.master_width_factor = 0.6
+-- Titlebar {{{1
+theme.titlebar_bg_normal = xrdb.color0
+theme.titlebar_bg_focus = darker(xrdb.color0, -10)
+theme.titlebar_size = 30
+theme.titlebar_font = "Monospace Bold 10"
 
 -- Menu {{{1
 -- menu_[bg|fg]_[normal|focus]

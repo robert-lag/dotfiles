@@ -31,6 +31,7 @@ end
 
 -- Signals {{{1
 
+-- manage {{{2
 -- Signal function to execute when a new client appears
 client.connect_signal("manage", function (c)
     -- Set the windows at the slave,
@@ -48,7 +49,7 @@ client.connect_signal("manage", function (c)
     setTitlebar(c, c.floating or (c.first_tag ~= nil and c.first_tag.layout == awful.layout.suit.floating))
 end)
 
-
+-- request::titlebars {{{2
 -- Add a titlebar if titlebars_enabled is set to true in the rules
 client.connect_signal("request::titlebars", function(c)
     -- Buttons for the titlebar
@@ -64,7 +65,7 @@ client.connect_signal("request::titlebars", function(c)
     )
 
     local top_titlebar = awful.titlebar(c, {
-        size = 35,
+        size = beautiful.titlebar_size,
     })
 
     top_titlebar : setup {
@@ -75,7 +76,7 @@ client.connect_signal("request::titlebars", function(c)
         { -- Middle
             { -- Title
                 align  = "center",
-                font = "Monospace Bold 10",
+                font   = beautiful.titlebar_font,
                 widget = awful.titlebar.widget.titlewidget(c)
             },
             buttons = buttons,
@@ -85,17 +86,20 @@ client.connect_signal("request::titlebars", function(c)
     }
 end)
 
+-- mouse::enter {{{2
 -- Enable sloppy focus, so that focus follows mouse.
 client.connect_signal("mouse::enter", function(c)
     c:emit_signal("request::activate", "mouse_enter", {raise = false})
 end)
 
+-- focus / unfocus {{{2
 client.connect_signal("focus", function(c)
     client.border_width = getBorderWidthOfTiledClient(c)
     c.border_color = beautiful.border_focus
 end)
 client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_normal end)
 
+-- property::layout {{{2
 tag.connect_signal("property::layout", function(t)
     -- Show titlebars on tags with the floating layout
     for _, c in pairs(t:clients()) do
@@ -112,6 +116,7 @@ tag.connect_signal("property::layout", function(t)
     end
 end)
 
+-- property::size {{{2
 client.connect_signal("property::size", function (c)
     if (c.floating or (c.first_tag ~= nil and c.first_tag.layout == awful.layout.suit.floating)) and not c.requests_no_titlebar and not c.fullscreen then
         gears.timer.delayed_call(function()
@@ -128,3 +133,4 @@ client.connect_signal("property::size", function (c)
         end)
     end
 end)
+
