@@ -63,6 +63,10 @@ syncthing -no-browser -no-restart -logflags=0 &
 # Apply cursor theme (workaround for bug in awesome wm)
 xsetroot -cursor_name left_ptr &
 
+# Setup keyring
+dbus-update-activation-environment --all
+gnome-keyring-daemon --start --components=secrets
+
 # Startup applications
 firefox &
 $TERMINAL -n ncmpcpp -e $SHELL -c "ncmpcpp" &
