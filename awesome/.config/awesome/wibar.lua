@@ -798,34 +798,6 @@ local wifi_popup = awful.popup {
             {
                 {
                     id = 'icon',
-                    text = '󰕒',
-                    align = 'left',
-                    valign = 'center',
-                    font = 'Monospace 15',
-                    forced_width = 25,
-                    widget = wibox.widget.textbox,
-                },
-                {
-                    id = 'label',
-                    markup = '<b>Upload:</b> ',
-                    align = 'left',
-                    valign = 'center',
-                    widget = wibox.widget.textbox,
-                },
-                {
-                    id = 'value',
-                    text = '- MBit/s',
-                    align = 'right',
-                    valign = 'center',
-                    widget = wibox.widget.textbox,
-                },
-                id = 'upload',
-                forced_width = wifi_popup_width,
-                widget = wibox.layout.align.horizontal
-            },
-            {
-                {
-                    id = 'icon',
                     text = '󰇚',
                     align = 'left',
                     valign = 'center',
@@ -848,6 +820,34 @@ local wifi_popup = awful.popup {
                     widget = wibox.widget.textbox,
                 },
                 id = 'download',
+                forced_width = wifi_popup_width,
+                widget = wibox.layout.align.horizontal
+            },
+            {
+                {
+                    id = 'icon',
+                    text = '󰕒',
+                    align = 'left',
+                    valign = 'center',
+                    font = 'Monospace 15',
+                    forced_width = 25,
+                    widget = wibox.widget.textbox,
+                },
+                {
+                    id = 'label',
+                    markup = '<b>Upload:</b> ',
+                    align = 'left',
+                    valign = 'center',
+                    widget = wibox.widget.textbox,
+                },
+                {
+                    id = 'value',
+                    text = '- MBit/s',
+                    align = 'right',
+                    valign = 'center',
+                    widget = wibox.widget.textbox,
+                },
+                id = 'upload',
                 forced_width = wifi_popup_width,
                 widget = wibox.layout.align.horizontal
             },
@@ -911,7 +911,7 @@ local wifi_widget = wibox.widget {
                 --     awful.spawn(string.format("notify-send --expire-time 4000 --icon=~/.local/share/dunst/icons/wifi.png -- '%s'", current_wifi))
                 -- end
             end),
-            awful.button({ }, 2, function() awful.spawn("dmenu-wlan-scanner") end),
+            awful.button({ "Shift" }, 1, function() awful.spawn("dmenu-wlan-scanner") end),
             awful.button({ }, 3, function() awful.spawn(string.format("%s -e %s -c 'iwctl station wlan0 show; iwctl'", terminal, shell)) end)
     )
 }
