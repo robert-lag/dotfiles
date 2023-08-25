@@ -132,7 +132,7 @@ nnoremap <esc> :noh<return><esc>:<esc>
 " Shortcuts for split navigation, saving a keypress
 
 " Toggle spellchecking
-noremap <leader>c :setlocal spell! spelllang=en_us,de<CR>
+noremap <leader>s :setlocal spell! spelllang=en_us,de<CR>
 
 " Correct last spelling mistake
 nnoremap <leader>d <c-g>u<Esc>[s1z=`]a<c-g>u
@@ -250,10 +250,9 @@ cnoremap w!! execute 'silent! write !sudo tee % >/dev/null' <bar> edit!
 " --------------------------------------------------------------------------
 call plug#begin(system('echo -n "${XDG_DATA_HOME:-$HOME/.local/share}/nvim/plugged"'))
     " Colorschemes
-    Plug 'lifepillar/vim-gruvbox8'
     Plug 'joshdick/onedark.vim'
 
-    " Show all available colors
+    " Show all available colors with ':XTermColorTable'
     Plug 'guns/xterm-color-table.vim'
 
     " Support for repeating actions of plugins using '.'
@@ -307,7 +306,8 @@ call plug#begin(system('echo -n "${XDG_DATA_HOME:-$HOME/.local/share}/nvim/plugg
     Plug 'honza/vim-snippets'
 
     " CSV support
-    Plug 'zhaocai/csv.vim'
+    " Plug 'chrisbra/csv.vim'
+    Plug 'mechatroner/rainbow_csv'
 call plug#end()
 
 " }}}2
@@ -327,6 +327,18 @@ let g:NERDCommentEmptyLines = 1
 
 " Enable NERDCommenterToggle to check all selected lines is commented or not
 let g:NERDToggleCheckAllLines = 1
+
+" Some default shortcuts used by this plugin
+" nnoremap <leader>cc NERDCommenterComment
+" nnoremap <leader>cn NERDCommenterNested
+" nnoremap <leader>c<space> NERDCommenterToggle
+" nnoremap <leader>cm NERDCommenterMinimal
+" nnoremap <leader>ci NERDCommenterInvert
+" nnoremap <leader>cs NERDCommenterSexy
+" nnoremap <leader>cy NERDCommenterYank
+" nnoremap <leader>c$ NERDCommenterToEOL
+" nnoremap <leader>cA NERDCommenterAppend
+" nnoremap <leader>ca NERDCommenterAltDelims
 
 " --------------------------------------------------------------------------
 " GitGutter {{{2
@@ -438,7 +450,7 @@ let g:ycm_autoclose_preview_window_after_completion = 1
 " let g:ycm_auto_hover = ''
 
 " Toggle documentation at cursor location
-nmap <leader>s <plug>(YCMHover)
+nmap <leader>f <plug>(YCMHover)
 
 " Use preview popup instead of preview window
 "set previewpopup=height:15,width:80,highlight:PMenu
@@ -479,7 +491,7 @@ let g:mkdp_preview_options = {
     \ 'sequence_diagrams': {},
     \ 'flowchart_diagrams': {},
     \ 'content_editable': v:false,
-    \ 'disable_filename': 0
+    \ 'disable_filename': 1
     \ }
 
 " --------------------------------------------------------------------------
