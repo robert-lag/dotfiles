@@ -351,8 +351,8 @@
     #background = "#991A15"
     background = "#1e2127bb"
     foreground = "#abb2bf"
-    frame_color = "#be5046"
-    highlight = "#be5046"
+    frame_color = "#d19a66"
+    highlight = "#d19a66"
     timeout = 0
     # Icon for notifications with critical urgency, uncomment to enable
     default_icon = ~/.local/share/dunst/icons/critical.png

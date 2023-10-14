@@ -121,8 +121,8 @@ declare -A theme_attr_dict=(
 
     ["urgency_critical-background"]="\"$(xrdb_get 'color0' '#2b303b')bb\""
     ["urgency_critical-foreground"]="\"$(xrdb_get 'color15' '#abb2bf')\""
-    ["urgency_critical-frame_color"]="\"$(xrdb_get 'color3' '#bf616a')\""
-    ["urgency_critical-highlight"]="\"$(xrdb_get 'color3' '#d19a66')\""
+    ["urgency_critical-frame_color"]="\"$(xrdb_get 'color1' '#bf616a')\""
+    ["urgency_critical-highlight"]="\"$(xrdb_get 'color1' '#d19a66')\""
 )
 
 # Attributes dictionary keys.
