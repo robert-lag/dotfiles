@@ -8,6 +8,7 @@ require("awful.autofocus")
 gears = require("gears")
 wibox = require("wibox")
 beautiful = require("beautiful")
+naughty = require("naughty")
 xresources = require("beautiful.xresources")
 xrdb = xresources.get_current_theme()
 menubar = require("menubar")
@@ -18,6 +19,10 @@ menubar = require("menubar")
 
 image_path = "/home/robert/.config/awesome/images/"
 
+-- }}}
+
+-- {{{ Disable notifications
+package.loaded["naughty.dbus"] = {}
 -- }}}
 
 -- {{{ Helper functions
