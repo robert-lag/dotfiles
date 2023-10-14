@@ -27,7 +27,6 @@ redshift &
 # dwmblocks &
 
 # Opacity effects
-# picom -b -experimental-backends
 picom -b
 
 # Hide mouse cursor when typing
@@ -66,6 +65,10 @@ xsetroot -cursor_name left_ptr &
 # Setup keyring
 dbus-update-activation-environment --all
 gnome-keyring-daemon --start --components=secrets
+
+# Start music visualizer after short delay to ensure that wallpaper is
+# already set
+# sh -c 'sleep 10 && glava --desktop'
 
 # Startup applications
 firefox &
