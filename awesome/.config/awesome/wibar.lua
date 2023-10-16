@@ -267,7 +267,7 @@ local volume_popup = awful.popup {
                 {
                     {
                         id = 'icon',
-                        text = '墳',
+                        text = '󰕾',
                         align = 'center',
                         valign = 'center',
                         font = 'Monospace 15',
@@ -313,7 +313,7 @@ local volume_popup = awful.popup {
                 {
                     {
                         id = 'icon',
-                        text = ' ',
+                        text = '󰍬',
                         align = 'center',
                         valign = 'center',
                         font = 'Monospace 15',
@@ -371,7 +371,7 @@ local volume_widget = wibox.widget {
     {
         {
             id = 'icon',
-            text = '墳',
+            text = '󰕾',
             align = 'center',
             valign = 'center',
             font = "Monospace 15",
