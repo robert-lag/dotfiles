@@ -1,0 +1,3 @@
+# Show specific manpage in nvim
+:Man <name of manpage>
+
