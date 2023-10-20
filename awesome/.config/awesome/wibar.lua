@@ -40,7 +40,7 @@ local cpu_popup = awful.popup {
             {
                 {
                     id = 'label',
-                    markup = '<b>Total usage:</b> ',
+                    markup = '<b>Total Usage</b> ',
                     align = 'left',
                     valign = 'center',
                     widget = wibox.widget.textbox,
@@ -59,6 +59,7 @@ local cpu_popup = awful.popup {
             {
                 forced_width = 0,
                 forced_height = 20,
+                opacity = 0,
                 color = beautiful.tasklist_fg_seperator,
                 widget = wibox.widget.separator
             },
@@ -181,7 +182,7 @@ local cpu_popup = awful.popup {
     visible      = false,
     ontop        = true,
     hide_on_right_click = true,
-    opacity      = 0.85,
+    opacity      = beautiful.tasklist_popup_opacity,
 }
 
 -- Widget {{{2
@@ -192,7 +193,7 @@ local cpu_widget = wibox.widget {
             text = '',
             align = 'left',
             valign = 'center',
-            font = "monospace 15",
+            font = "monospace 14",
             forced_width = 20,
             widget = wibox.widget.textbox,
         },
@@ -224,8 +225,10 @@ local cpu_widget = wibox.widget {
 
 -- Update widget {{{2
 local function update_cpu_widget()
+    -- The -n2 flag is needed to make sure some time goes by until the results are out,
+    -- as otherwise it will think that 'top' is the most cpu intensive app.
     awful.spawn.easy_async_with_shell("top -b -n2 | grep '%Cpu' | tail -1 | grep -P '(....|...) id,'|awk '{print 100-$8 }'", function(out)
-        local usage = string.format("%2d%%",math.floor(out))
+        local usage = string.format("%2.0f%%",out)
         cpu_widget.inner.number.text = usage
         cpu_popup.widget.inner.total_usage.value.text = usage
     end)
@@ -253,6 +256,297 @@ update_cpu_widget()
 cpu_widget_timer = timer({ timeout = 4.0 })
 cpu_widget_timer:connect_signal("timeout", update_cpu_widget)
 cpu_widget_timer:start()
+-- }}}2
+
+-- RAM Widget {{{1
+
+-- Popup {{{2
+local name_column_width = 150
+local usage_column_width = 50
+local ram_popup = awful.popup {
+    widget = {
+        {
+            {
+                {
+                    {
+                        id = 'icon',
+                        text = '',
+                        align = 'left',
+                        valign = 'center',
+                        font = "Monospace 20",
+                        forced_width = 30,
+                        widget = wibox.widget.textbox,
+                    },
+                    {
+                        text = 'Memory',
+                        align = 'left',
+                        valign = 'center',
+                        font = 'Monospace Bold 15',
+                        widget = wibox.widget.textbox,
+                    },
+                    widget = wibox.layout.fixed.horizontal,
+                },
+                fg = beautiful.tasklist_ram,
+                widget = wibox.container.background,
+            },
+            {
+                opacity = 0,
+                forced_width = 0,
+                forced_height = 10,
+                widget = wibox.widget.separator
+            },
+            {
+                {
+                    {
+                        id = 'label',
+                        opacity = 0,
+                        forced_width = 60,
+                        forced_height = 0,
+                        widget = wibox.widget.separator
+                    },
+                    {
+                        id = 'used',
+                        markup = '<b>Used</b>',
+                        align = 'right',
+                        valign = 'center',
+                        forced_width = 60,
+                        widget = wibox.widget.textbox,
+                    },
+                    {
+                        id = 'total',
+                        markup = '<b>Total</b>',
+                        align = 'right',
+                        valign = 'center',
+                        forced_width = 60,
+                        widget = wibox.widget.textbox,
+                    },
+                    {
+                        id = 'percent',
+                        opacity = 0,
+                        forced_width = 60,
+                        forced_height = 0,
+                        widget = wibox.widget.separator
+                    },
+                    id = 'header',
+                    spacing = 20,
+                    widget = wibox.layout.fixed.horizontal
+                },
+                fg = beautiful.tasklist_ram,
+                widget = wibox.container.background,
+            },
+            {
+                {
+                    id = 'label',
+                    markup = '<b>RAM</b> ',
+                    align = 'left',
+                    valign = 'center',
+                    forced_width = 60,
+                    widget = wibox.widget.textbox,
+                },
+                {
+                    id = 'used',
+                    text = '0',
+                    align = 'right',
+                    valign = 'center',
+                    forced_width = 60,
+                    widget = wibox.widget.textbox,
+                },
+                {
+                    id = 'total',
+                    text = '0',
+                    align = 'right',
+                    valign = 'center',
+                    forced_width = 60,
+                    widget = wibox.widget.textbox,
+                },
+                {
+                    id = 'percent',
+                    text = '0%',
+                    align = 'right',
+                    valign = 'center',
+                    forced_width = 60,
+                    widget = wibox.widget.textbox,
+                },
+                id = 'ram_usage',
+                spacing = 20,
+                widget = wibox.layout.fixed.horizontal
+            },
+            {
+                {
+                    id = 'label',
+                    markup = '<b>Swap</b> ',
+                    align = 'left',
+                    valign = 'center',
+                    forced_width = 60,
+                    widget = wibox.widget.textbox,
+                },
+                {
+                    id = 'used',
+                    text = '0',
+                    align = 'right',
+                    valign = 'center',
+                    forced_width = 60,
+                    widget = wibox.widget.textbox,
+                },
+                {
+                    id = 'total',
+                    text = '0',
+                    align = 'right',
+                    valign = 'center',
+                    forced_width = 60,
+                    widget = wibox.widget.textbox,
+                },
+                {
+                    id = 'percent',
+                    text = '0%',
+                    align = 'right',
+                    valign = 'center',
+                    forced_width = 60,
+                    widget = wibox.widget.textbox,
+                },
+                id = 'swap_usage',
+                spacing = 20,
+                widget = wibox.layout.fixed.horizontal
+            },
+            {
+                forced_width = 0,
+                forced_height = 20,
+                color = beautiful.tasklist_fg_seperator,
+                widget = wibox.widget.separator
+            },
+            {
+                {
+                    id = 'label',
+                    markup = '<b>Total</b> ',
+                    align = 'left',
+                    valign = 'center',
+                    forced_width = 60,
+                    widget = wibox.widget.textbox,
+                },
+                {
+                    id = 'used',
+                    text = '0',
+                    align = 'right',
+                    valign = 'center',
+                    forced_width = 60,
+                    widget = wibox.widget.textbox,
+                },
+                {
+                    id = 'total',
+                    text = '0',
+                    align = 'right',
+                    valign = 'center',
+                    forced_width = 60,
+                    widget = wibox.widget.textbox,
+                },
+                {
+                    id = 'percent',
+                    text = '0%',
+                    align = 'right',
+                    valign = 'center',
+                    forced_width = 60,
+                    widget = wibox.widget.textbox,
+                },
+                id = 'total_usage',
+                spacing = 20,
+                widget = wibox.layout.fixed.horizontal
+            },
+            id = 'inner',
+            layout = wibox.layout.fixed.vertical
+        },
+        margins = 10,
+        widget  = wibox.container.margin
+    },
+    border_color = beautiful.tasklist_border_color,
+    border_width = 2,
+    offset = { y = 5, x = 10 },
+    shape = function(cr, width, height)
+        gears.shape.rounded_rect(cr, width, height, 8)
+    end,
+    visible      = false,
+    ontop        = true,
+    hide_on_right_click = true,
+    opacity      = beautiful.tasklist_popup_opacity,
+}
+
+-- Widget {{{2
+local ram_widget = wibox.widget {
+    {
+        {
+            id = 'icon',
+            text = '',
+            align = 'left',
+            valign = 'center',
+            font = "monospace 14",
+            forced_width = 20,
+            widget = wibox.widget.textbox,
+        },
+        {
+            id = 'number',
+            text = ' 0%',
+            align = 'left',
+            valign = 'center',
+            widget = wibox.widget.textbox,
+        },
+        id = 'inner',
+        spacing = 5,
+        layout = wibox.layout.fixed.horizontal,
+    },
+    fg = beautiful.tasklist_ram,
+    widget = wibox.container.background,
+    buttons = gears.table.join(
+        awful.button({ }, 1, function()
+            if ram_popup.visible then
+                ram_popup.visible = false
+            else
+                hide_popups()
+                ram_popup:move_next_to(mouse.current_widget_geometry)
+            end
+        end),
+        awful.button({ }, 3, function() awful.spawn(string.format("%s -e htop", terminal)) end)
+    )
+}
+
+-- Update widget {{{2
+local function update_ram_widget()
+    awful.spawn.easy_async_with_shell("free -t | tail -n +2 | awk '{print $2,$3}'", function(out)
+        result = {}
+        -- Iterate through all individual results and collect them in a table
+        for match in string.gmatch(out, '[^ \n]+') do
+            table.insert(result, match)
+        end
+
+        -- To calculate from B to GiB, you have to divide by 1024^2
+        -- 1024^2 = 1048576
+        ram_total_gib = result[1] / 1048576
+        ram_used_gib = result[2] / 1048576
+        ram_used_percent = ram_used_gib / ram_total_gib * 100
+        swap_total_gib = result[3] / 1048576
+        swap_used_gib = result[4] / 1048576
+        swap_used_percent = swap_used_gib / swap_total_gib * 100
+        sum_total_gib = result[5] / 1048576
+        sum_used_gib = result[6] / 1048576
+        sum_used_percent = sum_used_gib / sum_total_gib * 100
+
+        ram_widget.inner.number.text = string.format("%2.0f%%", ram_used_percent)
+        ram_popup.widget.inner.ram_usage.used.text = string.format("%2.1fGiB", ram_used_gib)
+        ram_popup.widget.inner.ram_usage.total.text = string.format("%2.1fGiB", ram_total_gib)
+        ram_popup.widget.inner.ram_usage.percent.text = string.format("%2.1f%%", ram_used_percent)
+        ram_popup.widget.inner.swap_usage.used.text = string.format("%2.1fGiB", swap_used_gib)
+        ram_popup.widget.inner.swap_usage.total.text = string.format("%2.1fGiB", swap_total_gib)
+        ram_popup.widget.inner.swap_usage.percent.text = string.format("%2.1f%%", swap_used_percent)
+        ram_popup.widget.inner.total_usage.used.text = string.format("%2.1fGiB", sum_used_gib)
+        ram_popup.widget.inner.total_usage.total.text = string.format("%2.1fGiB", sum_total_gib)
+        ram_popup.widget.inner.total_usage.percent.text = string.format("%2.1f%%", sum_used_percent)
+
+    end)
+end
+
+update_ram_widget()
+
+ram_widget_timer = timer({ timeout = 4.0 })
+ram_widget_timer:connect_signal("timeout", update_ram_widget)
+ram_widget_timer:start()
 -- }}}2
 
 -- Volume Widget {{{1
@@ -363,7 +657,7 @@ local volume_popup = awful.popup {
     end,
     visible      = false,
     ontop        = true,
-    opacity      = 0.85,
+    opacity      = beautiful.tasklist_popup_opacity,
 }
 
 -- Widget {{{2
@@ -372,10 +666,10 @@ local volume_widget = wibox.widget {
         {
             id = 'icon',
             text = '󰕾',
-            align = 'center',
+            align = 'left',
             valign = 'center',
             font = "Monospace 15",
-            forced_width = 20,
+            forced_width = 16,
             widget = wibox.widget.textbox,
         },
         {
@@ -545,7 +839,7 @@ local battery_popup = awful.popup {
             {
                 {
                     id = 'label',
-                    markup = '<b>Battery:</b> ',
+                    markup = '<b>Battery</b> ',
                     align = 'left',
                     valign = 'center',
                     widget = wibox.widget.textbox,
@@ -564,7 +858,7 @@ local battery_popup = awful.popup {
             {
                 {
                     id = 'label',
-                    markup = '<b>Time left:</b> ',
+                    markup = '<b>Time left</b> ',
                     align = 'left',
                     valign = 'center',
                     widget = wibox.widget.textbox,
@@ -595,7 +889,7 @@ local battery_popup = awful.popup {
     visible      = false,
     ontop        = true,
     hide_on_right_click = true,
-    opacity      = 0.85,
+    opacity      = beautiful.tasklist_popup_opacity,
 }
 
 -- Widget {{{2
@@ -747,6 +1041,15 @@ local wifi_popup = awful.popup {
             {
                 {
                     {
+                        id = 'icon',
+                        text = '󰖪',
+                        align = 'left',
+                        valign = 'center',
+                        font = "Monospace 20",
+                        forced_width = 30,
+                        widget = wibox.widget.textbox,
+                    },
+                    {
                         id = 'value',
                         markup = '<b>Not Connected</b>',
                         align = 'center',
@@ -758,13 +1061,14 @@ local wifi_popup = awful.popup {
                     widget = wibox.layout.fixed.horizontal,
                 },
                 id = 'connected',
-                fg = beautiful.tasklist_wifi,
+                fg = beautiful.tasklist_wifi_not_connected,
                 widget = wibox.container.background,
             },
             {
+                id = 'header_separator',
                 forced_width = 0,
-                forced_height = 20,
-                color = beautiful.tasklist_fg_seperator,
+                forced_height = 10,
+                opacity = 0,
                 widget = wibox.widget.separator
             },
             {
@@ -779,17 +1083,69 @@ local wifi_popup = awful.popup {
                 },
                 {
                     id = 'label',
-                    markup = '<b>Signal:</b> ',
+                    markup = '<b>Signal</b> ',
                     align = 'left',
                     valign = 'center',
                     widget = wibox.widget.textbox,
                 },
                 {
-                    id = 'value',
-                    text = '- dBm',
-                    align = 'right',
-                    valign = 'center',
-                    widget = wibox.widget.textbox,
+                    {
+                        {
+                            id = 'value1',
+                            text = '',
+                            align = 'right',
+                            valign = 'center',
+                            widget = wibox.widget.textbox,
+                        },
+                        id = 'color1',
+                        widget = wibox.container.background,
+                    },
+                    {
+                        {
+                            id = 'value2',
+                            text = '',
+                            align = 'right',
+                            valign = 'center',
+                            widget = wibox.widget.textbox,
+                        },
+                        id = 'color2',
+                        widget = wibox.container.background,
+                    },
+                    {
+                        {
+                            id = 'value3',
+                            text = '',
+                            align = 'right',
+                            valign = 'center',
+                            widget = wibox.widget.textbox,
+                        },
+                        id = 'color3',
+                        widget = wibox.container.background,
+                    },
+                    {
+                        {
+                            id = 'value4',
+                            text = '',
+                            align = 'right',
+                            valign = 'center',
+                            widget = wibox.widget.textbox,
+                        },
+                        id = 'color4',
+                        widget = wibox.container.background,
+                    },
+                    {
+                        {
+                            id = 'value5',
+                            text = '',
+                            align = 'right',
+                            valign = 'center',
+                            widget = wibox.widget.textbox,
+                        },
+                        id = 'color5',
+                        widget = wibox.container.background,
+                    },
+                    id = 'values',
+                    widget = wibox.layout.fixed.horizontal
                 },
                 id = 'signal',
                 forced_width = wifi_popup_width,
@@ -807,7 +1163,7 @@ local wifi_popup = awful.popup {
                 },
                 {
                     id = 'label',
-                    markup = '<b>Download:</b> ',
+                    markup = '<b>Download</b> ',
                     align = 'left',
                     valign = 'center',
                     widget = wibox.widget.textbox,
@@ -835,7 +1191,7 @@ local wifi_popup = awful.popup {
                 },
                 {
                     id = 'label',
-                    markup = '<b>Upload:</b> ',
+                    markup = '<b>Upload</b> ',
                     align = 'left',
                     valign = 'center',
                     widget = wibox.widget.textbox,
@@ -866,18 +1222,17 @@ local wifi_popup = awful.popup {
     visible      = false,
     ontop        = true,
     hide_on_right_click = true,
-    opacity      = 0.85,
+    opacity      = beautiful.tasklist_popup_opacity,
 }
 
 -- Widget {{{2
 local connected_to_ethernet = true
-local current_wifi = ""
 local wifi_ui_collapsed = false
 local wifi_widget = wibox.widget {
     {
         {
             id = 'icon',
-            text = '󰌗',
+            text = '󰖪',
             align = 'left',
             valign = 'center',
             forced_width = 20,
@@ -895,7 +1250,7 @@ local wifi_widget = wibox.widget {
         spacing = 5,
         layout = wibox.layout.fixed.horizontal,
     },
-    fg = beautiful.tasklist_wifi,
+    fg = beautiful.tasklist_wifi_not_connected,
     widget = wibox.container.background,
     buttons = gears.table.join(
             awful.button({ }, 1, function()
@@ -905,11 +1260,6 @@ local wifi_widget = wibox.widget {
                     hide_popups()
                     wifi_popup:move_next_to(mouse.current_widget_geometry)
                 end
-                -- if connected_to_ethernet then
-                --     awful.spawn("notify-send --expire-time 4000 --icon=~/.local/share/dunst/icons/lan.png -- 'Ethernet'")
-                -- else
-                --     awful.spawn(string.format("notify-send --expire-time 4000 --icon=~/.local/share/dunst/icons/wifi.png -- '%s'", current_wifi))
-                -- end
             end),
             awful.button({ "Shift" }, 1, function() awful.spawn("dmenu-wlan-scanner") end),
             awful.button({ }, 3, function() awful.spawn(string.format("%s -e %s -c 'iwctl station wlan0 show; iwctl'", terminal, shell)) end)
@@ -924,30 +1274,108 @@ awful.widget.watch(
             return
         end
 
+
         local wifi = string.match(stdout, "SSID:.*\n")
         local index_1, index_2 = string.find(stdout, "SSID: [^\n]*")
-        local index_3, index_4 = string.find(stdout, "signal: [^\n]*")
+        local index_3, index_4 = string.find(stdout, "signal: [^ \n]*")
         local index_5, index_6 = string.find(stdout, "tx bitrate:%s%d+%p+%d+%s%a+%p%a")
         local index_7, index_8 = string.find(stdout, "rx bitrate:%s%d+%p+%d+%s%a+%p%a")
 
         if ( wifi == '' or wifi == nil ) then
+            wifi_popup.widget.inner.header_separator.visible = false
+            wifi_popup.widget.inner.signal.visible = false
+            wifi_popup.widget.inner.upload.visible = false
+            wifi_popup.widget.inner.download.visible = false
+
             widget.inner.icon.text = "󰖪"
-            current_wifi = ""
+            widget.fg = beautiful.tasklist_wifi_not_connected
+            wifi_popup.widget.inner.connected.fg = beautiful.tasklist_wifi_not_connected
+            wifi_popup.widget.inner.connected.inner.icon.text = "󰖪"
             wifi_popup.widget.inner.connected.inner.value.markup = "<b>Not Connected</b>"
             wifi_popup.widget.inner.download.value.text = "- Mbit/s"
             wifi_popup.widget.inner.upload.value.text = "- Mbit/s"
-            wifi_popup.widget.inner.signal.value.text = "- dBm"
         else
+            -- widget.fg = xrdb.color4
             wifi = string.sub(stdout, index_1+6, index_2)
-            wifi_signal = string.sub(stdout, index_3+8, index_4)
+            wifi_signal = tonumber(string.sub(stdout, index_3+8, index_4))
             wifi_bitrate_tx = string.sub(stdout, index_5+12, index_6)
             wifi_bitrate_rx = string.sub(stdout, index_7+12, index_8)
+
+            wifi_popup.widget.inner.header_separator.visible = true
+            wifi_popup.widget.inner.signal.visible = true
+            wifi_popup.widget.inner.upload.visible = true
+            wifi_popup.widget.inner.download.visible = true
+
+            -- awful.spawn(string.format("notify-send --expire-time 4000 --icon=~/.local/share/dunst/icons/wifi.png -- '%s'", wifi))
             widget.inner.icon.text = "󰖩"
-            current_wifi = wifi
+            widget.fg = beautiful.tasklist_wifi
+            wifi_popup.widget.inner.connected.fg = beautiful.tasklist_wifi
+            wifi_popup.widget.inner.connected.inner.icon.text = "󰖩"
             wifi_popup.widget.inner.connected.inner.value.markup = "<b>" .. wifi .. "</b>"
             wifi_popup.widget.inner.download.value.text = wifi_bitrate_rx
             wifi_popup.widget.inner.upload.value.text = wifi_bitrate_tx
-            wifi_popup.widget.inner.signal.value.text = wifi_signal
+
+            if wifi_signal > -50 then
+                wifi_popup.widget.inner.signal.values.color1.value1.text = '*'
+                wifi_popup.widget.inner.signal.values.color2.value2.text = '*'
+                wifi_popup.widget.inner.signal.values.color3.value3.text = '*'
+                wifi_popup.widget.inner.signal.values.color4.value4.text = '*'
+                wifi_popup.widget.inner.signal.values.color5.value5.text = '*'
+
+                wifi_popup.widget.inner.signal.values.color1.fg = beautiful.tasklist_wifi_high_signal_fg
+                wifi_popup.widget.inner.signal.values.color2.fg = beautiful.tasklist_wifi_high_signal_fg
+                wifi_popup.widget.inner.signal.values.color3.fg = beautiful.tasklist_wifi_high_signal_fg
+                wifi_popup.widget.inner.signal.values.color4.fg = beautiful.tasklist_wifi_high_signal_fg
+                wifi_popup.widget.inner.signal.values.color5.fg = beautiful.tasklist_wifi_high_signal_fg
+            elseif wifi_signal > -67 then
+                wifi_popup.widget.inner.signal.values.color1.value1.text = '*'
+                wifi_popup.widget.inner.signal.values.color2.value2.text = '*'
+                wifi_popup.widget.inner.signal.values.color3.value3.text = '*'
+                wifi_popup.widget.inner.signal.values.color4.value4.text = '*'
+                wifi_popup.widget.inner.signal.values.color5.value5.text = '*'
+
+                wifi_popup.widget.inner.signal.values.color1.fg = beautiful.tasklist_wifi_low_signal_fg
+                wifi_popup.widget.inner.signal.values.color2.fg = beautiful.tasklist_wifi_high_signal_fg
+                wifi_popup.widget.inner.signal.values.color3.fg = beautiful.tasklist_wifi_high_signal_fg
+                wifi_popup.widget.inner.signal.values.color4.fg = beautiful.tasklist_wifi_high_signal_fg
+                wifi_popup.widget.inner.signal.values.color5.fg = beautiful.tasklist_wifi_high_signal_fg
+            elseif wifi_signal > -70 then
+                wifi_popup.widget.inner.signal.values.color1.value1.text = '*'
+                wifi_popup.widget.inner.signal.values.color2.value2.text = '*'
+                wifi_popup.widget.inner.signal.values.color3.value3.text = '*'
+                wifi_popup.widget.inner.signal.values.color4.value4.text = '*'
+                wifi_popup.widget.inner.signal.values.color5.value5.text = '*'
+
+                wifi_popup.widget.inner.signal.values.color1.fg = beautiful.tasklist_wifi_low_signal_fg
+                wifi_popup.widget.inner.signal.values.color2.fg = beautiful.tasklist_wifi_low_signal_fg
+                wifi_popup.widget.inner.signal.values.color3.fg = beautiful.tasklist_wifi_high_signal_fg
+                wifi_popup.widget.inner.signal.values.color4.fg = beautiful.tasklist_wifi_high_signal_fg
+                wifi_popup.widget.inner.signal.values.color5.fg = beautiful.tasklist_wifi_high_signal_fg
+            elseif wifi_signal > -80 then
+                wifi_popup.widget.inner.signal.values.color1.value1.text = '*'
+                wifi_popup.widget.inner.signal.values.color2.value2.text = '*'
+                wifi_popup.widget.inner.signal.values.color3.value3.text = '*'
+                wifi_popup.widget.inner.signal.values.color4.value4.text = '*'
+                wifi_popup.widget.inner.signal.values.color5.value5.text = '*'
+
+                wifi_popup.widget.inner.signal.values.color1.fg = beautiful.tasklist_wifi_low_signal_fg
+                wifi_popup.widget.inner.signal.values.color2.fg = beautiful.tasklist_wifi_low_signal_fg
+                wifi_popup.widget.inner.signal.values.color3.fg = beautiful.tasklist_wifi_low_signal_fg
+                wifi_popup.widget.inner.signal.values.color4.fg = beautiful.tasklist_wifi_high_signal_fg
+                wifi_popup.widget.inner.signal.values.color5.fg = beautiful.tasklist_wifi_high_signal_fg
+            else
+                wifi_popup.widget.inner.signal.values.color1.value1.text = '*'
+                wifi_popup.widget.inner.signal.values.color2.value2.text = '*'
+                wifi_popup.widget.inner.signal.values.color3.value3.text = '*'
+                wifi_popup.widget.inner.signal.values.color4.value4.text = '*'
+                wifi_popup.widget.inner.signal.values.color5.value5.text = '*'
+
+                wifi_popup.widget.inner.signal.values.color1.fg = beautiful.tasklist_wifi_low_signal_fg
+                wifi_popup.widget.inner.signal.values.color2.fg = beautiful.tasklist_wifi_low_signal_fg
+                wifi_popup.widget.inner.signal.values.color3.fg = beautiful.tasklist_wifi_low_signal_fg
+                wifi_popup.widget.inner.signal.values.color4.fg = beautiful.tasklist_wifi_low_signal_fg
+                wifi_popup.widget.inner.signal.values.color5.fg = beautiful.tasklist_wifi_high_signal_fg
+            end
         end
     end,
     wifi_widget
@@ -961,10 +1389,17 @@ awful.widget.watch(
         else
             connected_to_ethernet = true
             widget.inner.icon.text = "󰌗"
+            widget.fg = beautiful.tasklist_wifi
+            wifi_popup.widget.inner.connected.fg = beautiful.tasklist_wifi
+            wifi_popup.widget.inner.connected.inner.icon.text = "󰌗"
             wifi_popup.widget.inner.connected.inner.value.markup = "<b>Ethernet</b>"
             wifi_popup.widget.inner.download.value.text = "- Mbit/s"
             wifi_popup.widget.inner.upload.value.text = "- Mbit/s"
-            wifi_popup.widget.inner.signal.value.text = "- dBm"
+
+            wifi_popup.widget.inner.header_separator.visible = false
+            wifi_popup.widget.inner.signal.visible = false
+            wifi_popup.widget.inner.upload.visible = false
+            wifi_popup.widget.inner.download.visible = false
         end
     end,
     wifi_widget
@@ -1129,7 +1564,7 @@ local calendar_popup = awful.popup {
     visible      = false,
     ontop        = true,
     hide_on_right_click = true,
-    opacity      = 0.85,
+    opacity      = beautiful.tasklist_popup_opacity,
     fg = beautiful.tasklist_datetime,
 }
 
@@ -1394,6 +1829,7 @@ awful.screen.connect_for_each_screen(function(s)
                 {
                     wifi_widget,
                     cpu_widget,
+                    ram_widget,
                     volume_widget,
                     battery_widget,
                     textclock,
@@ -1443,8 +1879,10 @@ end
 -- Hide popups {{{1
 function hide_popups()
     cpu_popup.visible = false
+    ram_popup.visible = false
     volume_popup.visible = false
     calendar_popup.visible = false
     battery_popup.visible = false
     wifi_popup.visible = false
 end
+
