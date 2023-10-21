@@ -44,11 +44,11 @@ pacman -S stow
 ```
 
 ### Deploy dotfiles
-Then you can deploy all of them simply be using the `stow` command:
+Then you can deploy all of them simply be using the `.stow-all` script:
 
 ```
 cd ~/.dotfiles
-stow
+./.stow-all
 ```
 
 To deploy them individually, you can tell `stow` the directory that should be
