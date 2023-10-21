@@ -1,0 +1,8 @@
+#!/bin/sh
+
+for dir in ./*/
+do
+	dir_name=$(basename "$dir")
+	stow "$dir_name"
+done
+
