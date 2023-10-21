@@ -107,7 +107,7 @@ export DFT_TAB_WIDTH=4
 # --------------------------------------------------
 if [ "$(tty)" = "/dev/tty1" ]; then
     # Start graphical server
-	exec startx
+    exec startx
 fi
 
 # Set theme for tty
