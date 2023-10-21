@@ -296,7 +296,7 @@ call plug#begin(system('echo -n "${XDG_DATA_HOME:-$HOME/.local/share}/nvim/plugg
     Plug 'mzlogin/vim-markdown-toc'
 
     " Latex preview
-    Plug 'xuhdev/vim-latex-live-preview'
+    Plug 'xuhdev/vim-latex-live-preview', { 'for': 'tex' }
 
     " Enhanced latex support
     Plug 'lervag/vimtex'
