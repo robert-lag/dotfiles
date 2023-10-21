@@ -16,6 +16,7 @@
 # Scratchpads
 $TERMINAL -n dropdown-general -e $SHELL -c "neofetch;$SHELL" &
 $TERMINAL -n dropdown-math -f xft:Hack:pixelsize=24 -e qalc -c &
+$TERMINAL -n ncmpcpp -e $SHELL -c "ncmpcpp" &
 
 # Set background (using custom script)
 setbg
@@ -42,16 +43,16 @@ dunst &
 xdotool key --clearmodifiers Num_Lock &
 
 # Setup extended monitor
-xrandr --output HDMI1 --auto --left-of eDP1 &
+setup-monitors &
 
 # Set keyboard settings
 setup-keyboard
 
 # setup lock screen (xautolock will also be called by suspend@USER.service)
 xautolock -detectsleep -resetsaver \
-	-locker "xsecurelock" -time 10 -notify 5 \
-	-notifier "/usr/lib/xsecurelock/until_nonidle /usr/lib/xsecurelock/dimmer" \
-	-killer "systemctl suspend" -killtime 50 &
+    -locker "xsecurelock" -time 10 -notify 5 \
+    -notifier "/usr/lib/xsecurelock/until_nonidle /usr/lib/xsecurelock/dimmer" \
+    -killer "systemctl suspend" -killtime 50 &
 
 # MPD daemon start (if no other user instance exists)
 [ ! -s ~/.config/mpd/pid ] && mpd &
@@ -72,4 +73,4 @@ gnome-keyring-daemon --start --components=secrets
 
 # Startup applications
 firefox &
-$TERMINAL -n ncmpcpp -e $SHELL -c "ncmpcpp" &
+
