@@ -181,9 +181,9 @@ cmd restore-trash ${{
 }}
 
 # Dragon drag-and-drop {{{2
-cmd dragon %dragon-drag-and-drop --all --and-exit $fx
-cmd dragon-stay %dragon-drag-and-drop --all $fx
-cmd dragon-individual %dragon-drag-and-drop $fx
+cmd dragon %dragon-drop --all --and-exit $fx
+cmd dragon-stay %dragon-drop --all $fx
+cmd dragon-individual %dragon-drop $fx
 cmd dragon-cp %dragon-cp
 cmd dragon-mv %dragon-mv
 cmd dragon-dl %dragon-dl
@@ -312,20 +312,22 @@ map gh cd ~
 map gb cd ~/.local/bin
 map gB cd /usr/local/bin
 map gc cd ~/.config
-map gd cd ~/data/_user/Documents
+map gd cd ~/documents
 map gD cd /dev
 map gE cd /etc
-map gi cd ~/data/_user/Pictures
+map gi cd ~/pictures
 map gl cd ~/.local
 map gm cd /run/media
 map gM cd /mnt
+map go cd ~/downloads
 map gO cd /opt
-map gp cd ~/data/_user/programming
+map gp cd ~/programming
 map gr cd /
 map gs cd ~/.local/share
 map gS cd /srv
 map gT cd /tmp
-map gu cd ~/data/_user
+# map gu cd ~/data/_user
 map gU cd /usr
 map gV cd /var
 map g/ cd /
+
