@@ -703,7 +703,6 @@ local microphone_slider_initialized = false
 function update_volume_widget()
     awful.spawn.easy_async_with_shell("get-volume", function(out)
         local volume = tonumber(out)
-
         if volume == nil then
             return
         end
@@ -720,6 +719,10 @@ function update_volume_widget()
     end)
     awful.spawn.easy_async_with_shell("get-microphone-volume", function(out)
         local mic_volume = tonumber(out)
+        if mic_volume == nil then
+            return
+        end
+
         if mic_volume <= 0 then
             volume_popup.widget.inner.microphone.margins.icon.text = '󰍭'
         else
@@ -745,11 +748,19 @@ end
 function set_volume_sliders()
     awful.spawn.easy_async_with_shell("get-volume", function(out)
         local volume = tonumber(out)
+        if volume == nil then
+            return
+        end
+
         volume_popup.widget.inner.volume.value.text = string.format(" %2d%%", volume)
         set_volume_slider_without_signal(volume)
     end)
     awful.spawn.easy_async_with_shell("get-microphone-volume", function(out)
         local mic_volume = tonumber(out)
+        if mic_volume == nil then
+            return
+        end
+
         volume_popup.widget.inner.microphone.value.text = string.format(" %2d%%", mic_volume)
         volume_popup.widget.inner.microphone.slider.value = mic_volume
         set_microphone_slider_without_signal(mic_volume)
@@ -759,24 +770,28 @@ end
 update_volume_widget()
 set_volume_sliders()
 
-volume_popup.widget.inner.volume.slider:connect_signal("property::value", function(widget, new_value)
+volume_popup.widget.inner.volume.slider:connect_signal("property::value", function(_, new_value)
     if manual_set_of_volume_slider then
         manual_set_of_volume_slider = false
         return
     end
 
-    awful.spawn(string.format("pactl set-sink-volume @DEFAULT_SINK@ %d%%", new_value))
-    awful.spawn("pactl set-sink-mute @DEFAULT_SINK@ 0")
-    update_volume_widget()
+    -- I didn't use new_value here as there currently is a bug whre new_value is always nil
+    if (volume_popup.widget.inner.volume.slider.value ~= nil) then
+        awful.spawn(string.format("pactl set-sink-volume @DEFAULT_SINK@ %d%%", volume_popup.widget.inner.volume.slider.value))
+        awful.spawn("pactl set-sink-mute @DEFAULT_SINK@ 0")
+        update_volume_widget()
+    end
 end)
-volume_popup.widget.inner.microphone.slider:connect_signal("property::value", function(widget, new_value)
+volume_popup.widget.inner.microphone.slider:connect_signal("property::value", function(_, new_value)
     if manual_set_of_microphone_slider then
         manual_set_of_microphone_slider = false
         return
     end
 
-    if (new_value ~= nil) then
-        awful.spawn(string.format("pactl set-source-volume @DEFAULT_SOURCE@ %d%%", new_value))
+    -- I didn't use new_value here as there currently is a bug whre new_value is always nil
+    if (volume_popup.widget.inner.microphone.slider.value ~= nil) then
+        awful.spawn(string.format("pactl set-source-volume @DEFAULT_SOURCE@ %d%%", volume_popup.widget.inner.microphone.slider.value))
         awful.spawn("pactl set-source-mute @DEFAULT_SOURCE@ 0")
         update_volume_widget()
     end
@@ -949,6 +964,7 @@ battery_widget:connect_signal('upower::update', function (widget, device)
     if device.state == 1 or device.state == 5 then
         -- Device is charging (state 1) or pending charging (state 5)
         time_left = device.time_to_full / 3600
+        battery_popup.widget.inner.timeleft.visible = true
 
         -- Set the brightness to maximum after plugging in the cable
         if was_discharging then
@@ -963,6 +979,7 @@ battery_widget:connect_signal('upower::update', function (widget, device)
     elseif device.state == 2 then
         -- Device is discharging (state 2)
         time_left = device.time_to_empty / 3600
+        battery_popup.widget.inner.timeleft.visible = true
 
         was_discharging = true
 
@@ -1010,14 +1027,16 @@ battery_widget:connect_signal('upower::update', function (widget, device)
         elseif device.percentage <= 20 then
             battery_color = beautiful.tasklist_battery_warning
         end
-    end
-
-    if device.state == 4 then
+    elseif device.state == 4 then
         -- Device is fully charged (state 4)
         battery_popup.widget.inner.timeleft.visible = false
         battery_icon = "󰁹"
     else
-        battery_popup.widget.inner.timeleft.visible = true
+        -- Device state is something else
+        -- This case will occur if no battery is found
+        -- (like in a desktop PC)
+        battery_popup.widget.inner.timeleft.visible = false
+        battery_icon = "󰂑"
     end
 
     widget.fg = battery_color
@@ -1273,6 +1292,7 @@ awful.widget.watch(
     "iw dev wlan0 link", 5,
     function(widget, stdout, stderr, exitreason, exitcode)
         if connected_to_ethernet == true then
+            awful.spawn("notify-send 'connected to ethernet'")
             return
         end
 
@@ -1384,7 +1404,7 @@ awful.widget.watch(
 )
 
 awful.widget.watch(
-    "sh -c 'ip address show enp2s0 | grep inet'", 5,
+    "sh -c 'ip address show enp5s0 | grep inet'", 5,
     function(widget, stdout, stderr, exitreason, exitcode)
         if stdout == "" then
             connected_to_ethernet = false
