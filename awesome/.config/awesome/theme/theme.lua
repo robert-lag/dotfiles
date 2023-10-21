@@ -81,14 +81,19 @@ theme.taglist_squares_unsel = nil
 
 -- Tasklist {{{1
 theme.tasklist_font = "Monospace Bold 10"
+theme.tasklist_popup_opacity = 0.9
 theme.tasklist_bg_normal = theme.bg_normal
 theme.tasklist_bg_raised = darker(theme.tasklist_bg_normal, -20)
 theme.tasklist_fg_normal = theme.fg_normal
 theme.tasklist_fg_seperator = theme.fg_normal
 theme.tasklist_fg_focus = theme.fg_focus
 theme.tasklist_border_color = darker(theme.tasklist_bg_normal, -20)
-theme.tasklist_wifi = xrdb.color6
+theme.tasklist_wifi = xrdb.color2
+theme.tasklist_wifi_not_connected = xrdb.color1
+theme.tasklist_wifi_high_signal_fg = theme.tasklist_wifi
+theme.tasklist_wifi_low_signal_fg = theme.fg_normal
 theme.tasklist_cpu = xrdb.color4
+theme.tasklist_ram = xrdb.color4
 theme.tasklist_sound = xrdb.color5
 theme.tasklist_battery = xrdb.color2
 theme.tasklist_battery_warning = xrdb.color3

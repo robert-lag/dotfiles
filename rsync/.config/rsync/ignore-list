@@ -1,27 +1,38 @@
 # Directories to be ignored
 .android/
+.boscaceoil/
 .cache/
 /.config/
-.dendron/
-.eclipse/
-.ghc/
-.ghidra/
-.freeplane/
-.gradle/
-.hplip/
-.java/
-.mume/
-.pki/
-.sane/
-.swt/
-.vimgolf/
-.vscode-oss/
-.vscode-R/
+/.dendron/
+/.eclipse/
+/.ghc/
+/.ghidra/
+/.gsutil/
+/.freeplane/
+/.gradle/
+/.hplip/
+/.java/
+/.local/share/
+/.m2
+/.mume/
+/.pki/
+/.sane/
+/.sts4/
+/.swt/
+/.thunderbird/
+/.vpython-root/
+/.vimgolf/
+/.vscode-oss/
+/.vscode-R/
 .wine/
+
+cache/
 downloads/
 Downloads/
 
-cache/
+/.Xauthority
+/.yarnrc
+/.lmmsrc.xml
 
 programming/**/build/
 programming/**/Build/
@@ -37,10 +48,12 @@ vim-plug/
 # Windows directories
 $RECYCLE.BIN/
 DeliveryOptimization/
+MapData/
+Program Files/
+Programme/
 System Volume Information/
 WindowsApps/
 WpSystem/
 WUDownloadCache/
-Program Files/
-Programme/
 pagefile.sys
+DumpStack.log.tmp
