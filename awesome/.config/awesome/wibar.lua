@@ -481,9 +481,11 @@ volume_popup.widget.inner.microphone.slider:connect_signal("property::value", fu
         return
     end
 
-    awful.spawn(string.format("pactl set-source-volume @DEFAULT_SOURCE@ %d%%", new_value))
-    awful.spawn("pactl set-source-mute @DEFAULT_SOURCE@ 0")
-    update_volume_widget()
+    if (new_value ~= nil) then
+        awful.spawn(string.format("pactl set-source-volume @DEFAULT_SOURCE@ %d%%", new_value))
+        awful.spawn("pactl set-source-mute @DEFAULT_SOURCE@ 0")
+        update_volume_widget()
+    end
 end)
 
 volume_popup.widget.inner.volume.margins.icon:connect_signal("button::press", function()
