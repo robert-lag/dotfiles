@@ -39,28 +39,35 @@ local cpu_popup = awful.popup {
             },
             {
                 {
-                    id = 'label',
-                    markup = '<b>Total Usage</b> ',
-                    align = 'left',
-                    valign = 'center',
-                    widget = wibox.widget.textbox,
+                    {
+                        id = 'percentage',
+                        text = '',
+                        align = 'center',
+                        valign = 'center',
+                        font = "monospace 18",
+                        widget = wibox.widget.textbox,
+                    },
+                    id = 'inner',
+                    fg = beautiful.tasklist_cpu,
+                    widget = wibox.container.background
                 },
-                {
-                    id = 'value',
-                    text = '0%',
-                    align = 'right',
-                    valign = 'center',
-                    widget = wibox.widget.textbox,
-                },
-                id = 'total_usage',
-                forced_width = 120,
-                widget = wibox.layout.align.horizontal
+                id = 'graph',
+                thickness = 8,
+                bg = beautiful.tasklist_bg_raised,
+                colors = { beautiful.tasklist_cpu },
+                value = 40,
+                min_value = 0,
+                max_value = 100,
+                rounded_edge = true,
+                forced_width = 100,
+                forced_height = 100,
+                start_angle = 1.5 * math.pi,
+                widget = wibox.container.arcchart
             },
             {
                 forced_width = 0,
                 forced_height = 20,
                 opacity = 0,
-                color = beautiful.tasklist_fg_seperator,
                 widget = wibox.widget.separator
             },
             {
@@ -228,9 +235,10 @@ local function update_cpu_widget()
     -- The -n2 flag is needed to make sure some time goes by until the results are out,
     -- as otherwise it will think that 'top' is the most cpu intensive app.
     awful.spawn.easy_async_with_shell("top -b -n2 | grep '%Cpu' | tail -1 | grep -P '(....|...) id,'|awk '{print 100-$8 }'", function(out)
-        local usage = string.format("%2.0f%%",out)
-        cpu_widget.inner.number.text = usage
-        cpu_popup.widget.inner.total_usage.value.text = usage
+        local usage = out
+        cpu_widget.inner.number.text = string.format("%2.0f%%", usage)
+        cpu_popup.widget.inner.graph.inner.percentage.text = string.format("%0.0f%%", usage)
+        cpu_popup.widget.inner.graph.value = usage
     end)
     awful.spawn.easy_async_with_shell("top -b -n2 -w 200 | grep -A 5 '%CPU' | tail -5 | awk '{print $9,$12 }'", function(out)
         result = {}
@@ -258,7 +266,7 @@ cpu_widget_timer:connect_signal("timeout", update_cpu_widget)
 cpu_widget_timer:start()
 -- }}}2
 
--- RAM Widget {{{1
+-- Memory Widget {{{1
 
 -- Popup {{{2
 local name_column_width = 150
@@ -471,6 +479,8 @@ local function update_ram_widget()
         sum_total_gib = result[5] / b_to_gib_divider
         sum_used_gib = result[6] / b_to_gib_divider
         sum_used_percent = sum_used_gib / sum_total_gib * 100
+
+        ram_widget.inner.number.text = string.format("%2.0f%%", ram_used_percent)
 
         ram_popup.widget.inner.graphs.ram.graph.value = ram_used_percent
         ram_popup.widget.inner.graphs.ram.graph.inner.percentage.text = string.format("%0.0f%%", ram_used_percent)
