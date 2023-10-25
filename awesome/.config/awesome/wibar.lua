@@ -298,158 +298,101 @@ local ram_popup = awful.popup {
             {
                 {
                     {
-                        id = 'label',
-                        opacity = 0,
-                        forced_width = 60,
-                        forced_height = 0,
-                        widget = wibox.widget.separator
+                        {
+                            {
+                                id = 'percentage',
+                                text = '',
+                                align = 'center',
+                                valign = 'center',
+                                font = "monospace 18",
+                                widget = wibox.widget.textbox,
+                            },
+                            id = 'inner',
+                            fg = beautiful.tasklist_ram,
+                            widget = wibox.container.background
+                        },
+                        id = 'graph',
+                        thickness = 8,
+                        bg = beautiful.tasklist_bg_raised,
+                        colors = { beautiful.tasklist_ram },
+                        value = 40,
+                        min_value = 0,
+                        max_value = 100,
+                        rounded_edge = true,
+                        forced_width = 100,
+                        forced_height = 100,
+                        start_angle = 1.5 * math.pi,
+                        widget = wibox.container.arcchart
                     },
                     {
-                        id = 'used',
-                        markup = '<b>Used</b>',
-                        align = 'right',
+                        text = 'RAM',
+                        align = 'center',
                         valign = 'center',
-                        forced_width = 60,
+                        font = "monospace bold 14",
                         widget = wibox.widget.textbox,
                     },
                     {
-                        id = 'total',
-                        markup = '<b>Total</b>',
-                        align = 'right',
+                        id = 'exact_values',
+                        text = ' 0.0GiB /  0.0GiB',
+                        align = 'center',
                         valign = 'center',
-                        forced_width = 60,
+                        font = "monospace 9",
+                        widget = wibox.widget.textbox,
+                    },
+                    id = 'ram',
+                    spacing = 5,
+                    widget = wibox.layout.fixed.vertical
+                },
+                {
+                    {
+                        {
+                            {
+                                id = 'percentage',
+                                text = '',
+                                align = 'center',
+                                valign = 'center',
+                                font = "monospace 18",
+                                widget = wibox.widget.textbox,
+                            },
+                            id = 'inner',
+                            fg = beautiful.tasklist_ram,
+                            widget = wibox.container.background
+                        },
+                        id = 'graph',
+                        thickness = 8,
+                        bg = beautiful.tasklist_bg_raised,
+                        colors = { beautiful.tasklist_ram },
+                        value = 40,
+                        min_value = 0,
+                        max_value = 100,
+                        rounded_edge = true,
+                        forced_width = 100,
+                        forced_height = 100,
+                        start_angle = 1.5 * math.pi,
+                        widget = wibox.container.arcchart
+                    },
+                    {
+                        text = 'Swap',
+                        align = 'center',
+                        valign = 'center',
+                        font = "monospace bold 14",
                         widget = wibox.widget.textbox,
                     },
                     {
-                        id = 'percent',
-                        opacity = 0,
-                        forced_width = 60,
-                        forced_height = 0,
-                        widget = wibox.widget.separator
+                        id = 'exact_values',
+                        text = ' 0.0GiB /  0.0GiB',
+                        align = 'center',
+                        valign = 'center',
+                        font = "monospace 9",
+                        widget = wibox.widget.textbox,
                     },
-                    id = 'header',
-                    spacing = 20,
-                    widget = wibox.layout.fixed.horizontal
+                    id = 'swap',
+                    spacing = 5,
+                    widget = wibox.layout.fixed.vertical
                 },
-                fg = beautiful.tasklist_ram,
-                widget = wibox.container.background,
-            },
-            {
-                {
-                    id = 'label',
-                    markup = '<b>RAM</b> ',
-                    align = 'left',
-                    valign = 'center',
-                    forced_width = 60,
-                    widget = wibox.widget.textbox,
-                },
-                {
-                    id = 'used',
-                    text = '0',
-                    align = 'right',
-                    valign = 'center',
-                    forced_width = 60,
-                    widget = wibox.widget.textbox,
-                },
-                {
-                    id = 'total',
-                    text = '0',
-                    align = 'right',
-                    valign = 'center',
-                    forced_width = 60,
-                    widget = wibox.widget.textbox,
-                },
-                {
-                    id = 'percent',
-                    text = '0%',
-                    align = 'right',
-                    valign = 'center',
-                    forced_width = 60,
-                    widget = wibox.widget.textbox,
-                },
-                id = 'ram_usage',
-                spacing = 20,
-                widget = wibox.layout.fixed.horizontal
-            },
-            {
-                {
-                    id = 'label',
-                    markup = '<b>Swap</b> ',
-                    align = 'left',
-                    valign = 'center',
-                    forced_width = 60,
-                    widget = wibox.widget.textbox,
-                },
-                {
-                    id = 'used',
-                    text = '0',
-                    align = 'right',
-                    valign = 'center',
-                    forced_width = 60,
-                    widget = wibox.widget.textbox,
-                },
-                {
-                    id = 'total',
-                    text = '0',
-                    align = 'right',
-                    valign = 'center',
-                    forced_width = 60,
-                    widget = wibox.widget.textbox,
-                },
-                {
-                    id = 'percent',
-                    text = '0%',
-                    align = 'right',
-                    valign = 'center',
-                    forced_width = 60,
-                    widget = wibox.widget.textbox,
-                },
-                id = 'swap_usage',
-                spacing = 20,
-                widget = wibox.layout.fixed.horizontal
-            },
-            {
-                forced_width = 0,
-                forced_height = 20,
-                color = beautiful.tasklist_fg_seperator,
-                widget = wibox.widget.separator
-            },
-            {
-                {
-                    id = 'label',
-                    markup = '<b>Total</b> ',
-                    align = 'left',
-                    valign = 'center',
-                    forced_width = 60,
-                    widget = wibox.widget.textbox,
-                },
-                {
-                    id = 'used',
-                    text = '0',
-                    align = 'right',
-                    valign = 'center',
-                    forced_width = 60,
-                    widget = wibox.widget.textbox,
-                },
-                {
-                    id = 'total',
-                    text = '0',
-                    align = 'right',
-                    valign = 'center',
-                    forced_width = 60,
-                    widget = wibox.widget.textbox,
-                },
-                {
-                    id = 'percent',
-                    text = '0%',
-                    align = 'right',
-                    valign = 'center',
-                    forced_width = 60,
-                    widget = wibox.widget.textbox,
-                },
-                id = 'total_usage',
-                spacing = 20,
-                widget = wibox.layout.fixed.horizontal
+                id = 'graphs',
+                forced_width = 280,
+                widget = wibox.layout.flex.horizontal
             },
             id = 'inner',
             layout = wibox.layout.fixed.vertical
@@ -518,27 +461,24 @@ local function update_ram_widget()
 
         -- To calculate from B to GiB, you have to divide by 1024^2
         -- 1024^2 = 1048576
-        ram_total_gib = result[1] / 1048576
-        ram_used_gib = result[2] / 1048576
+        b_to_gib_divider = 1048576
+        ram_total_gib = result[1] / b_to_gib_divider
+        ram_used_gib = result[2] / b_to_gib_divider
         ram_used_percent = ram_used_gib / ram_total_gib * 100
-        swap_total_gib = result[3] / 1048576
-        swap_used_gib = result[4] / 1048576
+        swap_total_gib = result[3] / b_to_gib_divider
+        swap_used_gib = result[4] / b_to_gib_divider
         swap_used_percent = swap_used_gib / swap_total_gib * 100
-        sum_total_gib = result[5] / 1048576
-        sum_used_gib = result[6] / 1048576
+        sum_total_gib = result[5] / b_to_gib_divider
+        sum_used_gib = result[6] / b_to_gib_divider
         sum_used_percent = sum_used_gib / sum_total_gib * 100
 
-        ram_widget.inner.number.text = string.format("%2.0f%%", ram_used_percent)
-        ram_popup.widget.inner.ram_usage.used.text = string.format("%2.1fGiB", ram_used_gib)
-        ram_popup.widget.inner.ram_usage.total.text = string.format("%2.1fGiB", ram_total_gib)
-        ram_popup.widget.inner.ram_usage.percent.text = string.format("%2.1f%%", ram_used_percent)
-        ram_popup.widget.inner.swap_usage.used.text = string.format("%2.1fGiB", swap_used_gib)
-        ram_popup.widget.inner.swap_usage.total.text = string.format("%2.1fGiB", swap_total_gib)
-        ram_popup.widget.inner.swap_usage.percent.text = string.format("%2.1f%%", swap_used_percent)
-        ram_popup.widget.inner.total_usage.used.text = string.format("%2.1fGiB", sum_used_gib)
-        ram_popup.widget.inner.total_usage.total.text = string.format("%2.1fGiB", sum_total_gib)
-        ram_popup.widget.inner.total_usage.percent.text = string.format("%2.1f%%", sum_used_percent)
+        ram_popup.widget.inner.graphs.ram.graph.value = ram_used_percent
+        ram_popup.widget.inner.graphs.ram.graph.inner.percentage.text = string.format("%0.0f%%", ram_used_percent)
+        ram_popup.widget.inner.graphs.ram.exact_values.text = string.format("%2.1fGiB / %2.1fGiB", ram_used_gib, ram_total_gib)
 
+        ram_popup.widget.inner.graphs.swap.graph.value = swap_used_percent
+        ram_popup.widget.inner.graphs.swap.graph.inner.percentage.text = string.format("%0.0f%%", swap_used_percent)
+        ram_popup.widget.inner.graphs.swap.exact_values.text = string.format("%2.1fGiB / %2.1fGiB", swap_used_gib, swap_total_gib)
     end)
 end
 
