@@ -1,15 +1,24 @@
 {
+    //*******************************************
+    // General
+    //*******************************************
     "editor.fontSize": 20,
     "window.menuBarVisibility": "toggle",
+    "update.mode": "none",
+    "boot-java.rewrite.reconcile": true,
+    "security.workspace.trust.untrustedFiles": "open",
+    "workbench.startupEditor": "none",
 
-    // "vscode-neovim.neovimExecutablePaths.linux": "/usr/local/bin/neovim",
-
+    //*******************************************
+    // Vim
+    //*******************************************
     // To make sure that changed keyboard mappings (like caps:swapescape made
     // using setxkbmap) are handled correctly. 
     "keyboard.dispatch": "keyCode",
 
     "vim.foldfix": true,
     "vim.useSystemClipboard": true,
+    "vim.leader": ",",
     "vim.normalModeKeyBindingsNonRecursive": [
         {
         "before": ["<leader>", "e"],
@@ -37,24 +46,22 @@
         },
         {
         "before": ["<leader>", "c"],
-        "commands": ["editor.action.addCommentLine"]
-        },
-        {
-        "before": ["<leader>", "v"],
-        "commands": ["editor.action.removeCommentLine"]
+        "commands": ["editor.action.commentLine"]
         },
     ],
-    "vim.leader": ",",
     "vim.visualModeKeyBindings": [
         {
         "before": ["<leader>", "c"],
-        "commands": ["editor.action.addCommentLine"]
-        },
-        {
-        "before": ["<leader>", "v"],
-        "commands": ["editor.action.removeCommentLine"]
+        "commands": ["editor.action.commentLine"]
         },
     ],
+    "vim.handleKeys": {
+        "<C-p>": false,
+        "<C-d>": true,
+        "<C-s>": false,
+        "<C-z>": false
+    },
+
     "files.exclude": {
         "**/*.aseprite": true,
         "**/*.import": true,
@@ -64,27 +71,18 @@
     },
     "window.zoomLevel": -1,
 
+    //*******************************************
+    // Languages
+    //*******************************************
     "[typescript]": {
         "editor.tabSize": 2
     },
     "[html]": {
         "editor.tabSize": 2
     },
+
     "typescript.preferences.quoteStyle": "single",
     "typescript.updateImportsOnFileMove.enabled": "always",
-    "update.mode": "none",
-    "boot-java.rewrite.reconcile": true,
-    "security.workspace.trust.untrustedFiles": "open",
+
     "godot_tools.gdscript_lsp_server_port": 6005,
-    "workbench.startupEditor": "none",
-    "vim.handleKeys": {
-        "<C-p>": false,
-        "<C-d>": true,
-        "<C-s>": false,
-        "<C-z>": false
-    },
-    "C_Cpp_Runner.includePaths": [
-        "include/",
-        "/mnt/data/_user/studium/gcg/ue/VK_Framework/include/"
-    ]
 }
