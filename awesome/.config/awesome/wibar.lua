@@ -68,6 +68,7 @@ local cpu_popup = awful.popup {
                 forced_width = 0,
                 forced_height = 20,
                 opacity = 0,
+                color = beautiful.tasklist_fg_seperator,
                 widget = wibox.widget.separator
             },
             {
@@ -1673,6 +1674,7 @@ awful.screen.connect_for_each_screen(function(s)
     })
 
     -- Create a promptbox for each screen {{{2
+    -- The promptbox hides the tasklist widget to display some message for the user
     s.mypromptbox = awful.widget.prompt()
 
     -- Create a taglist widget {{{2
@@ -1767,7 +1769,7 @@ awful.screen.connect_for_each_screen(function(s)
             {
                 {
                     id = 'inner',
-                    text = 'Hello World',
+                    text = '',
                     widget = wibox.widget.textbox
                 },
                 id = 'margin',
