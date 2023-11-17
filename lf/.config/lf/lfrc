@@ -26,7 +26,10 @@ set mouse true
 
 # General {{{2
 cmd open ${{
-    open-file "$f"
+	case "$f" in
+		*.zip|*.rar|*.tar.gz|*.tar.bz2|*.tar.xz|*.tar) lf -remote "send $id unarchive" ;;
+		*) open-file "$f" ;;
+	esac
 }}
 
 cmd open-alternative ${{
@@ -50,7 +53,8 @@ cmd chmod ${{
 }}
 
 cmd new-instance ${{
-    $TERMINAL -e $SHELL -c "lf" 1>/dev/null 2>&1 &
+    $TERMINAL -e $SHELL -c "lf;$SHELL" 1>/dev/null 2>&1 &
+    disown
 }}
 
 # Fzf-finder and movement {{{2
@@ -128,56 +132,56 @@ cmd cut-remove %{{
 }}
 
 # Archive bindings {{{2
-cmd unarchive ${{
-    lf -remote "send $id echo Unzipping $f"
-	case "$f" in
-		# *.zip) unzip "$f" 2>&1 1>/dev/null && success=true || success=false ;;
-		*.rar) unrar "$f" 2>&1 1>/dev/null && success=true || success=false ;;
-		*.tar.gz) tar -xzvf "$f" 2>&1 1>/dev/null && success=true || success=false ;;
-		*.tar.bz2) tar -xjvf "$f" 2>&1 1>/dev/null && success=true || success=false ;;
-		*.tar) tar -xvf "$f" 2>&1 1>/dev/null && success=true || success=false ;;
-		*) echo "Unsupported format"; success=false;;
-	esac
+cmd unarchive %{{
+    lf -remote "send $id echo Unpacking $f"
 
-    if [ "$success" ]; then
-        lf -remote "send $id echo Unzipping Complete"
+    success=false
+
+    aunpack "$f" 2>&1 1>/dev/null && success=true || success=false
+
+    if [ "$success" = "true" ]; then
+        lf -remote "send $id echo Unpacked $f"
     else
-        lf -remote "send $id echo Unzipping Error"
+        lf -remote "send $id echo Unpacking Error"
     fi
 }}
 
-cmd zip ${{
-    lf -remote "send $id echo Unzipping $f"
-    apack "$(basename "$f").zip" "$(basename "$f")" 2>&1 1>/dev/null
-      && lf -remote "send $id echo Unzipping Complete"
-      || lf -remote "send $id echo Unzipping Error"
-	lf -remote "send clear"
+cmd unzip ${{
+    # This function is just an alias for 'unarchive'
+    lf -remote "send $id unarchive"
+}}
+
+cmd zip %{{
+    lf -remote "send $id echo Zipping $f"
+    apack "$(basename "$f").zip" "$(basename "$f")" 2>&1 1>/dev/null \
+      && lf -remote "send $id echo Zipped $f" \
+      || lf -remote "send $id echo Zipping Error"
 }}
 
 # Trash files {{{2
 cmd trash ${{
-	files=$(printf "$fx" | tr '\n' ';')
-	while [ "$files" ]; do
-    # extract the substring from start of string up to delimiter.
-    # this is the first "element" of the string.
-    file=${files%%;*}
+    files=$(printf "$fx" | tr '\n' ';')
+    while [ "$files" ]; do
+        # extract the substring from start of string up to delimiter.
+        # this is the first "element" of the string.
+        file=${files%%;*}
 
-    trash-put "$(basename "$file")"
-    # if there's only one element left, set `files` to an empty string.
-    # this causes us to exit this `while` loop.
-    # else, we delete the first "element" of the string from files, and move onto the next.
-    if [ "$files" = "$file" ]; then
-      files=''
-    else
-      files="${files#*;}"
-    fi
-  done
+        trash-put "$(basename "$file")"
+        # if there's only one element left, set `files` to an empty string.
+        # this causes us to exit this `while` loop.
+        # else, we delete the first "element" of the string from files, and move onto the next.
+        if [ "$files" = "$file" ]; then
+          files=''
+        else
+          files="${files#*;}"
+        fi
+    done
 }}
 
 cmd clear-trash %trash-empty
 
 cmd restore-trash ${{
-  trash-restore
+    trash-restore
 }}
 
 # Dragon drag-and-drop {{{2
