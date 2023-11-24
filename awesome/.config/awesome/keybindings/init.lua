@@ -124,9 +124,9 @@ globalkeys = gears.table.join(
               {description = "reload awesome", group = "awesome"}),
     awful.key({ modkey, "Shift"   }, "q", function ()
         local screen_geometry = awful.screen.focused().geometry
-        mymainmenu:show { coords = {
-            x = screen_geometry.x + screen_geometry.width / 2 - mymainmenu.theme.width / 2,
-            y = screen_geometry.y + screen_geometry.height / 2 - mymainmenu.theme.height * #mymainmenu.items / 2
+        mainmenu:show { coords = {
+            x = screen_geometry.x + screen_geometry.width / 2 - mainmenu.theme.width / 2,
+            y = screen_geometry.y + screen_geometry.height / 2 - mainmenu.theme.height * #mainmenu.items / 2
         }}
     end,      {description = "show main menu", group = "awesome"}),
 

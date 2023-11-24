@@ -1,0 +1,3 @@
+# Ignore files where default file is present
+**/theme.lua
+

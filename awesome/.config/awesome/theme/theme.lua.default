@@ -99,7 +99,7 @@ theme.tasklist_battery = xrdb.color2
 theme.tasklist_battery_warning = xrdb.color3
 theme.tasklist_battery_critical = xrdb.color1
 theme.tasklist_datetime = xrdb.color3
-theme.show_battery_widget = false
+theme.show_battery_widget = true
 
 -- Tooltip {{{1
 theme.tooltip_fg = theme.fg_normal

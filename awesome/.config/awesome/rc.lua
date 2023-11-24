@@ -99,24 +99,21 @@ awful.mouse.snap.edge_enabled = false
 
 -- Create a awesome submenu
 awesomemenu = {
-    -- { "hotkeys", function() hotkeys_popup.show_help(nil, awful.screen.focused()) end },
-    { " manual", terminal .. " -e man awesome", image_path.."placeholder.png" },
-    { " edit config", editor_cmd .. " " .. awesome.conffile, image_path.."placeholder.png" },
+    { " manual", terminal .. " -e man awesome", image_path.."placeholder.png" },
     { " restart", awesome.restart, image_path.."placeholder.png" },
-    { " quit", function() awesome.quit() end, image_path.."placeholder.png" },
 }
 
 systemmenu = {
+    { "󰍃 logout", function() awesome.quit() end, image_path.."placeholder.png" },
     { " reboot", "systemctl reboot", image_path.."placeholder.png" },
     { " shutdown", "systemctl poweroff -i", image_path.."placeholder.png" },
 }
 
 -- Create a launcher widget and a main menu
-mymainmenu = awful.menu({
-    { " lock", "xautolock -locknow", image_path.."placeholder.png" },
-    { " system", systemmenu, image_path.."placeholder.png" },
-    { "󰌢 awesome", awesomemenu, image_path.."placeholder.png" },
-    { " terminal", terminal, image_path.."placeholder.png" },
+mainmenu = awful.menu({
+    { " lock", "xautolock -locknow", image_path.."placeholder.png" },
+    { " system", systemmenu, image_path.."placeholder.png" },
+    { "󰭳 awesome", awesomemenu, image_path.."placeholder.png" },
 })
 -- }}}
 
@@ -130,7 +127,7 @@ require("wibar")
 
 -- {{{ Mouse bindings
 root.buttons(gears.table.join(
-    awful.button({ }, 3, function () mymainmenu:toggle() end),
+    awful.button({ }, 3, function () mainmenu:toggle() end),
     awful.button({ }, 4, awful.tag.viewnext),
     awful.button({ }, 5, awful.tag.viewprev)
 ))

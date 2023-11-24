@@ -1644,7 +1644,7 @@ beautiful.tasklist_disable_icon = true
 -- Create a wibox for each screen and add it {{{1
 local index_of_screen = 1
 awful.screen.connect_for_each_screen(function(s)
-    -- Create tags {{{2
+    -- Create tags {{{2z
     for i = 1, 10 do
         awful.tag.add(tostring(i), {
             layout = awful.layout.layouts[1],
@@ -1790,6 +1790,12 @@ awful.screen.connect_for_each_screen(function(s)
     s.mywibox = awful.wibar({ position = "top", screen = s, opacity = 0.95 })
 
     -- Add widgets to the wibox {{{2
+    if beautiful.show_battery_widget then
+        battery_widget_to_show = battery_widget
+    else
+        battery_widget_to_show = nil
+    end
+
     s.mywibox:setup {
         layout = wibox.layout.align.horizontal,
         { -- Left widgets
@@ -1805,7 +1811,7 @@ awful.screen.connect_for_each_screen(function(s)
                     cpu_widget,
                     ram_widget,
                     volume_widget,
-                    battery_widget,
+                    battery_widget_to_show,
                     textclock,
                     {
                         {
