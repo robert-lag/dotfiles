@@ -102,6 +102,11 @@ export JAVA_HOME="/usr/lib/jvm/java-17-openjdk"
 # Difftastic settings
 export DFT_TAB_WIDTH=4
 
+# Make it possible to change Qt settings through qt6ct
+# export QT_QPA_PLATFORMTHEME="qt6ct"
+# Use GTK style for QT applications
+export QT_QPA_PLATFORMTHEME="gtk2"
+
 # --------------------------------------------------
 # Window manager
 # --------------------------------------------------
