@@ -148,33 +148,31 @@ noremap <leader>bl :silent !dmenu-zettelkasten-history-viewer -l<cr>
 noremap <leader>bo :silent !cat<Space>"%"<Space>\|<Space>dmenu-zettelkasten-link-handler<Space>-o<cr>
 
 " Move between changes
-noremap <leader>n ]c
-noremap <leader>N [c
-
-noremap <n ]c
-noremap <N [c
+nnoremap <leader>n ]c
+nnoremap <leader>N [c
+nnoremap <n ]c
+nnoremap <N [c
 
 " Move between windows
-noremap <leader>h <C-w>h
-noremap <leader>j <C-w>j
-noremap <leader>k <C-w>k
-noremap <leader>l <C-w>l
-noremap <leader>w <C-w><C-w>
+nnoremap <leader>h <C-w>h
+nnoremap <leader>j <C-w>j
+nnoremap <leader>k <C-w>k
+nnoremap <leader>l <C-w>l
+nnoremap <leader>w <C-w><C-w>
+nnoremap <h <C-w>h
+nnoremap <j <C-w>j
+nnoremap <k <C-w>k
+nnoremap <l <C-w>l
+nnoremap <w <C-w><C-w>
 
-noremap <h <C-w>h
-noremap <j <C-w>j
-noremap <k <C-w>k
-noremap <l <C-w>l
-noremap <w <C-w><C-w>
-
-" noremap <C-h> <C-w>h
-" noremap <C-j> <C-w>j
-" noremap <C-k> <C-w>k
-" noremap <C-l> <C-w>l
+" nnoremap <C-h> <C-w>h
+" nnoremap <C-j> <C-w>j
+" nnoremap <C-k> <C-w>k
+" nnoremap <C-l> <C-w>l
 
 " This remapping is needed to ensure that nvim doesn't wait
 " for further input after the second '<' is typed
-noremap << <<
+nnoremap << <<
 
 " }}}1
 
