@@ -29,6 +29,20 @@ local function setTitlebar(client, showBar)
     end
 end
 
+-- Use tile.bottom in portrait and tile in landscape mode
+local function updateLayoutBasedOnScreenGeometry(s, t)
+    if s.geometry.width >= s.geometry.height then
+        if t.layout == awful.layout.suit.tile.bottom then
+            t.layout = awful.layout.suit.tile
+        end
+    else
+        if t.layout == awful.layout.suit.tile then
+            t.layout = awful.layout.suit.tile.bottom
+        end
+    end
+end
+
+
 -- Signals {{{1
 
 -- manage {{{2
@@ -133,4 +147,22 @@ client.connect_signal("property::size", function (c)
         end)
     end
 end)
+
+-- Listen for screen rotation change {{{2
+
+awful.spawn.with_line_callback({"sh", "-c", "xev -root -event randr"}, {
+    stdout = function(line)
+        -- Listen for screen rotation (can happen on notebooks)
+        if line:match("RRScreenChangeNotify") then
+            for s in screen do
+                for _,t in ipairs(s.tags) do
+                    updateLayoutBasedOnScreenGeometry(s,t)
+                end
+            end
+        end
+    end,
+    stderr = function(line)
+        awful.spawn(string.format("notify-send -u critical -- 'xev Error' '%s'", line))
+    end,
+})
 
