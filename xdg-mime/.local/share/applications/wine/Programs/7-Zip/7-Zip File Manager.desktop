@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=7-Zip File Manager
+Exec=env WINEPREFIX="/home/robert/.local/share/wineprefixes/default" wine C:\\\\ProgramData\\\\Microsoft\\\\Windows\\\\Start\\ Menu\\\\Programs\\\\7-Zip\\\\7-Zip\\ File\\ Manager.lnk
+Type=Application
+StartupNotify=true
+Icon=2775_7zFM.0
+StartupWMClass=7zfm.exe
