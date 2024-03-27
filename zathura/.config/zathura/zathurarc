@@ -83,8 +83,8 @@ set completion-highlight-fg "#1e2127"
 set completion-highlight-bg "#3b84c0"
 
 # Hightlight {{{2
-set highlight-color "#61afef"
-set highlight-active-color "#61afef"
+set highlight-color "rgba(97, 175, 239, 0.5)"
+set highlight-active-color "rgba(97, 175, 239, 0.5)"
 
 # Recoloring {{{2
 set recolor-lightcolor "#1e2127"
