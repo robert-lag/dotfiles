@@ -1644,10 +1644,19 @@ beautiful.tasklist_disable_icon = true
 -- Create a wibox for each screen and add it {{{1
 local index_of_screen = 1
 awful.screen.connect_for_each_screen(function(s)
-    -- Create tags {{{2z
+    -- Create tags {{{2
+
+    -- Use different tiling depending on if landscape or portrait
+    local tag_layout;
+    if s.geometry.width >= s.geometry.height then
+        tag_layout = awful.layout.layouts[1]
+    else
+        tag_layout = awful.layout.layouts[2]
+    end
+
     for i = 1, 10 do
         awful.tag.add(tostring(i), {
-            layout = awful.layout.layouts[1],
+            layout = tag_layout,
             screen = s,
             selected = (i == 1)     -- Select first tag
         })

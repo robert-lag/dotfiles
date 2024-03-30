@@ -3,12 +3,14 @@
 
 [Default Applications]
 text/plain=text.desktop
+text/xml=text.desktop
 text/x-shellscript=text.desktop
 application/javascript=text.desktop
 application/pdf=pdf.desktop
 image/png=img.desktop
 image/jpg=img.desktop
 image/jpeg=img.desktop
+image/heic=img.desktop
 image/gif=img.desktop
 image/svg+xml=img.desktop
 inode/directory=file.desktop
