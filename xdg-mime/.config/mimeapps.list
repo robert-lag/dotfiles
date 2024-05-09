@@ -5,6 +5,7 @@
 text/plain=text.desktop
 text/xml=text.desktop
 text/x-shellscript=text.desktop
+application/javascript=text.desktop
 application/pdf=pdf.desktop
 image/png=img.desktop
 image/jpg=img.desktop
