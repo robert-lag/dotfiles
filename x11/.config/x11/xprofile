@@ -14,7 +14,7 @@
 	xrdb -merge ${XDG_CONFIG_HOME:-$HOME/.config}/x11/xresources
 
 # Scratchpads
-$TERMINAL -n dropdown-general -e $SHELL -c "neofetch;$SHELL" &
+$TERMINAL -n dropdown-general -e $SHELL -c "fastfetch;$SHELL" &
 $TERMINAL -n dropdown-math -f xft:Hack:pixelsize=24 -e qalc -c &
 $TERMINAL -n ncmpcpp -e $SHELL -c "ncmpcpp" &
 

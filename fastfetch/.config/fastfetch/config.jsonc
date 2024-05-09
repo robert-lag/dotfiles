@@ -1,0 +1,125 @@
+{
+  "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
+  "logo": {
+    "color": {
+      "1": "34",
+      "2": "34"
+    }
+  },
+  "display": {
+    "color": "34",
+    "separator": "\t"
+  },
+  "modules": [
+    {
+        "type": "title",
+        "color": {
+            "user": "magenta",
+            "at": "magenta",
+            "host": "magenta"
+        },
+        "format": "\u001b[1m\u001b[35m─── {1}@{2} ───\u001b[0m"
+    },
+    {
+        "type": "custom",
+        "format": "\u001b[1m\u001b[34m󰧨 Software"
+    },
+    {
+        "type": "os",
+        "key": "├ OS   ",
+        "keyColor": "34"
+    },
+    {
+        "type": "kernel",
+        "key": "├ Kernel",
+        "keyColor": "34"
+    },
+    {
+        "type": "uptime",
+        "key": "├ Uptime",
+        "keyColor": "34"
+    },
+    {
+        "type": "packages",
+        "key": "├ Packages",
+        "keyColor": "34"
+    },
+    {
+        "type": "terminal",
+        "key": "├ Terminal",
+        "keyColor": "34"
+    },
+    {
+        "type": "terminalfont",
+        "key": "├ Terminal-Font",
+        "keyColor": "34"
+    },
+    {
+        "type": "shell",
+        "key": "└ Shell",
+        "keyColor": "34"
+    },
+    {
+        "type": "custom",
+        "format": "\u001b[1m\u001b[33m Theming"
+    },
+    {
+        "type": "de",
+        "key": "├ DE",
+        "keyColor": "yellow"
+    },
+    {
+        "type": "wm",
+        "key": "├ WM   ",
+        "keyColor": "yellow"
+    },
+    {
+        "type": "wmtheme",
+        "key": "├ WM-Theme",
+        "keyColor": "yellow"
+    },
+    {
+        "type": "theme",
+        "key": "├ Theme",
+        "keyColor": "yellow"
+    },
+    {
+        "type": "icons",
+        "key": "├ Icons",
+        "keyColor": "yellow"
+    },
+    {
+        "type": "font",
+        "key": "├ Font ",
+        "keyColor": "yellow"
+    },
+    {
+        "type": "cursor",
+        "key": "└ Cursor",
+        "keyColor": "yellow"
+    },
+    {
+        "type": "custom",
+        "format": "\u001b[1m\u001b[32m Hardware"
+    },
+    {
+        "type": "cpu",
+        "key": "├ CPU",
+        "format": "{1}",
+        "keyColor": "green"
+    },
+    {
+        "type": "gpu",
+        "key": "├ GPU",
+        "format": "{2} [{6}]",
+        "keyColor": "green"
+    },
+    {
+        "type": "memory",
+        "key": "└ Mem",
+        "keyColor": "green"
+    },
+    "break",
+    "colors"
+  ]
+}
