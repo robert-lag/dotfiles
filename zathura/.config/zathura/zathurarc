@@ -17,9 +17,8 @@ set scroll-page-aware 1
 set window-title-home-tilde 1
 
 set statusbar-basename 1
-
-set statusbar-h-padding 0
-set statusbar-v-padding 0
+set statusbar-v-padding 8
+set statusbar-h-padding 12
 
 set recolor 1
 set recolor-keephue 1
@@ -46,7 +45,7 @@ map . zoom out
 map <C--> zoom out
 
 ##############################################
-### Layout and Colors {{{1
+### Colors {{{1
 ##############################################
 set default-bg "#17191e"
 
@@ -58,7 +57,7 @@ set index-active-bg "#1e2127"
 
 # Statusbar {{{2
 set statusbar-fg "#828997"
-set statusbar-bg "#00000000"
+set statusbar-bg "rgba(0, 0, 0, 0.0)"
 
 # Notificationbar {{{2
 set notification-fg "#98c379"
@@ -67,10 +66,6 @@ set notification-warning-fg "#e5c07b"
 set notification-warning-bg "#1e2127"
 set notification-error-fg "#e06c75"
 set notification-error-bg "#1e2127"
-
-# Status- and Notificationbar padding {{{2
-set statusbar-v-padding 8
-set statusbar-h-padding 12
 
 # Inputbar {{{2
 set inputbar-fg "#61afef"
