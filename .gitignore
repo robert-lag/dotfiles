@@ -25,3 +25,7 @@ gtk/.config/gtk-3.0/bookmarks
 
 # dunst
 dunst/.config/dunst/experimental-images/
+
+# cheat
+cheat/.config/cheat/cheatsheets/community/
+
