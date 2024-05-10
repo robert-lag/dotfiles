@@ -17,7 +17,7 @@
 # Wait 0.5 seconds before calling fastfetch to ensure that the fastfetch won't
 # wrap its information. This would happen if it prints before the terminal size
 # is set to the correct value.
-$TERMINAL -n dropdown-general -e $SHELL -c "sleep 0.5;fastfetch;$SHELL" &
+$TERMINAL -n dropdown-general -e $SHELL -c "sleep 1;fastfetch;$SHELL" &
 $TERMINAL -n dropdown-math -f xft:Hack:pixelsize=24 -e qalc -c &
 $TERMINAL -n ncmpcpp -e $SHELL -c "ncmpcpp" &
 

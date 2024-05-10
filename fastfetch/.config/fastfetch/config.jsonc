@@ -61,7 +61,7 @@
     },
     {
         "type": "custom",
-        "format": "\u001b[1m\u001b[33m Theming"
+        "format": "\u001b[1m\u001b[33m Style"
     },
     {
         "type": "de",
@@ -100,7 +100,7 @@
     },
     {
         "type": "custom",
-        "format": "\u001b[1m\u001b[32m Hardware"
+        "format": "\u001b[1m\u001b[32m Hardware"
     },
     {
         "type": "cpu",
