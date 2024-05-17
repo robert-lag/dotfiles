@@ -116,7 +116,6 @@ autocmd BufWinEnter * silent! loadview
 
 " }}}1
 
-
 " --------------------------------------------------------------------------
 " Key mappings {{{1
 " --------------------------------------------------------------------------
@@ -132,7 +131,7 @@ nnoremap <esc> :noh<return><esc>:<esc>
 " Shortcuts for split navigation, saving a keypress
 
 " Toggle spellchecking
-noremap <leader>s :setlocal spell! spelllang=en_us,de<CR>
+nnoremap <leader>s :setlocal spell! spelllang=en_us,de<CR>
 
 " Correct last spelling mistake
 nnoremap <leader>d <c-g>u<Esc>[s1z=`]a<c-g>u
@@ -143,9 +142,9 @@ source $XDG_CONFIG_HOME/nvim/code-snippets/rust.vim
 source $XDG_CONFIG_HOME/nvim/code-snippets/latex.vim
 
 " Zettelkasten script shortcuts
-noremap <leader>bh :silent !dmenu-zettelkasten-history-viewer -o<cr>
-noremap <leader>bl :silent !dmenu-zettelkasten-history-viewer -l<cr>
-noremap <leader>bo :silent !cat<Space>"%"<Space>\|<Space>dmenu-zettelkasten-link-handler<Space>-o<cr>
+nnoremap <leader>bh :silent !dmenu-zettelkasten-history-viewer -o<cr>
+nnoremap <leader>bl :silent !dmenu-zettelkasten-history-viewer -l<cr>
+nnoremap <leader>bo :silent !cat<Space>"%"<Space>\|<Space>dmenu-zettelkasten-link-handler<Space>-o<cr>
 
 " Move between changes
 nnoremap <leader>n ]c
@@ -204,41 +203,6 @@ cnoremap w!! execute 'silent! write !sudo tee % >/dev/null' <bar> edit!
 
 " }}}1
 
-" Content search functions {{{1
-" function! HandleURL()
-"   let s:uri = matchstr(getline("."), '[a-z]*:\/\/[^ >,;()]*')
-"   let s:uri = shellescape(s:uri, 1)
-"   echom s:uri
-"   if s:uri != ""
-"         silent exec "!xdg-open '".s:uri."'"
-"     :redraw!
-"   else
-"     echo "No URI found in line."
-"   endif
-" endfunction
-" 
-" nmap <leader>z yiW:!xdg-open <c-r>" &<cr>
-" 
-" function! HandleNoteLink()
-"     let lineList = getline(1, '$')
-"     let fileString = join(lineList, "\n")
-"     let moreIdsToGo = v:true
-"     let l:startIndex = 0
-" 
-"     while (moreIdsToGo)
-"         let l:uri = matchstrpos(fileString, '\[\[[a-zA-Z0-9]*\]\]', startIndex)
-"         echom l:uri[0]
-"         echom l:uri[1]
-"         echom l:uri[2]
-"         echom len(fileString)
-"         let l:startIndex = l:uri[2]
-"         if l:uri[2] >= len(fileString)
-"             let moreIdsToGo = v:false
-"         endif
-"     endwhile
-" endfunction
-" }}}1
-
 " --------------------------------------------------------------------------
 " Plugins {{{1
 " --------------------------------------------------------------------------
@@ -272,11 +236,6 @@ call plug#begin(system('echo -n "${XDG_DATA_HOME:-$HOME/.local/share}/nvim/plugg
     " Git wrapper for vim
     " Needed for git support in lightline
     Plug 'tpope/vim-fugitive'
-
-    " Enables the viewing of 'tags' in a source code file
-    " This makes it possible to easily jump between function definitions
-    " and get a good overview of a source file in a short amount of time
-    " Plug 'vim-scripts/taglist.vim'
 
     " Status line
     Plug 'itchyny/lightline.vim'
@@ -326,17 +285,22 @@ let g:NERDCommentEmptyLines = 1
 " Enable NERDCommenterToggle to check all selected lines is commented or not
 let g:NERDToggleCheckAllLines = 1
 
-" Some default shortcuts used by this plugin
-" nnoremap <leader>cc NERDCommenterComment
-" nnoremap <leader>cn NERDCommenterNested
-" nnoremap <leader>c<space> NERDCommenterToggle
-" nnoremap <leader>cm NERDCommenterMinimal
-" nnoremap <leader>ci NERDCommenterInvert
-" nnoremap <leader>cs NERDCommenterSexy
-" nnoremap <leader>cy NERDCommenterYank
-" nnoremap <leader>c$ NERDCommenterToEOL
-" nnoremap <leader>cA NERDCommenterAppend
-" nnoremap <leader>ca NERDCommenterAltDelims
+" Don't create default mappings as they are declared explicitly
+let g:NERDCreateDefaultMappings = 0
+noremap <leader>c <Plug>NERDCommenterToggle
+
+" Some default mappings that would be created by this plugin
+" nnoremap <leader>cc <Plug>NERDCommenterComment
+" nnoremap <leader>cu <Plug>NERDCommenterUncomment
+" nnoremap <leader>cn <Plug>NERDCommenterNested
+" nnoremap <leader>c<space> <Plug>NERDCommenterToggle
+" nnoremap <leader>cm <Plug>NERDCommenterMinimal
+" nnoremap <leader>ci <Plug>NERDCommenterInvert
+" nnoremap <leader>cs <Plug>NERDCommenterSexy
+" nnoremap <leader>cy <Plug>NERDCommenterYank
+" nnoremap <leader>c$ <Plug>NERDCommenterToEOL
+" nnoremap <leader>cA <Plug>NERDCommenterAppend
+" nnoremap <leader>ca <Plug>NERDCommenterAltDelims
 
 " --------------------------------------------------------------------------
 " GitGutter {{{2
@@ -371,8 +335,8 @@ endfunction
 let g:gitgutter_map_keys = 0
 
 " Shortcuts
-nmap ) <Plug>(GitGutterNextHunk)
-nmap ( <Plug>(GitGutterPrevHunk)
+nnoremap ) <Plug>(GitGutterNextHunk)
+nnoremap ( <Plug>(GitGutterPrevHunk)
 
 " --------------------------------------------------------------------------
 " Lightline {{{2
@@ -432,11 +396,6 @@ let g:lightline#ale#indicator_errors = ""
 let g:lightline#ale#indicator_ok = ""
 
 " --------------------------------------------------------------------------
-" Taglist {{{2
-" --------------------------------------------------------------------------
-nnoremap <silent> <leader>t :TlistToggle<CR>
-
-" --------------------------------------------------------------------------
 " YouCompleteMe {{{2
 " --------------------------------------------------------------------------
 let g:ycm_autoclose_preview_window_after_completion = 1
@@ -448,7 +407,7 @@ let g:ycm_autoclose_preview_window_after_completion = 1
 " let g:ycm_auto_hover = ''
 
 " Toggle documentation at cursor location
-nmap <leader>f <plug>(YCMHover)
+nnoremap <leader>f <plug>(YCMHover)
 
 " Use preview popup instead of preview window
 "set previewpopup=height:15,width:80,highlight:PMenu
@@ -531,7 +490,7 @@ let g:csv_highlight_column = 'y'
 " --------------------------------------------------------------------------
 " UltiSnips {{{2
 " --------------------------------------------------------------------------
-let g:UltiSnipsExpandTrigger="<leader><leader>"
+let g:UltiSnipsExpandTrigger=">"
 let g:UltiSnipsJumpForwardTrigger="<C-j>"
 let g:UltiSnipsJumpBackwardTrigger="<C-k>"
 let g:UltiSnipsSnippetDirectories=["UltiSnips", "my_snippets"]
