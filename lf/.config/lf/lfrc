@@ -54,7 +54,7 @@ cmd chmod ${{
 
 cmd new-instance ${{
     $TERMINAL -e $SHELL -c "lf;$SHELL" 1>/dev/null 2>&1 &
-    disown
+    disown %1
 }}
 
 # Fzf-finder and movement {{{2
