@@ -50,11 +50,6 @@
         "keyColor": "34"
     },
     {
-        "type": "terminalfont",
-        "key": "├ Terminal-Font",
-        "keyColor": "34"
-    },
-    {
         "type": "shell",
         "key": "└ Shell",
         "keyColor": "34"
