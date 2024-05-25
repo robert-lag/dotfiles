@@ -153,7 +153,7 @@ cmd unzip ${{
 
 cmd zip %{{
     lf -remote "send $id echo Zipping $f"
-    apack "$(basename "$f").zip" "$(basename "$f")" 2>&1 1>/dev/null \
+    apack "$(basename "$f").zip" "$(basename "$f")" 1>/dev/null 2>&1 \
       && lf -remote "send $id echo Zipped $f" \
       || lf -remote "send $id echo Zipping Error"
 }}
@@ -185,12 +185,12 @@ cmd restore-trash ${{
 }}
 
 # Dragon drag-and-drop {{{2
-cmd dragon %dragon-drop --all --and-exit $fx
-cmd dragon-stay %dragon-drop --all $fx
-cmd dragon-individual %dragon-drop $fx
-cmd dragon-cp %dragon-cp
-cmd dragon-mv %dragon-mv
-cmd dragon-dl %dragon-dl
+cmd dragon %dragon-drop --all --and-exit $fx 1>/dev/null 2>&1
+cmd dragon-stay %dragon-drop --all $fx 1>/dev/null 2>&1
+cmd dragon-individual %dragon-drop $fx 1>/dev/null 2>&1
+cmd dragon-cp %dragon-cp 1>/dev/null 2>&1
+cmd dragon-mv %dragon-mv 1>/dev/null 2>&1
+cmd dragon-dl %dragon-dl 1>/dev/null 2>&1
 
 # Create symlink {{{2
 # To create a symlink first copy/cut a file and
