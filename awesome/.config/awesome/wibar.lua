@@ -1,4 +1,5 @@
 local battery_widget = require("battery-widget")
+local virtual_keyboard = require("virtual_keyboard")
 
 -- CPU Widget {{{1
 
@@ -1379,6 +1380,32 @@ awful.widget.watch(
 )
 -- }}}2
 
+-- Keyboard widget {{{1
+
+local keyboard_widget = wibox.widget {
+    {
+        {
+            id = 'icon',
+            text = '',
+            align = 'left',
+            valign = 'center',
+            forced_width = 25,
+            font = "monospace 15",
+            widget = wibox.widget.textbox,
+        },
+        id = 'inner',
+        spacing = 5,
+        layout = wibox.layout.fixed.horizontal,
+    },
+    fg = beautiful.tasklist_keyboard,
+    widget = wibox.container.background,
+    buttons = gears.table.join(
+            awful.button({ }, 1, function()
+                awful.screen.focused().virtual_keyboard:toggle()
+            end)
+    )
+}
+
 -- Calendar widget {{{1
 
 -- Popup {{{2
@@ -1644,6 +1671,9 @@ beautiful.tasklist_disable_icon = true
 -- Create a wibox for each screen and add it {{{1
 local index_of_screen = 1
 awful.screen.connect_for_each_screen(function(s)
+    -- Create virtual keyboard {{{2
+    s.virtual_keyboard = virtual_keyboard:new({ screen = s } )
+
     -- Create tags {{{2
 
     -- Use different tiling depending on if landscape or portrait
@@ -1799,6 +1829,12 @@ awful.screen.connect_for_each_screen(function(s)
     s.mywibox = awful.wibar({ position = "top", screen = s, opacity = 0.95 })
 
     -- Add widgets to the wibox {{{2
+    if beautiful.show_virtual_keyboard_widget then
+        keyboard_widget_to_show = keyboard_widget
+    else
+        keyboard_widget_to_show = nil
+    end
+
     if beautiful.show_battery_widget then
         battery_widget_to_show = battery_widget
     else
@@ -1816,6 +1852,7 @@ awful.screen.connect_for_each_screen(function(s)
         { -- Right widgets
             {
                 {
+                    keyboard_widget_to_show,
                     wifi_widget,
                     cpu_widget,
                     ram_widget,

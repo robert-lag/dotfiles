@@ -99,7 +99,21 @@ theme.tasklist_battery = xrdb.color2
 theme.tasklist_battery_warning = xrdb.color3
 theme.tasklist_battery_critical = xrdb.color1
 theme.tasklist_datetime = xrdb.color3
+theme.tasklist_keyboard = xrdb.color6
 theme.show_battery_widget = false
+theme.show_virtual_keyboard_widget = true
+
+-- Virtual keyboard {{{1
+theme.keyboard_font = "Monospace 12"
+theme.keyboard_bg = xrdb.color0
+theme.keyboard_key_fg = xrdb.color15
+theme.keyboard_key_bg = xrdb.color8
+theme.keyboard_mod_fg = xrdb.color10
+theme.keyboard_mod_bg = xrdb.color8
+theme.keyboard_mod_accent_fg = xrdb.color0
+theme.keyboard_mod_accent_bg = xrdb.color2
+theme.keyboard_mod_press_fg = xrdb.color0
+theme.keyboard_mod_press_bg = xrdb.color10
 
 -- Tooltip {{{1
 theme.tooltip_fg = theme.fg_normal
