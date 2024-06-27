@@ -918,9 +918,9 @@ battery_widget:connect_signal('upower::update', function (widget, device)
         time_left = device.time_to_full / 3600
         battery_popup.widget.inner.timeleft.visible = true
 
-        -- Set the brightness to maximum after plugging in the cable
+        -- Set the brightness higher again after plugging in the cable
         if was_discharging then
-            awful.spawn("xbacklight -set 100 -time 500")
+            awful.spawn("set-brightness 80")
             was_discharging = false
         end
 
@@ -938,21 +938,21 @@ battery_widget:connect_signal('upower::update', function (widget, device)
         if device.percentage <= 5 then
             battery_icon = "󰂃"
             if not brightness_reduced_critical then
-                awful.spawn("set-max-brightness 10")
+                awful.spawn("decrease-brightness-to 10")
                 awful.spawn("notify-send --urgency critical --icon=~/.local/share/dunst/icons/battery-alert.png -- 'Very Low Battery'")
                 brightness_reduced_critical = true
             end
         elseif device.percentage <= 10 then
             battery_icon = "󰁺"
             if not brightness_reduced_warning then
-                awful.spawn("set-max-brightness 50")
+                awful.spawn("decrease-brightness-to 50")
                 awful.spawn("notify-send --icon=~/.local/share/dunst/icons/battery-alert.png -- 'Low Battery'")
                 brightness_reduced_warning = true
             end
         elseif device.percentage <= 20 then
             battery_icon = "󰁻"
             if not brightness_reduced_warning then
-                awful.spawn("set-max-brightness 50")
+                awful.spawn("decrease-brightness-to 50")
                 awful.spawn("notify-send --icon=~/.local/share/dunst/icons/battery-alert.png -- 'Low Battery'")
                 brightness_reduced_warning = true
             end
