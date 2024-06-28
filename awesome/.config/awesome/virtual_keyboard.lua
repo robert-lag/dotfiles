@@ -219,11 +219,19 @@ function module:new(config)
                             name = "",
                             size = 0.25
                         }),
-                        module.button({ name = "Ins", keycode = "Insert" }),
-                        module.button({ name = "Home" }),
+                        module.button({
+                            name = "Ins",
+                            keycode = "Insert",
+                            fg = mod_fg_color, bg = mod_bg_color,
+                        }),
+                        module.button({
+                            name = "Home",
+                            fg = mod_fg_color, bg = mod_bg_color,
+                        }),
                         module.button({
                             name = "PgUp",
-                            keycode = "Page_Up"
+                            keycode = "Page_Up",
+                            fg = mod_fg_color, bg = mod_bg_color,
                         })
                         
                         
@@ -269,11 +277,19 @@ function module:new(config)
                             name = "",
                             size = 0.25
                         }),
-                        module.button({ name = "Del", keycode = "Delete" }),
-                        module.button({ name = "End" }),
                         module.button({
-                            name = "PgDwn",
-                            keycode = "Page_Down"
+                            name = "Del",
+                            keycode = "Delete",
+                            fg = mod_fg_color, bg = mod_bg_color,
+                        }),
+                        module.button({
+                            name = "End",
+                            fg = mod_fg_color, bg = mod_bg_color,
+                        }),
+                        module.button({
+                            name = "PgDn",
+                            keycode = "Page_Down",
+                            fg = mod_fg_color, bg = mod_bg_color,
                         })
 					},
 					{ layout = wibox.layout.fixed.horizontal }
@@ -363,7 +379,10 @@ function module:new(config)
                             size = 0.25
                         }),
                         module.button({ name = "" }),
-                        module.button({ name = "Up" }),
+                        module.button({
+                            name = "Up",
+                            fg = mod_fg_color, bg = mod_bg_color,
+                        }),
                         module.button({ name = "" })
 					},
 					{ layout = wibox.layout.fixed.horizontal }
@@ -443,9 +462,18 @@ function module:new(config)
                             name = "",
                             size = 0.25
                         }),
-                        module.button({ name = "Left" }),
-                        module.button({ name = "Down" }),
-                        module.button({ name = "Right" })
+                        module.button({
+                            name = "Left",
+                            fg = mod_fg_color, bg = mod_bg_color,
+                        }),
+                        module.button({
+                            name = "Down",
+                            fg = mod_fg_color, bg = mod_bg_color,
+                        }),
+                        module.button({
+                            name = "Right",
+                            fg = mod_fg_color, bg = mod_bg_color,
+                        })
 					},
 					{ layout = wibox.layout.fixed.horizontal }
 				}
