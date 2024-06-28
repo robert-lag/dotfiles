@@ -1,3 +1,5 @@
+-- Original Source: https://gist.github.com/intrntbrn/65700d3d3ac1713b1d31c56a5fb09a04
+--
 -- Dependency: xdotool
 --
 -- Usage:
@@ -13,7 +15,8 @@
 
 local awful = require("awful")
 local wibox = require("wibox")
-local dpi = require("beautiful").xresources.apply_dpi
+local beautiful = require("beautiful")
+local dpi = beautiful.xresources.apply_dpi
 
 local module = {}
 
@@ -28,9 +31,13 @@ local accent_bg_color = beautiful.keyboard_mod_accent_bg
 local press_fg_color = beautiful.keyboard_mod_press_fg
 local press_bg_color = beautiful.keyboard_mod_press_bg
 
+local modifiers_to_clear = {}
+
 function module.button(attributes)
 	local attr = attributes or {}
-	attr.togglable = attr.toggleable or false
+    attr.toggled_on = false
+	attr.toggleable = attr.toggleable or false
+	attr.clear_after_one_use = attr.clear_after_one_use or false
 	attr.size = attr.size or 1.0
 	attr.name = attr.name or ""
 	attr.keycode = attr.keycode or attr.name or nil
@@ -69,18 +76,15 @@ function module.button(attributes)
 			bg = keyboard_bg
 
 		})
+
 	local boxbg = box:get_children_by_id("bg")[1]
-    local counter = 0
+
     local time_until_long_press = 0.5
     local long_press_timer = gears.timer {
         timeout   = time_until_long_press,
         autostart = false,
         callback  = function(t)
-            if not attr.keycode then
-                awful.spawn("xdotool key " .. attr.name)
-            else
-                awful.spawn("xdotool key " .. attr.keycode)
-            end
+            awful.spawn("xdotool key " .. attr.keycode)
 
             -- Decrease the time until the next event
             t.timeout = 0.05
@@ -88,21 +92,68 @@ function module.button(attributes)
         end
     }
 	boxbg:connect_signal("button::press", function()
-		if not attr.keycode then
-			awful.spawn("xdotool key " .. attr.name)
-		else
-			awful.spawn("xdotool key " .. attr.keycode)
-		end
-        boxbg.bg = press_bg_color
-    	boxbg.fg = press_fg_color
-        long_press_timer:start()
+        if attr.toggleable then
+            if attr.toggled_on then
+                -- Release the key
+                awful.spawn("xdotool keyup " .. attr.keycode)
+                boxbg.bg = attr.bg
+                boxbg.fg = attr.fg
+            else
+                -- Press the key
+                awful.spawn("xdotool keydown " .. attr.keycode)
+                boxbg.bg = press_bg_color
+                boxbg.fg = press_fg_color
+
+                -- Should it be toggled off after pressing another key?
+                if attr.clear_after_one_use then
+                    modifiers_to_clear[attr.keycode] = { attr = attr, bg_ctrl = boxbg }
+                end
+            end
+            attr.toggled_on = not attr.toggled_on
+        else
+            awful.spawn("xdotool key " .. attr.keycode)
+            boxbg.bg = press_bg_color
+            boxbg.fg = press_fg_color
+            -- Long press doesn't work on control keys
+            long_press_timer:start()
+        end
 	end)
 	boxbg:connect_signal("button::release", function()
-        long_press_timer:stop()
-        long_press_timer.timeout = time_until_long_press
+        if attr.keycode == "Caps_Lock" then
+            long_press_timer:stop()
+            long_press_timer.timeout = time_until_long_press
 
-        boxbg.bg = attr.bg
-        boxbg.fg = attr.fg
+            awful.spawn.easy_async_with_shell("xset -q | sed -n 's/^.*Caps Lock:[ \\t]*\\(\\S*\\).*$/\\1/p'", function(out)
+                if out == "on\n" then
+                    boxbg.bg = press_bg_color
+                    boxbg.fg = press_fg_color
+                elseif out == "off\n" then
+                    boxbg.bg = attr.bg
+                    boxbg.fg = attr.fg
+                else
+                    awful.spawn(string.format("notify-send -u critical 'Error' 'Unknown Caps Lock state: %s'", out))
+                end
+            end)
+        else
+            -- Toggle keys don't listen to release events
+            if not attr.toggleable then
+                long_press_timer:stop()
+                long_press_timer.timeout = time_until_long_press
+
+                boxbg.bg = attr.bg
+                boxbg.fg = attr.fg
+
+                for k,v in pairs(modifiers_to_clear) do
+                    awful.spawn("xdotool keyup " .. v.attr.keycode)
+                    v.attr.toggled_on = false
+                    v.bg_ctrl.bg = v.attr.bg
+                    v.bg_ctrl.fg = v.attr.fg
+
+                    -- Delete the item from the list
+                    modifiers_to_clear[k] = nil
+                end
+            end
+        end
 	end)
 	return box
 end
@@ -164,18 +215,18 @@ function module:new(config)
 								keycode = "BackSpace",
 								fg = mod_fg_color, bg = mod_bg_color,
 							}),
-						-- module.button({
-						--     name = "",
-						--     size = 0.25
-						-- }),
-						-- module.button({ name = "Insert" }),
-						-- module.button({ name = "Home" }),
-						-- module.button({
-						--     name = "PageUp",
-						--     keycode = "Page_Up"
-						-- })
-						--
-						--
+                        module.button({
+                            name = "",
+                            size = 0.25
+                        }),
+                        module.button({ name = "Ins", keycode = "Insert" }),
+                        module.button({ name = "Home" }),
+                        module.button({
+                            name = "PgUp",
+                            keycode = "Page_Up"
+                        })
+                        
+                        
 					},
 					{ layout = wibox.layout.fixed.horizontal }
 				},
@@ -214,16 +265,16 @@ function module:new(config)
 								keycode = "backslash",
 								fg = mod_fg_color, bg = mod_bg_color,
 							}),
-						-- module.button({
-						--     name = "",
-						--     size = 0.25
-						-- }),
-						-- module.button({ name = "Delete" }),
-						-- module.button({ name = "End" }),
-						-- module.button({
-						--     name = "PageDown",
-						--     keycode = "Page_Down"
-						-- })
+                        module.button({
+                            name = "",
+                            size = 0.25
+                        }),
+                        module.button({ name = "Del", keycode = "Delete" }),
+                        module.button({ name = "End" }),
+                        module.button({
+                            name = "PgDwn",
+                            keycode = "Page_Down"
+                        })
 					},
 					{ layout = wibox.layout.fixed.horizontal }
 				},
@@ -261,13 +312,13 @@ function module:new(config)
 								fg = accent_fg_color,
 								bg = accent_bg_color,
 							}),
-						-- module.button({
-						--     name = "",
-						--     size = 0.25
-						-- }),
-						-- module.button({ name = "" }),
-						-- module.button({ name = "" }),
-						-- module.button({ name = "" })
+                        module.button({
+                            name = "",
+                            size = 0.25
+                        }),
+                        module.button({ name = "" }),
+                        module.button({ name = "" }),
+                        module.button({ name = "" })
 					},
 					{ layout = wibox.layout.fixed.horizontal }
 				},
@@ -284,7 +335,9 @@ function module:new(config)
 						module.button({
 								name = "Shift",
 								size = 2.25,
-								keycode = "Shift_Lock",
+								keycode = "Shift_L",
+								toggleable = true,
+                                clear_after_one_use = true,
 								fg = mod_fg_color, bg = mod_bg_color,
 							}),
 						module.button({ name = "z" }),
@@ -300,15 +353,18 @@ function module:new(config)
 						module.button({
 								name = "Shift",
 								size = 2.75,
+								keycode = "Shift_R",
+								toggleable = true,
+                                clear_after_one_use = true,
 								fg = mod_fg_color, bg = mod_bg_color,
 							}),
-						-- module.button({
-						--     name = "",
-						--     size = 0.25
-						-- }),
-						-- module.button({ name = "" }),
-						-- module.button({ name = "Up" }),
-						-- module.button({ name = "" })
+                        module.button({
+                            name = "",
+                            size = 0.25
+                        }),
+                        module.button({ name = "" }),
+                        module.button({ name = "Up" }),
+                        module.button({ name = "" })
 					},
 					{ layout = wibox.layout.fixed.horizontal }
 				},
@@ -326,18 +382,24 @@ function module:new(config)
 								name = "Ctrl",
 								keycode = "Control_L",
 								size = 1.25,
+                                toggleable = true,
+                                clear_after_one_use = true,
 								fg = mod_fg_color, bg = mod_bg_color,
 							}),
 						module.button({
 								name = "Win",
 								keycode = "Super_L",
 								size = 1.25,
+                                toggleable = true,
+                                clear_after_one_use = true,
 								fg = mod_fg_color, bg = mod_bg_color,
 							}),
 						module.button({
 								name = "Alt",
 								keycode = "Alt_L",
 								size = 1.25,
+                                toggleable = true,
+                                clear_after_one_use = true,
 								fg = mod_fg_color, bg = mod_bg_color,
 							}),
 						module.button({
@@ -346,36 +408,44 @@ function module:new(config)
 								keycode = "space"
 							}),
 						module.button({
-								name = "Alt",
-								keycode = "Alt_R",
+								name = "AltGr",
+								keycode = "ISO_Level3_Shift",
 								size = 1.25,
+                                toggleable = true,
+                                clear_after_one_use = true,
 								fg = mod_fg_color, bg = mod_bg_color,
 							}),
 						module.button({
 								name = "Win",
 								keycode = "Super_R",
 								size = 1.25,
+                                toggleable = true,
+                                clear_after_one_use = true,
 								fg = mod_fg_color, bg = mod_bg_color,
 							}),
 						module.button({
 								name = "Menu",
 								keycode = "Hyper_R",
 								size = 1.25,
+                                toggleable = true,
+                                clear_after_one_use = true,
 								fg = mod_fg_color, bg = mod_bg_color,
 							}),
 						module.button({
 								name = "Ctrl",
 								keycode = "Ctrl_R",
 								size = 1.25,
+                                toggleable = true,
+                                clear_after_one_use = true,
 								fg = mod_fg_color, bg = mod_bg_color,
 							}),
-						-- module.button({
-						--     name = "",
-						--     size = 0.25
-						-- }),
-						-- module.button({ name = "Left" }),
-						-- module.button({ name = "Down" }),
-						-- module.button({ name = "Right" })
+                        module.button({
+                            name = "",
+                            size = 0.25
+                        }),
+                        module.button({ name = "Left" }),
+                        module.button({ name = "Down" }),
+                        module.button({ name = "Right" })
 					},
 					{ layout = wibox.layout.fixed.horizontal }
 				}
