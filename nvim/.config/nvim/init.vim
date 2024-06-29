@@ -490,7 +490,7 @@ let g:csv_highlight_column = 'y'
 " --------------------------------------------------------------------------
 " UltiSnips {{{2
 " --------------------------------------------------------------------------
-let g:UltiSnipsExpandTrigger=">"
+let g:UltiSnipsExpandTrigger="<return>"
 let g:UltiSnipsJumpForwardTrigger="<C-j>"
 let g:UltiSnipsJumpBackwardTrigger="<C-k>"
 let g:UltiSnipsSnippetDirectories=["UltiSnips", "my_snippets"]
