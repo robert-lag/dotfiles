@@ -2,7 +2,6 @@
     editor = nvim
     ; use this value ('input') only for linux (on windows use 'true')
     autocrlf = input
-	pager = less -+FX
 [user]
     name = Robert Lag
     email = rob.lag@outlook.com
