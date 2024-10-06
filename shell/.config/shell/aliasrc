@@ -41,7 +41,8 @@ alias \
     yt="youtube-viewer" \
     v="$EDITOR" \
     p="pacman" \
-    z="zathura"
+    z="zathura" \
+    bctl="bluetoothctl"
 
 # ~/ cleanup
 alias freeplane="freeplane -U $FREEPLANE_DATA_HOME"
