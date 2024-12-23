@@ -36,6 +36,14 @@ cmd open-alternative ${{
     open-file -a "$f"
 }}
 
+cmd open-dir-in-image-viewer ${{
+    nsxiv --thumbnail --scale-mode=f --animate --quiet --private "$PWD"
+}}
+
+cmd open-dir-in-gui ${{
+    nautilus-arc-dark-gtk4 "$PWD" 2>&1 1>/dev/null &
+}}
+
 cmd mkdir $mkdir -p "$(echo $* | tr ' ' '\ ')"
 
 cmd mkfile $$EDITOR $1
@@ -242,8 +250,9 @@ cmd wq quit
 # --------------------------------------------------
 
 # Remove defaults {{{2
-map m
 map d
+map m
+map r
 
 # Basic bindings {{{2
 map ZZ quit
@@ -276,12 +285,16 @@ map <m-2> unselect
 map <m-3> invert
 
 # Rename {{{2
-map A rename # at the very end
-map r push A<c-u> # new rename
-map I push A<c-a> # at the very beginning
-map i push A<a-b><a-b><a-f> # before extention
-map a push A<a-b> # after extention
-map B bulkrename
+map rA rename # at the very end
+map rr push A<c-u> # new rename
+map rI push A<c-a> # at the very beginning
+map ri push A<a-b><a-b><a-f> # before extention
+map ra push A<a-b> # after extention
+map rB bulkrename
+
+# Image Viewer {{{2
+map i open-dir-in-image-viewer
+map I open-dir-in-gui
 
 # Wallpaper / lockscreen {{{2
 map bg $setbg $f
@@ -325,12 +338,12 @@ map gm cd /run/media
 map gM cd /mnt
 map go cd ~/downloads
 map gO cd /opt
-map gp cd ~/programming
+map gp cd ~/documents/personal/programming
 map gr cd /
 map gs cd ~/.local/share
 map gS cd /srv
 map gT cd /tmp
-# map gu cd ~/data/_user
+map gu cd ~/documents/personal
 map gU cd /usr
 map gV cd /var
 map g/ cd /

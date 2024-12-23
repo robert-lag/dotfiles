@@ -8,10 +8,6 @@ globalkeys = gears.table.join(
     -- General {{{2
     awful.key({ modkey,           }, "s",      hotkeys_popup.show_help,
               {description="show help", group="awesome"}),
-    awful.key({ modkey,           }, "Left",   awful.tag.viewprev,
-              {description = "view previous", group = "tag"}),
-    awful.key({ modkey,           }, "Right",  awful.tag.viewnext,
-              {description = "view next", group = "tag"}),
     awful.key({ modkey,           }, "Tab", awful.tag.history.restore,
               {description = "go back", group = "tag"}),
     awful.key({ modkey,           }, "x", function() awful.spawn("xautolock -locknow") end,
@@ -137,7 +133,7 @@ globalkeys = gears.table.join(
     awful.key({ }, "XF86Search", function() awful.spawn("dmenu_run") end,
               {description = "show application launcher", group = "launcher"}),
     awful.key({ modkey }, "o", nil, function()
-        show_message("(b)rowser | (m)ail | (v)scodium | music (p)layer | (n)otes | ne(w)s | (g)imp | (y)outube | m(e)ssenger | (t)erminal | (s)ystem")
+        show_message("(b)rowser | (m)ail | (v)scodium | music (p)layer | (n)otes | ne(w)s | (g)imp | (y)outube | m(e)ssenger | b(o)ard | (t)erminal | (s)ystem")
         keygrabber.run(function(mods, key, action)
             if key == "Super_L" and action == "release" then
                 -- Continue to wait after the Super key was released
@@ -147,12 +143,13 @@ globalkeys = gears.table.join(
             local app_shortcuts = {
                 b = os.getenv("BROWSER") or "firefox",
                 m = "thunderbird",
-                n = "notion-app-nativefier",
+                n = "obsidian",
                 v = "vscodium",
                 p = terminal .. " -e ncmpcpp",
                 g = "gimp",
                 y = "gtk-youtube-viewer",
                 e = "signal-desktop",
+                o = "focalboard-bin",
                 w = terminal .. " -e newsboat",
                 t = terminal,
                 s = "system-monitoring-center",
@@ -403,6 +400,22 @@ clientkeys = gears.table.join(
         awful.client.focus.global_bydirection("down")
         c:lower()
     end, {description = "focus lower client", group = "client"}),
+    awful.key({ modkey }, "Left", function (c)
+        awful.client.focus.global_bydirection("left")
+        c:lower()
+    end, {description = "focus left client", group = "client"}),
+    awful.key({ modkey }, "Right", function (c)
+        awful.client.focus.global_bydirection("right")
+        c:lower()
+    end, {description = "focus right client", group = "client"}),
+    awful.key({ modkey }, "Up", function (c)
+        awful.client.focus.global_bydirection("up")
+        c:lower()
+    end, {description = "focus upper client", group = "client"}),
+    awful.key({ modkey }, "Down", function (c)
+        awful.client.focus.global_bydirection("down")
+        c:lower()
+    end, {description = "focus lower client", group = "client"}),
     awful.key({ modkey }, "u", awful.client.urgent.jumpto,
          {description = "jump to urgent client", group = "client"}),
 
@@ -432,6 +445,38 @@ clientkeys = gears.table.join(
         c:raise()
     end, {description = "move up", group = "client"}),
     awful.key({ modkey, "Shift"   }, "j", function (c)
+        if c.floating then
+            c:relative_move(  0,  20,   0,   0)
+        else
+            awful.client.swap.global_bydirection("down")
+        end
+        c:raise()
+    end, {description = "move down", group = "client"}),
+    awful.key({ modkey, "Shift"   }, "Left", function (c)
+        if c.floating then
+            c:relative_move(-20,   0,   0,   0)
+        else
+            awful.client.swap.global_bydirection("left")
+        end
+        c:raise()
+    end, {description = "move left", group = "client"}),
+    awful.key({ modkey, "Shift"   }, "Right", function (c)
+        if c.floating then
+            c:relative_move( 20,   0,   0,   0)
+        else
+            awful.client.swap.global_bydirection("right")
+        end
+        c:raise()
+    end, {description = "move right", group = "client"}),
+    awful.key({ modkey, "Shift"   }, "Up", function (c)
+        if c.floating then
+            c:relative_move(  0, -20,   0,   0)
+        else
+            awful.client.swap.global_bydirection("up")
+        end
+        c:raise()
+    end, {description = "move up", group = "client"}),
+    awful.key({ modkey, "Shift"   }, "Down", function (c)
         if c.floating then
             c:relative_move(  0,  20,   0,   0)
         else

@@ -42,6 +42,9 @@ dmenu.selforeground:        yellow_dark
 Sxiv.font:                 monospace:pixelsize=16
 Sxiv.background:           black_dark
 Sxiv.foreground:           cyan_light
+Nsxiv.bar.font:                 monospace:pixelsize=16
+Nsxiv.bar.background:           cyan_light
+Nsxiv.bar.foreground:           black_dark
 
 !! ---------------------------------------------------------------------------
 !! URxvt Appearance
