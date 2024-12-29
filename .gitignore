@@ -29,3 +29,9 @@ dunst/.config/dunst/experimental-images/
 # cheat
 cheat/.config/cheat/cheatsheets/community/
 
+# VSCode
+vscode/.local/share/vscode/extensions/
+vscode/.local/share/vscode/user-data/
+!vscode/.local/share/vscode/user-data/User/settings.json
+vscode/.local/share/vscode/argv.json
+
