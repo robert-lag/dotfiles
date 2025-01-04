@@ -71,6 +71,8 @@ export R_ENVIRON_USER="$XDG_CONFIG_HOME/r/.Renviron"
 export GRADLE_USER_HOME="$XDG_DATA_HOME/gradle"
 export RANDFILE="$XDG_CACHE_HOME/openssl/rnd"
 export WINEPREFIX="$XDG_DATA_HOME/wineprefixes/default"
+export REDISCLI_HISTFILE="$XDG_DATA_HOME/redis/rediscli_history"
+export REDISCLI_RCFILE="$XDG_CONFIG_HOME/redis/redisclirc"
 
 # custom variables called in ~/.config/shell/.aliasrc
 export FREEPLANE_DATA_HOME="$XDG_DATA_HOME/freeplane"
