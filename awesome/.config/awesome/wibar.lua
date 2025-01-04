@@ -228,7 +228,7 @@ local cpu_widget = wibox.widget {
                 cpu_popup:move_next_to(mouse.current_widget_geometry)
             end
         end),
-        awful.button({ }, 3, function() awful.spawn(string.format("%s -e htop", terminal)) end)
+        awful.button({ }, 3, function() awful.spawn(string.format("%s -e btop", terminal)) end)
     )
 }
 
