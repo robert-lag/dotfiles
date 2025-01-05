@@ -49,12 +49,14 @@ cmd mkdir $mkdir -p "$(echo $* | tr ' ' '\ ')"
 cmd mkfile $$EDITOR $1
 
 cmd chmod ${{
-    printf "Mode Bits: "
-    read ans
+	if [ "$#" -eq 0 ] || [ -z "$1" ]; then
+		lf -remote "send $id echo chmod: no mode bits specified"
+		exit 0
+	fi
 
-    for file in "$fx"
-    do
-        chmod $ans $file
+    for file in $fx; do
+        file_path=$(realpath "$file")
+        chmod "$1" "$file_path"
     done
 
     lf -remote 'send reload'
