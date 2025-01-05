@@ -37,7 +37,7 @@ cmd open-alternative ${{
 }}
 
 cmd open-dir-in-image-viewer ${{
-    nsxiv --thumbnail --scale-mode=f --animate --quiet --private "$PWD"
+    open-images-in-dir
 }}
 
 cmd open-dir-in-gui ${{
