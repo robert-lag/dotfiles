@@ -117,6 +117,8 @@
     #   %%  Literal %
     # Markup is allowed
     format = "<b>%s</b>\n%b"
+    # Line height needs to be adjusted, so summary doesn't overshadow the body
+    # format = "<span font='Roboto Bold 14' line_height="0.8">%s</span>\n%b"
 
     # Alignment of message text.
     # Possible values are "left", "center" and "right".
@@ -366,6 +368,13 @@
 [thunderbird-icon]
     desktop_entry = "Thunderbird"
     new_icon = ~/.local/share/dunst/icons/email.png
+
+# }}}1
+
+# [volume-notification] {{{1
+[volume-notification]
+    desktop_entry = "volume-notification"
+    format = "<span font="Roboto Bold 18">%s\n%b</span>"
 
 # }}}1
 
