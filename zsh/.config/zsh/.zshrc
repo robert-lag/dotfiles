@@ -78,7 +78,20 @@ lfcd () {
 }
 bindkey -s '^o' 'lfcd\n'
 
-bindkey -s '^f' 'cd "$(dirname "$(fzf)")"\n'
+# Use fzf to switch directories and bind it to ctrl-f
+fzfcd () {
+    selected_path="$(fzf)"
+
+    # If a file was selected, select the directory it's in
+    if [ -d "$selected_path" ]; then
+        selected_dir="$selected_path"
+    else
+        selected_dir="$(dirname "$selected_path")"
+    fi
+
+    cd "$selected_dir"
+}
+bindkey -s '^f' 'fzfcd\n'
 
 bindkey '^[[P' delete-char
 
