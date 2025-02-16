@@ -374,7 +374,7 @@
 # [volume-notification] {{{1
 [volume-notification]
     desktop_entry = "volume-notification"
-    format = "<span font="Roboto Bold 18">%s\n%b</span>"
+    format = "<span font="Roboto Bold 18">%s</span>"
 
 # }}}1
 
