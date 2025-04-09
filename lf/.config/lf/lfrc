@@ -56,7 +56,7 @@ cmd chmod ${{
 
     for file in $fx; do
         file_path=$(realpath "$file")
-        chmod "$1" "$file_path"
+        chmod "$@" "$file_path"
     done
 
     lf -remote 'send reload'
