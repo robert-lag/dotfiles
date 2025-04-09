@@ -313,6 +313,7 @@ Vagrantfile             
 *.ogm   
 *.mp4   
 *.m4v   
+*.m4s   
 *.mp4v  
 *.vob   
 *.qt    
