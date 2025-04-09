@@ -36,6 +36,7 @@ x-scheme-handler/mid=mail.desktop
 message/rfc822=mail.desktop
 
 x-scheme-handler/notion=notion-app.desktop
+x-scheme-handler/postman=Postman.desktop
 
 [Added Associations]
 
