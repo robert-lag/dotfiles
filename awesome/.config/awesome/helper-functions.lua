@@ -20,3 +20,8 @@ end
 function show_msg(format, variable)
     awful.spawn(string.format("notify-send '" .. format .. "'", variable))
 end
+
+function rtrim(str)
+    return str:match'^(.*%S)%s*$'
+end
+

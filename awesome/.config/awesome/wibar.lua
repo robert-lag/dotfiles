@@ -1206,7 +1206,7 @@ local wifi_widget = wibox.widget {
         {
             id = 'icon',
             text = '󰖪',
-            align = 'left',
+            align = 'center',
             valign = 'center',
             forced_width = 20,
             font = "monospace 15",
@@ -1377,6 +1377,138 @@ awful.widget.watch(
         end
     end,
     wifi_widget
+)
+-- }}}2
+
+-- Bluetooth widget {{{1
+
+-- Popup {{{2
+local bluetooth_popup_width = 220
+local bluetooth_popup = awful.popup {
+    widget = {
+        {
+            {
+                {
+                    {
+                        id = 'icon',
+                        text = '󰂲',
+                        align = 'left',
+                        valign = 'center',
+                        font = "Monospace 20",
+                        forced_width = 30,
+                        widget = wibox.widget.textbox,
+                    },
+                    {
+                        id = 'value',
+                        markup = '<b>Not Connected</b>',
+                        align = 'center',
+                        valign = 'center',
+                        font = 'Monospace 14',
+                        widget = wibox.widget.textbox,
+                    },
+                    id = 'inner',
+                    widget = wibox.layout.fixed.horizontal,
+                },
+                id = 'connected',
+                fg = beautiful.tasklist_wifi_not_connected,
+                widget = wibox.container.background,
+            },
+            {
+                id = 'header_separator',
+                forced_width = 0,
+                forced_height = 10,
+                opacity = 0,
+                widget = wibox.widget.separator
+            },
+            {
+                id = 'device',
+                text = '',
+                align = 'left',
+                valign = 'center',
+                widget = wibox.widget.textbox,
+                forced_width = bluetooth_popup_width
+            },
+            id = 'inner',
+            layout = wibox.layout.fixed.vertical,
+        },
+        margins = 10,
+        widget  = wibox.container.margin
+    },
+    border_color = beautiful.tasklist_border_color,
+    border_width = 2,
+    offset = { y = 5, x = 10 },
+    shape = function(cr, width, height)
+        gears.shape.rounded_rect(cr, width, height, 8)
+    end,
+    visible      = false,
+    ontop        = true,
+    hide_on_right_click = true,
+    opacity      = beautiful.tasklist_popup_opacity,
+}
+
+-- Widget {{{2
+local bluetooth_widget = wibox.widget {
+    {
+        {
+            id = 'icon',
+            text = '󰂯',
+            align = 'center',
+            valign = 'center',
+            forced_width = 15,
+            font = "monospace 15",
+            widget = wibox.widget.textbox,
+        },
+        {
+            id = 'name',
+            text = '',
+            align = 'left',
+            valign = 'center',
+            widget = wibox.widget.textbox,
+        },
+        id = 'inner',
+        spacing = 5,
+        layout = wibox.layout.fixed.horizontal,
+    },
+    fg = beautiful.tasklist_bluetooth,
+    widget = wibox.container.background,
+    buttons = gears.table.join(
+            awful.button({ }, 1, function()
+                if bluetooth_popup.visible then
+                    bluetooth_popup.visible = false
+                else
+                    hide_popups()
+                    bluetooth_popup:move_next_to(mouse.current_widget_geometry)
+                end
+            end),
+            awful.button({ "Shift" }, 1, function() awful.spawn("dmenu-bluetooth-scanner") end)
+    )
+}
+
+-- Update widget {{{2
+awful.widget.watch(
+    "sh -c 'bluetoothctl devices Connected | cut -d\" \" --fields=3-'", 5,
+    function(widget, stdout, stderr, exitreason, exitcode)
+        if stdout == "" then
+            widget.inner.icon.text = "󰂲"
+            widget.fg = beautiful.tasklist_wifi_not_connected
+            bluetooth_popup.widget.inner.connected.fg = beautiful.tasklist_wifi_not_connected
+            bluetooth_popup.widget.inner.connected.inner.icon.text = "󰂲"
+            bluetooth_popup.widget.inner.connected.inner.value.markup = "<b>Not Connected</b>"
+            bluetooth_popup.widget.inner.device.text = ''
+            bluetooth_popup.widget.inner.header_separator.visible = false
+            bluetooth_popup.widget.inner.device.visible = false
+        else
+            widget.inner.icon.text = "󰂯"
+            widget.fg = beautiful.tasklist_wifi
+            bluetooth_popup.widget.inner.connected.fg = beautiful.tasklist_wifi
+            bluetooth_popup.widget.inner.connected.inner.icon.text = "󰂯"
+            bluetooth_popup.widget.inner.connected.inner.value.markup = "<b>Connected</b>"
+            bluetooth_popup.widget.inner.device.text = rtrim(stdout)
+            bluetooth_popup.widget.inner.header_separator.visible = true
+            bluetooth_popup.widget.inner.device.visible = true
+        end
+    end,
+    bluetooth_widget
 )
 -- }}}2
 
@@ -1853,6 +1985,7 @@ awful.screen.connect_for_each_screen(function(s)
             {
                 {
                     keyboard_widget_to_show,
+                    bluetooth_widget,
                     wifi_widget,
                     cpu_widget,
                     ram_widget,
