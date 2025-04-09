@@ -485,9 +485,9 @@ def_key "J"
  select_item
  scroll_down
 
-def_key "O"
+def_key "+"
     volume_up
-def_key "I"
+def_key "-"
     volume_down
 def_key "L"
  seek_forward
@@ -499,9 +499,9 @@ def_key "n"
 def_key "N"
     previous_found_item
 
-def_key "Z"
+def_key "ctrl-k"
 	move_selected_items_up
-def_key "T"
+def_key "ctrl-j"
 	move_selected_items_down
 
 # Delete {{{1
@@ -521,7 +521,7 @@ def_key "x"
 # Lyrics {{{1
 def_key "."
     show_lyrics
-def_key "-"
+def_key "d"
     run_external_command "lyrics-dl"
 def_key "e"
     edit_lyrics
