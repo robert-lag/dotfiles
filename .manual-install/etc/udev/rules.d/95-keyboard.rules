@@ -1,0 +1,2 @@
+# Execute setup-keyboard whenever a keyboard connects
+ACTION=="add", SUBSYSTEM=="input", ENV{DISPLAY}=":0", ENV{XAUTHORITY}="/home/robert/.Xauthority", RUN+="/bin/su robert --command '/home/robert/.local/bin/setup-keyboard' &"
