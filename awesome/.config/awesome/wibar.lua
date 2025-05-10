@@ -939,21 +939,21 @@ battery_widget:connect_signal('upower::update', function (widget, device)
             battery_icon = "󰂃"
             if not brightness_reduced_critical then
                 awful.spawn("decrease-brightness-to 10")
-                awful.spawn("notify-send --urgency critical -i ~/.local/share/dunst/icons/battery-alert.png -- 'Very Low Battery'")
+                awful.spawn("notify-send --urgency critical -i /home/robert/.local/share/dunst/icons/battery-alert.png -- 'Very Low Battery'")
                 brightness_reduced_critical = true
             end
         elseif device.percentage <= 10 then
             battery_icon = "󰁺"
             if not brightness_reduced_warning then
                 awful.spawn("decrease-brightness-to 50")
-                awful.spawn("notify-send -i ~/.local/share/dunst/icons/battery-alert.png -- 'Low Battery'")
+                awful.spawn("notify-send -i /home/robert/.local/share/dunst/icons/battery-alert.png -- 'Low Battery'")
                 brightness_reduced_warning = true
             end
         elseif device.percentage <= 20 then
             battery_icon = "󰁻"
             if not brightness_reduced_warning then
                 awful.spawn("decrease-brightness-to 50")
-                awful.spawn("notify-send -i ~/.local/share/dunst/icons/battery-alert.png -- 'Low Battery'")
+                awful.spawn("notify-send -i /home/robert/.local/share/dunst/icons/battery-alert.png -- 'Low Battery'")
                 brightness_reduced_warning = true
             end
         elseif device.percentage <= 30 then
