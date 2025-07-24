@@ -287,12 +287,10 @@ map <m-2> unselect
 map <m-3> invert
 
 # Rename {{{2
-map rA rename # at the very end
-map rr push A<c-u> # new rename
-map rI push A<c-a> # at the very beginning
-map ri push A<a-b><a-b><a-f> # before extention
-map ra push A<a-b> # after extention
-map rB bulkrename
+map rr :rename; cmd-end; cmd-delete-home # new rename
+map ri rename               # cursor before extension
+map rI :rename; cmd-home    # cursor at the very beginning
+map rA :rename; cmd-end     # cursor at the very end
 
 # Image Viewer {{{2
 map i open-dir-in-image-viewer
