@@ -61,7 +61,7 @@ xautolock -detectsleep -resetsaver \
 [ ! -s ~/.config/mpd/pid ] && mpd &
 
 # Syncthing (for syncing folders with computers/smartphones)
-syncthing -no-browser -no-restart -logflags=0 &
+syncthing --no-browser --no-restart --logflags=0 &
 
 # Apply cursor theme (workaround for bug in awesome wm)
 xsetroot -cursor_name left_ptr &
