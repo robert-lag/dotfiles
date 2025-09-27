@@ -62,6 +62,20 @@ cmd chmod ${{
     lf -remote 'send reload'
 }}
 
+cmd chown ${{
+	if [ "$#" -eq 0 ] || [ -z "$1" ]; then
+		lf -remote "send $id echo chown: no arguments specified"
+		exit 0
+	fi
+
+    for file in $fx; do
+        file_path=$(realpath "$file")
+        chown "$@" "$file_path"
+    done
+
+    lf -remote 'send reload'
+}}
+
 cmd new-instance ${{
     $TERMINAL -e $SHELL -c "lf;$SHELL" 1>/dev/null 2>&1 &
     disown %1
