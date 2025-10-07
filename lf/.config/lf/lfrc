@@ -40,6 +40,10 @@ cmd open-dir-in-image-viewer ${{
     open-images-in-dir
 }}
 
+cmd open-dir-in-image-viewer-shuffled ${{
+    open-images-in-dir -r
+}}
+
 cmd open-dir-in-gui ${{
     nautilus-arc-dark-gtk4 "$PWD" 2>&1 1>/dev/null &
 }}
@@ -212,7 +216,7 @@ cmd restore-trash ${{
 cmd dragon %dragon-drop --all --and-exit $fx 1>/dev/null 2>&1
 cmd dragon-stay %dragon-drop --all $fx 1>/dev/null 2>&1
 cmd dragon-individual %dragon-drop $fx 1>/dev/null 2>&1
-cmd dragon-cp %dragon-cp 1>/dev/null 2>&1
+cmd dragon-cp %dragon-cp
 cmd dragon-mv %dragon-mv 1>/dev/null 2>&1
 cmd dragon-dl %dragon-dl 1>/dev/null 2>&1
 
@@ -267,6 +271,7 @@ cmd wq quit
 
 # Remove defaults {{{2
 map d
+map i
 map m
 map r
 
@@ -307,7 +312,8 @@ map rI :rename; cmd-home    # cursor at the very beginning
 map rA :rename; cmd-end     # cursor at the very end
 
 # Image Viewer {{{2
-map i open-dir-in-image-viewer
+map ii open-dir-in-image-viewer
+map ir open-dir-in-image-viewer-shuffled
 map I open-dir-in-gui
 
 # Wallpaper / lockscreen {{{2
