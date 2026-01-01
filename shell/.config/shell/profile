@@ -107,8 +107,8 @@ export XSECURELOCK_SAVER_WEATHER_FONT_SIZE=20
 export XSECURELOCK_SAVER_FONT_COLOR_RGBA="0.73/0.78/0.88/0.9"
 export XSECURELOCK_SAVER_FONT_SHADOW_COLOR_RGBA="0/0/0/0.9"
 
-# Use Java 17
-export JAVA_HOME="/usr/lib/jvm/java-17-openjdk"
+# Use Java 25
+export JAVA_HOME="/usr/lib/jvm/java-25-openjdk"
 
 # Difftastic settings
 export DFT_TAB_WIDTH=4
