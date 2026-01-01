@@ -42,7 +42,9 @@ alias \
     v="$EDITOR" \
     p="pacman" \
     z="zathura" \
-    bctl="bluetoothctl"
+    bctl="bluetoothctl" \
+    transg="trans -sl english -tl german" \
+    transe="trans -sl german -tl english"
 
 # ~/ cleanup
 alias freeplane="freeplane -U $FREEPLANE_DATA_HOME"
