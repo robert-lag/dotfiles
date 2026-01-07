@@ -1,0 +1,52 @@
+### Movement ###
+
+# Move to next pane
+<c-w>w
+
+# Move to right pane
+<c-w>l
+<c-w><right>
+
+# Move to left pane
+<c-w>h
+<c-w><left>
+
+### Apply changes to panes ###
+
+# Obtains changes from other pane and applies it to the current one
+do - diff obtain
+
+# Overrides changes in the current pane with the changes in the other pane
+dp - diff put
+
+# Overrides changes in the current pane with the changes in the specified pane
+# (e.g. "diffget 1", etc.)
+:diffget <index>
+
+# Overrides changes in the current pane with the changes in the specified pane
+# (e.g. "diffget LOCAL", "diffget LO", "diffget REMOTE", "diffget RE", etc.)
+:diffget <name>
+
+### Settings ###
+
+# Update coloring when comparing files (=vimdiff)
+:diffupdate
+
+# Disable diffing in this pane
+:diffo(ff)
+
+# Enable diffing in this pane
+:difft(his)
+
+### Quit ###
+
+# Closes all panes, but diff opens new panes if there is
+# another merge conflict remaining (when used for merging)
+# Exitcode: 0
+:qa
+
+# Closes all panes, and doesn't open new ones even if there
+# are other merge conflicts remaining (when used for merging)
+# Exitcode: 1
+:cq
+
