@@ -1486,7 +1486,7 @@ local bluetooth_widget = wibox.widget {
 
 -- Update widget {{{2
 awful.widget.watch(
-    "sh -c 'bluetoothctl devices Connected | cut -d\" \" --fields=3-'", 5,
+    "sh -c 'bluetooth-connected-devices | cut -d\" \" --fields=2-'", 5,
     function(widget, stdout, stderr, exitreason, exitcode)
         if stdout == "" then
             widget.inner.icon.text = "󰂲"
