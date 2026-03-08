@@ -14,10 +14,12 @@
 ### Apply changes to panes ###
 
 # Obtains changes from other pane and applies it to the current one
-do - diff obtain
+# diff obtain
+do
 
 # Overrides changes in the current pane with the changes in the other pane
-dp - diff put
+# diff put
+dp
 
 # Overrides changes in the current pane with the changes in the specified pane
 # (e.g. "diffget 1", etc.)
