@@ -5,11 +5,14 @@
 # /___|___/_| |_|_|  \___|
 #
 
-# General settings
+# --------------------------------------------------
+# General
+# --------------------------------------------------
+
 autoload -U colors && colors	# Load colors
-setopt autocd					# Automatically cd into typed directory.
-stty stop undef					# Disable ctrl-s to freeze terminal.
-setopt interactive_comments
+setopt autocd					# Automatically cd into typed directory
+setopt interactive_comments     # Allow comments in shell
+stty stop undef					# Disable ctrl-s to not accidentally freeze terminal
 
 # Prompt
 PS1="%B%{$fg[green]%}%n@%M%{$fg[white]%}:%{$fg[yellow]%}%~%{$reset_color%}$%b "
@@ -25,19 +28,27 @@ zstyle ':vcs_info:git:*' formats '%b'
 # History
 HISTSIZE=10000000
 SAVEHIST=10000000
-HISTFILE=~/.cache/zsh/history
+HISTFILE="${XDG_CACHE_HOME:-$HOME/.cache}/zsh/history"
+HISTCONTROL=ignoreboth          # Consecutive duplicates & commands starting with space are not saved
 
-# Load aliases and shortcuts if existent
-[ -f "${XDG_CONFIG_HOME:-$HOME/.config}/shell/shortcutrc" ] && source "${XDG_CONFIG_HOME:-$HOME/.config}/shell/shortcutrc"
+# Setup $LS_COLORS
+eval "$(dircolors -b)"
+
+# Load aliases if existent
 [ -f "${XDG_CONFIG_HOME:-$HOME/.config}/shell/aliasrc" ] && source "${XDG_CONFIG_HOME:-$HOME/.config}/shell/aliasrc"
-[ -f "${XDG_CONFIG_HOME:-$HOME/.config}/shell/zshnameddirrc" ] && source "${XDG_CONFIG_HOME:-$HOME/.config}/shell/zshnameddirrc"
 
 # Basic auto/tab complete
-autoload -U compinit -d ~/.cache/zsh/zcompdump-$ZSH_VERSION
-zstyle ':completion:*' menu select
+autoload -U compinit -d "${XDG_CACHE_HOME:-$HOME/.cache}/zsh/zcompdump-$ZSH_VERSION"
+zstyle ':completion:*' menu select                              # Tab opens completion menu
+zstyle ':completion:*' list-colors ${LS_COLORS} ma=1\;30\;104   # Colorize completion menu
 zmodload zsh/complist
-compinit -d ~/.cache/zsh/zcompdump-$ZSH_VERSION
-_comp_options+=(globdots)		# Include hidden files.
+compinit -d "${XDG_CACHE_HOME:-$HOME/.cache}/zsh/zcompdump-$ZSH_VERSION"
+setopt globdots                                                 # Include dotfiles
+
+
+# --------------------------------------------------
+# vim integration
+# --------------------------------------------------
 
 # vi mode
 bindkey -v
@@ -66,7 +77,14 @@ zle -N zle-line-init
 echo -ne '\e[5 q'					# Use beam shape cursor on startup.
 preexec() { echo -ne '\e[5 q' ;}	# Use beam shape cursor for each new prompt.
 
-# Use lf to switch directories and bind it to ctrl-o
+
+# --------------------------------------------------
+# lf integration
+# --------------------------------------------------
+# ctrl-o: Switch dirs (lfcd)
+# --------------------------------------------------
+
+# Setup ctlr-o: Use lf to switch directories
 lfcd () {
     tmp="$(mktemp)"
     lf -last-dir-path="$tmp" "$@"
@@ -78,7 +96,19 @@ lfcd () {
 }
 bindkey -s '^o' 'lfcd\n'
 
-# Use fzf to switch directories and bind it to ctrl-f
+
+# --------------------------------------------------
+# fzf integration
+# --------------------------------------------------
+# ctrl-t: Fuzzy find files and dirs of working-dir and print to stdout
+# ctrl-r: Fuzzy find through shell history
+# ctrl-f: Switch dirs (fzfcd)
+# --------------------------------------------------
+
+# Setup ctrl-t and ctrl-r
+source <(fzf --zsh)
+
+# Setup ctrl-f: Use fzf to switch directories
 fzfcd () {
     selected_path="$(fzf)"
 
@@ -93,11 +123,17 @@ fzfcd () {
 }
 bindkey -s '^f' 'fzfcd\n'
 
+
+# --------------------------------------------------
+# Other
+# --------------------------------------------------
+
 bindkey '^[[P' delete-char
 
-# Edit currently typing command in vim with ctrl-e
+# ctrl-e: Edit currently typing command in vim
 autoload edit-command-line; zle -N edit-command-line
 bindkey '^e' edit-command-line
 
 # Load syntax highlighting (should be last)
 source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.plugin.zsh 2>/dev/null
+
