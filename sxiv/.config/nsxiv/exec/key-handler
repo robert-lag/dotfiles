@@ -2,7 +2,11 @@
 while read file
 do
 	case "$1" in
-	"w") setbg "$file" & ;;
+	"o")
+        mpv --script-opts=autoload-disabled=yes "$(echo $file | sed 's/\/.video-thumbnail-cache//' | sed 's/.jpg/.mp4/' | sed 's/.png/.mp4/')" 1>/dev/null ||
+        mpv --script-opts=autoload-disabled=yes "$(echo $file | sed 's/\/.video-thumbnail-cache//' | sed 's/.jpg/.m4v/' | sed 's/.png/.m4v/')" 1>/dev/null ||
+        mpv --script-opts=autoload-disabled=yes "$(echo $file | sed 's/\/.video-thumbnail-cache//' | sed 's/.jpg/.webm/' | sed 's/.png/.webm/')" 1>/dev/null ||
+		mpv --script-opts=autoload-disabled=yes "$file" 1>/dev/null & ;;
 	"r")
 		convert -rotate 90 "$file" "$file" ;;
 	"R")
