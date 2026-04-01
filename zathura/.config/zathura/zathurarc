@@ -10,7 +10,8 @@
 ##############################################
 ### General {{{1
 ##############################################
-set page-padding 1
+set page-v-padding 1
+set page-h-padding 1
 set selection-clipboard clipboard
 set scroll-page-aware 1
 
