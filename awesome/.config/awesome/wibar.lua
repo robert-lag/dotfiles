@@ -1428,6 +1428,63 @@ local bluetooth_popup = awful.popup {
                 widget = wibox.widget.textbox,
                 forced_width = bluetooth_popup_width
             },
+            {
+                {
+                    id = 'name',
+                    text = '',
+                    align = 'left',
+                    valign = 'center',
+                    widget = wibox.widget.textbox,
+                },
+                {
+                    id = 'battery',
+                    text = '',
+                    align = 'right',
+                    valign = 'center',
+                    widget = wibox.widget.textbox,
+                },
+                id = 'device0',
+                forced_width = wifi_popup_width,
+                widget = wibox.layout.align.horizontal
+            },
+            {
+                {
+                    id = 'name',
+                    text = '',
+                    align = 'left',
+                    valign = 'center',
+                    widget = wibox.widget.textbox,
+                },
+                {
+                    id = 'battery',
+                    text = '',
+                    align = 'right',
+                    valign = 'center',
+                    widget = wibox.widget.textbox,
+                },
+                id = 'device1',
+                forced_width = wifi_popup_width,
+                widget = wibox.layout.align.horizontal
+            },
+            {
+                {
+                    id = 'name',
+                    text = '',
+                    align = 'left',
+                    valign = 'center',
+                    widget = wibox.widget.textbox,
+                },
+                {
+                    id = 'battery',
+                    text = '',
+                    align = 'right',
+                    valign = 'center',
+                    widget = wibox.widget.textbox,
+                },
+                id = 'device2',
+                forced_width = wifi_popup_width,
+                widget = wibox.layout.align.horizontal
+            },
             id = 'inner',
             layout = wibox.layout.fixed.vertical,
         },
@@ -1494,18 +1551,46 @@ awful.widget.watch(
             bluetooth_popup.widget.inner.connected.fg = beautiful.tasklist_wifi_not_connected
             bluetooth_popup.widget.inner.connected.inner.icon.text = "󰂲"
             bluetooth_popup.widget.inner.connected.inner.value.markup = "<b>Not Connected</b>"
-            bluetooth_popup.widget.inner.device.text = ''
             bluetooth_popup.widget.inner.header_separator.visible = false
             bluetooth_popup.widget.inner.device.visible = false
+
+            bluetooth_popup.widget.inner.device0.name.text = ''
+            bluetooth_popup.widget.inner.device0.battery.text = ''
+            bluetooth_popup.widget.inner.device1.name.text = ''
+            bluetooth_popup.widget.inner.device1.battery.text = ''
+            bluetooth_popup.widget.inner.device2.name.text = ''
+            bluetooth_popup.widget.inner.device2.battery.text = ''
         else
             widget.inner.icon.text = "󰂯"
             widget.fg = beautiful.tasklist_wifi
             bluetooth_popup.widget.inner.connected.fg = beautiful.tasklist_wifi
             bluetooth_popup.widget.inner.connected.inner.icon.text = "󰂯"
             bluetooth_popup.widget.inner.connected.inner.value.markup = "<b>Connected</b>"
-            bluetooth_popup.widget.inner.device.text = rtrim(stdout)
             bluetooth_popup.widget.inner.header_separator.visible = true
             bluetooth_popup.widget.inner.device.visible = true
+
+            local devices_info = {}
+            for device_line in stdout:gmatch("[^\r\n]+") do
+                table.insert(devices_info, device_line)
+            end
+
+            if devices_info[1] then
+                local battery, name = string.match(devices_info[1], "^(%S+)%s+(.*)")
+                bluetooth_popup.widget.inner.device0.name.text = rtrim(name)
+                bluetooth_popup.widget.inner.device0.battery.text = battery
+            end
+
+            if devices_info[2] then
+                local battery, name = string.match(devices_info[2], "^(%S+)%s+(.*)")
+                bluetooth_popup.widget.inner.device1.name.text = rtrim(name)
+                bluetooth_popup.widget.inner.device1.battery.text = battery
+            end
+
+            if devices_info[3] then
+                local battery, name = string.match(devices_info[3], "^(%S+)%s+(.*)")
+                bluetooth_popup.widget.inner.device2.name.text = rtrim(name)
+                bluetooth_popup.widget.inner.device2.battery.text = battery
+            end
         end
     end,
     bluetooth_widget
