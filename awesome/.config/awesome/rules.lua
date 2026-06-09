@@ -37,6 +37,7 @@ awful.rules.rules = {
         -- and the name shown there might not match defined rules here.
         name = {
           "Event Tester",   -- xev.
+          "annotate_toolbar", -- Zoom annotation icon (pencil icon in bottom left corner when screen sharing)
         },
         role = {
           "AlarmWindow",    -- Thunderbird's calendar.
