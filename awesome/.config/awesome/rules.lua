@@ -80,6 +80,29 @@ awful.rules.rules = {
       }
     },
 
+    -- Picture-in-Picture {{{1
+    {
+        rule_any = {
+            name = { "Picture-in-Picture" },
+        },
+        properties = {
+            ontop = true,
+            sticky = true,
+            floating = true,
+        },
+        callback = function(c)
+            c:connect_signal("property::fullscreen", function()
+                if c.fullscreen then
+                    -- Entering fullscreen -> disable ontop as it prevents fullscreen
+                    c.ontop = false
+                else 
+                    -- Leaving fullscreen -> Make it show on top of all other windows again
+                    c.ontop = true
+                end
+            end)
+        end
+    },
+
     -- Scratchpads {{{1
     { rule = { instance = "dropdown-general" },
       properties = {
