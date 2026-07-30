@@ -50,6 +50,8 @@ theme.fg_minimize   = darker(xrdb.color7, 50)
 
 theme.useless_gap   = dpi(0)
 theme.border_width  = dpi(3)
+theme.border_width_tiling = theme.border_width
+theme.border_width_floating = dpi(1)
 theme.border_normal = xrdb.color8
 theme.border_focus  = darker(theme.border_normal, -25)
 theme.border_marked = xrdb.color10
@@ -126,7 +128,7 @@ theme.bg_systray = theme.tasklist_bg_normal
 
 -- Titlebar {{{1
 theme.titlebar_bg_normal = xrdb.color0
-theme.titlebar_bg_focus = darker(xrdb.color0, -10)
+theme.titlebar_bg_focus = xrdb.color0
 theme.titlebar_size = 30
 theme.titlebar_font = "Monospace Bold 10"
 

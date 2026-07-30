@@ -1,6 +1,6 @@
 -- Helper functions {{{1
 
-local function getBorderWidthOfTiledClient(client)
+local function updateBorder(client)
     -- use tiled_clients so that other floating windows don't affect the count
     -- but iterate over clients instead of tiled_clients as tiled_clients doesn't include maximized windows
     local s = client.screen
@@ -8,10 +8,21 @@ local function getBorderWidthOfTiledClient(client)
 
     -- A client should have a border only if it isn't floating and if at least
     -- one other non-floating client is shown next to it
-    if (only_one and not client.floating) or client.floating or client.maximized then
-        return 0
+    if (only_one and not client.floating) or client.maximized then
+        client.border_width = 0
+    elseif client.floating then
+        client.border_width = beautiful.border_width_floating
+        -- Floating clients always have border_normal
+        client.border_color = beautiful.border_normal
     else
-        return beautiful.border_width
+        client.border_width = beautiful.border_width_tiling
+    end
+end
+
+local function applyRoundedShape(client)
+    -- Make rounded borders around clients
+    client.shape = function(cr, w, h)
+        gears.shape.rounded_rect(cr, w, h, 10)
     end
 end
 
@@ -22,10 +33,8 @@ local function setTitlebar(client, showBar)
             client:emit_signal("request::titlebars", "rules", {})
         end
         awful.titlebar.show(client)
-        client.border_width = 0
     else
         awful.titlebar.hide(client)
-        client.border_width = getBorderWidthOfTiledClient(client)
     end
 end
 
@@ -108,10 +117,21 @@ end)
 
 -- focus / unfocus {{{2
 client.connect_signal("focus", function(c)
-    client.border_width = getBorderWidthOfTiledClient(c)
-    c.border_color = beautiful.border_focus
+    updateBorder(c)
+
+    -- Only change border color when tiling
+    -- On floating windows the title name changes color instead, to highlight the window
+    if (c.floating or c.first_tag ~= nil and c.first_tag.layout == awful.layout.suit.floating) then
+        c.border_color = beautiful.border_normal
+    else
+        c.border_color = beautiful.border_focus
+    end
 end)
-client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_normal end)
+
+client.connect_signal("unfocus", function(c)
+    updateBorder(c)
+    c.border_color = beautiful.border_normal
+end)
 
 -- property::layout {{{2
 tag.connect_signal("property::layout", function(t)
@@ -120,13 +140,13 @@ tag.connect_signal("property::layout", function(t)
         if ((t.layout == awful.layout.suit.floating or c.floating)) and not c.requests_no_titlebar and not c.fullscreen then
             setTitlebar(c, true)
 
-            -- Make rounded borders around clients
             gears.timer.delayed_call(function()
-                gears.surface.apply_shape_bounding(c, gears.shape.rounded_rect, 10)
+                applyRoundedShape(c)
             end)
         else
             setTitlebar(c, false)
         end
+        updateBorder(c)
     end
 end)
 
@@ -137,13 +157,14 @@ client.connect_signal("property::size", function (c)
             -- Show titlebar
             setTitlebar(c, true)
 
-            -- Make rounded borders around clients
-            gears.surface.apply_shape_bounding(c, gears.shape.rounded_rect, 10)
+            applyRoundedShape(c)
+            updateBorder(c)
         end)
     else
         gears.timer.delayed_call(function()
             -- Hide titlebar
             setTitlebar(c, false)
+            updateBorder(c)
         end)
     end
 end)
