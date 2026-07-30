@@ -1106,17 +1106,6 @@ local wifi_popup = awful.popup {
                         id = 'color4',
                         widget = wibox.container.background,
                     },
-                    {
-                        {
-                            id = 'value5',
-                            text = '',
-                            align = 'right',
-                            valign = 'center',
-                            widget = wibox.widget.textbox,
-                        },
-                        id = 'color5',
-                        widget = wibox.container.background,
-                    },
                     id = 'values',
                     widget = wibox.layout.fixed.horizontal
                 },
@@ -1127,7 +1116,7 @@ local wifi_popup = awful.popup {
             {
                 {
                     id = 'icon',
-                    text = '󰇚',
+                    text = '󰓅',
                     align = 'left',
                     valign = 'center',
                     font = 'Monospace 15',
@@ -1136,7 +1125,7 @@ local wifi_popup = awful.popup {
                 },
                 {
                     id = 'label',
-                    markup = '<b>Download</b> ',
+                    markup = '<b>Bitrate</b> ',
                     align = 'left',
                     valign = 'center',
                     widget = wibox.widget.textbox,
@@ -1148,14 +1137,14 @@ local wifi_popup = awful.popup {
                     valign = 'center',
                     widget = wibox.widget.textbox,
                 },
-                id = 'download',
+                id = 'rate',
                 forced_width = wifi_popup_width,
                 widget = wibox.layout.align.horizontal
             },
             {
                 {
                     id = 'icon',
-                    text = '󰕒',
+                    text = '󰒃',
                     align = 'left',
                     valign = 'center',
                     font = 'Monospace 15',
@@ -1164,7 +1153,7 @@ local wifi_popup = awful.popup {
                 },
                 {
                     id = 'label',
-                    markup = '<b>Upload</b> ',
+                    markup = '<b>Security</b> ',
                     align = 'left',
                     valign = 'center',
                     widget = wibox.widget.textbox,
@@ -1176,7 +1165,7 @@ local wifi_popup = awful.popup {
                     valign = 'center',
                     widget = wibox.widget.textbox,
                 },
-                id = 'upload',
+                id = 'security',
                 forced_width = wifi_popup_width,
                 widget = wibox.layout.align.horizontal
             },
@@ -1199,7 +1188,7 @@ local wifi_popup = awful.popup {
 }
 
 -- Widget {{{2
-local connected_to_ethernet = true
+local connected_to_ethernet = false
 local wifi_ui_collapsed = false
 local wifi_widget = wibox.widget {
     {
@@ -1235,120 +1224,91 @@ local wifi_widget = wibox.widget {
                 end
             end),
             awful.button({ "Shift" }, 1, function() awful.spawn("dmenu-wlan-scanner") end),
-            awful.button({ }, 3, function() awful.spawn(string.format("%s -e %s -c 'iwctl station wlan0 show; iwctl'", terminal, shell)) end)
+            awful.button({ }, 3, function() awful.spawn(string.format("%s -e %s -c 'nmtui'", terminal, shell)) end)
     )
 }
 
 -- Update widget {{{2
 awful.widget.watch(
-    "iw dev wlan0 link", 5,
+    "sh -c 'nmcli -t -f IN-USE,SSID,SIGNAL,RATE,SECURITY device wifi list | grep \'^*\''", 5,
     function(widget, stdout, stderr, exitreason, exitcode)
         if connected_to_ethernet == true then
             awful.spawn("notify-send 'connected to ethernet'")
             return
         end
 
+        local ssid, signal, rate, security = stdout:match("^[*]?:(.*):([^:]+):([^:]+):([^:\n]+)")
+        signal = tonumber(signal)
 
-        local wifi = string.match(stdout, "SSID:.*\n")
-        local index_1, index_2 = string.find(stdout, "SSID: [^\n]*")
-        local index_3, index_4 = string.find(stdout, "signal: [^ \n]*")
-        local index_5, index_6 = string.find(stdout, "tx bitrate:%s%d+%p+%d+%s%a+%p%a")
-        local index_7, index_8 = string.find(stdout, "rx bitrate:%s%d+%p+%d+%s%a+%p%a")
-
-        if ( wifi == '' or wifi == nil ) then
+        if ( ssid == '' or ssid == nil ) then
             wifi_popup.widget.inner.header_separator.visible = false
             wifi_popup.widget.inner.signal.visible = false
-            wifi_popup.widget.inner.upload.visible = false
-            wifi_popup.widget.inner.download.visible = false
+            wifi_popup.widget.inner.rate.visible = false
+            wifi_popup.widget.inner.security.visible = false
 
             widget.inner.icon.text = "󰖪"
             widget.fg = beautiful.tasklist_wifi_not_connected
             wifi_popup.widget.inner.connected.fg = beautiful.tasklist_wifi_not_connected
             wifi_popup.widget.inner.connected.inner.icon.text = "󰖪"
             wifi_popup.widget.inner.connected.inner.value.markup = "<b>Not Connected</b>"
-            wifi_popup.widget.inner.download.value.text = "- Mbit/s"
-            wifi_popup.widget.inner.upload.value.text = "- Mbit/s"
+            wifi_popup.widget.inner.rate.value.text = "- Mbit/s"
+            wifi_popup.widget.inner.security.value.text = "-"
         else
-            -- widget.fg = xrdb.color4
-            wifi = string.sub(stdout, index_1+6, index_2)
-            wifi_signal = tonumber(string.sub(stdout, index_3+8, index_4))
-            wifi_bitrate_tx = string.sub(stdout, index_5+12, index_6)
-            wifi_bitrate_rx = string.sub(stdout, index_7+12, index_8)
-
             wifi_popup.widget.inner.header_separator.visible = true
             wifi_popup.widget.inner.signal.visible = true
-            wifi_popup.widget.inner.upload.visible = true
-            wifi_popup.widget.inner.download.visible = true
+            wifi_popup.widget.inner.rate.visible = true
+            wifi_popup.widget.inner.security.visible = true
 
-            -- awful.spawn(string.format("notify-send --expire-time 4000 --icon=~/.local/share/dunst/icons/wifi.png -- '%s'", wifi))
+            -- awful.spawn(string.format("notify-send --expire-time 4000 --icon=~/.local/share/dunst/icons/wifi.png -- '%s'", ssid))
             widget.inner.icon.text = "󰖩"
             widget.fg = beautiful.tasklist_wifi
             wifi_popup.widget.inner.connected.fg = beautiful.tasklist_wifi
             wifi_popup.widget.inner.connected.inner.icon.text = "󰖩"
-            wifi_popup.widget.inner.connected.inner.value.markup = "<b>" .. wifi .. "</b>"
-            wifi_popup.widget.inner.download.value.text = wifi_bitrate_rx
-            wifi_popup.widget.inner.upload.value.text = wifi_bitrate_tx
+            wifi_popup.widget.inner.connected.inner.value.markup = "<b>" .. ssid .. "</b>"
+            wifi_popup.widget.inner.rate.value.text = rate
+            wifi_popup.widget.inner.security.value.text = security
 
-            if wifi_signal > -50 then
-                wifi_popup.widget.inner.signal.values.color1.value1.text = '*'
-                wifi_popup.widget.inner.signal.values.color2.value2.text = '*'
-                wifi_popup.widget.inner.signal.values.color3.value3.text = '*'
-                wifi_popup.widget.inner.signal.values.color4.value4.text = '*'
-                wifi_popup.widget.inner.signal.values.color5.value5.text = '*'
+            if signal >= 75 then
+                wifi_popup.widget.inner.signal.values.color1.value1.text = '▂'
+                wifi_popup.widget.inner.signal.values.color2.value2.text = '▄'
+                wifi_popup.widget.inner.signal.values.color3.value3.text = '▆'
+                wifi_popup.widget.inner.signal.values.color4.value4.text = '█'
 
                 wifi_popup.widget.inner.signal.values.color1.fg = beautiful.tasklist_wifi_high_signal_fg
                 wifi_popup.widget.inner.signal.values.color2.fg = beautiful.tasklist_wifi_high_signal_fg
                 wifi_popup.widget.inner.signal.values.color3.fg = beautiful.tasklist_wifi_high_signal_fg
                 wifi_popup.widget.inner.signal.values.color4.fg = beautiful.tasklist_wifi_high_signal_fg
-                wifi_popup.widget.inner.signal.values.color5.fg = beautiful.tasklist_wifi_high_signal_fg
-            elseif wifi_signal > -67 then
-                wifi_popup.widget.inner.signal.values.color1.value1.text = '*'
-                wifi_popup.widget.inner.signal.values.color2.value2.text = '*'
-                wifi_popup.widget.inner.signal.values.color3.value3.text = '*'
-                wifi_popup.widget.inner.signal.values.color4.value4.text = '*'
-                wifi_popup.widget.inner.signal.values.color5.value5.text = '*'
+            elseif signal >= 50 then
+                wifi_popup.widget.inner.signal.values.color1.value1.text = '▂'
+                wifi_popup.widget.inner.signal.values.color2.value2.text = '▄'
+                wifi_popup.widget.inner.signal.values.color3.value3.text = '▆'
+                wifi_popup.widget.inner.signal.values.color4.value4.text = '_'
 
-                wifi_popup.widget.inner.signal.values.color1.fg = beautiful.tasklist_wifi_low_signal_fg
+                wifi_popup.widget.inner.signal.values.color1.fg = beautiful.tasklist_wifi_high_signal_fg
                 wifi_popup.widget.inner.signal.values.color2.fg = beautiful.tasklist_wifi_high_signal_fg
                 wifi_popup.widget.inner.signal.values.color3.fg = beautiful.tasklist_wifi_high_signal_fg
-                wifi_popup.widget.inner.signal.values.color4.fg = beautiful.tasklist_wifi_high_signal_fg
-                wifi_popup.widget.inner.signal.values.color5.fg = beautiful.tasklist_wifi_high_signal_fg
-            elseif wifi_signal > -70 then
-                wifi_popup.widget.inner.signal.values.color1.value1.text = '*'
-                wifi_popup.widget.inner.signal.values.color2.value2.text = '*'
-                wifi_popup.widget.inner.signal.values.color3.value3.text = '*'
-                wifi_popup.widget.inner.signal.values.color4.value4.text = '*'
-                wifi_popup.widget.inner.signal.values.color5.value5.text = '*'
+                wifi_popup.widget.inner.signal.values.color4.fg = beautiful.tasklist_wifi_low_signal_fg
+            elseif signal >= 25 then
 
-                wifi_popup.widget.inner.signal.values.color1.fg = beautiful.tasklist_wifi_low_signal_fg
-                wifi_popup.widget.inner.signal.values.color2.fg = beautiful.tasklist_wifi_low_signal_fg
-                wifi_popup.widget.inner.signal.values.color3.fg = beautiful.tasklist_wifi_high_signal_fg
-                wifi_popup.widget.inner.signal.values.color4.fg = beautiful.tasklist_wifi_high_signal_fg
-                wifi_popup.widget.inner.signal.values.color5.fg = beautiful.tasklist_wifi_high_signal_fg
-            elseif wifi_signal > -80 then
-                wifi_popup.widget.inner.signal.values.color1.value1.text = '*'
-                wifi_popup.widget.inner.signal.values.color2.value2.text = '*'
-                wifi_popup.widget.inner.signal.values.color3.value3.text = '*'
-                wifi_popup.widget.inner.signal.values.color4.value4.text = '*'
-                wifi_popup.widget.inner.signal.values.color5.value5.text = '*'
+                wifi_popup.widget.inner.signal.values.color1.value1.text = '▂'
+                wifi_popup.widget.inner.signal.values.color2.value2.text = '▄'
+                wifi_popup.widget.inner.signal.values.color3.value3.text = '_'
+                wifi_popup.widget.inner.signal.values.color4.value4.text = '_'
 
-                wifi_popup.widget.inner.signal.values.color1.fg = beautiful.tasklist_wifi_low_signal_fg
-                wifi_popup.widget.inner.signal.values.color2.fg = beautiful.tasklist_wifi_low_signal_fg
+                wifi_popup.widget.inner.signal.values.color1.fg = beautiful.tasklist_wifi_high_signal_fg
+                wifi_popup.widget.inner.signal.values.color2.fg = beautiful.tasklist_wifi_high_signal_fg
                 wifi_popup.widget.inner.signal.values.color3.fg = beautiful.tasklist_wifi_low_signal_fg
-                wifi_popup.widget.inner.signal.values.color4.fg = beautiful.tasklist_wifi_high_signal_fg
-                wifi_popup.widget.inner.signal.values.color5.fg = beautiful.tasklist_wifi_high_signal_fg
+                wifi_popup.widget.inner.signal.values.color4.fg = beautiful.tasklist_wifi_low_signal_fg
             else
-                wifi_popup.widget.inner.signal.values.color1.value1.text = '*'
-                wifi_popup.widget.inner.signal.values.color2.value2.text = '*'
-                wifi_popup.widget.inner.signal.values.color3.value3.text = '*'
-                wifi_popup.widget.inner.signal.values.color4.value4.text = '*'
-                wifi_popup.widget.inner.signal.values.color5.value5.text = '*'
+                wifi_popup.widget.inner.signal.values.color1.value1.text = '▂'
+                wifi_popup.widget.inner.signal.values.color2.value2.text = '_'
+                wifi_popup.widget.inner.signal.values.color3.value3.text = '_'
+                wifi_popup.widget.inner.signal.values.color4.value4.text = '_'
 
-                wifi_popup.widget.inner.signal.values.color1.fg = beautiful.tasklist_wifi_low_signal_fg
+                wifi_popup.widget.inner.signal.values.color1.fg = beautiful.tasklist_wifi_high_signal_fg
                 wifi_popup.widget.inner.signal.values.color2.fg = beautiful.tasklist_wifi_low_signal_fg
                 wifi_popup.widget.inner.signal.values.color3.fg = beautiful.tasklist_wifi_low_signal_fg
                 wifi_popup.widget.inner.signal.values.color4.fg = beautiful.tasklist_wifi_low_signal_fg
-                wifi_popup.widget.inner.signal.values.color5.fg = beautiful.tasklist_wifi_high_signal_fg
             end
         end
     end,
@@ -1367,13 +1327,13 @@ awful.widget.watch(
             wifi_popup.widget.inner.connected.fg = beautiful.tasklist_wifi
             wifi_popup.widget.inner.connected.inner.icon.text = "󰌗"
             wifi_popup.widget.inner.connected.inner.value.markup = "<b>Ethernet</b>"
-            wifi_popup.widget.inner.download.value.text = "- Mbit/s"
-            wifi_popup.widget.inner.upload.value.text = "- Mbit/s"
+            wifi_popup.widget.inner.rate.value.text = "- Mbit/s"
+            wifi_popup.widget.inner.security.value.text = "-"
 
             wifi_popup.widget.inner.header_separator.visible = false
             wifi_popup.widget.inner.signal.visible = false
-            wifi_popup.widget.inner.upload.visible = false
-            wifi_popup.widget.inner.download.visible = false
+            wifi_popup.widget.inner.rate.visible = false
+            wifi_popup.widget.inner.security.visible = false
         end
     end,
     wifi_widget
