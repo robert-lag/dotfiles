@@ -44,7 +44,8 @@ do
         if in_error then return end
         in_error = true
 
-        awful.spawn(string.format("notify-send --urgency critical --expire-time=10000 -- 'Oops, an error happenend!' '%s'", err))
+        local trace = debug.traceback(err, 2)
+        awful.spawn(string.format("notify-send --urgency critical --expire-time=10000 -- 'Oops, an error happenend!' '%s'", trace:gsub("'", "'\\''")))
 
         in_error = false
     end)

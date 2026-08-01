@@ -49,11 +49,13 @@ theme.fg_urgent     = xrdb.color0
 theme.fg_minimize   = darker(xrdb.color7, 50)
 
 theme.useless_gap   = dpi(0)
+theme.corner_radius = dpi(10)
 theme.border_width  = dpi(3)
 theme.border_width_tiling = theme.border_width
 theme.border_width_floating = dpi(1)
-theme.border_normal = xrdb.color8
-theme.border_focus  = darker(theme.border_normal, -25)
+theme.border_floating = darker(xrdb.color8, -10)
+theme.border_normal = darker(xrdb.color0, -5)
+theme.border_focus  = darker(xrdb.color8, -25)
 theme.border_marked = xrdb.color10
 
 theme.master_width_factor = 0.6

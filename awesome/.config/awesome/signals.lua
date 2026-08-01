@@ -1,5 +1,44 @@
 -- Helper functions {{{1
 
+-- Update gap for a single tag based on number of tiled clients
+local function updateTagGap(t)
+    if not t then return end
+
+    -- Floating layout: always no gap
+    if t.layout == awful.layout.suit.floating then
+        t.gap = 0
+        return
+    end
+    
+    local count = 0
+    for _, c in ipairs(t:clients()) do
+        -- Only count clients that are tiled (not floating, maximized, or fullscreen)
+        if not c.floating and not c.maximized and not c.fullscreen then
+            count = count + 1
+        end
+    end
+    
+    if count > 1 then
+        t.gap = beautiful.useless_gap
+    else
+        t.gap = 0
+    end
+end
+
+-- Update gap for all tags on all screens
+local function updateAllTagGaps()
+    for s in screen do
+        for _,t in ipairs(s.tags) do
+            updateTagGap(t)
+        end
+    end
+end
+
+-- Returns, if a specific client wants to be styled like a floating client (with titlebar, appropriate border, etc.)
+local function wantsFloatingSettings(c)
+    return c.floating or (c.first_tag ~= nil and c.first_tag.layout == awful.layout.suit.floating) and not c.fullscreen
+end
+
 local function updateBorder(client)
     -- use tiled_clients so that other floating windows don't affect the count
     -- but iterate over clients instead of tiled_clients as tiled_clients doesn't include maximized windows
@@ -12,17 +51,10 @@ local function updateBorder(client)
         client.border_width = 0
     elseif client.floating then
         client.border_width = beautiful.border_width_floating
-        -- Floating clients always have border_normal
-        client.border_color = beautiful.border_normal
+        -- Floating clients always have border_floating
+        client.border_color = beautiful.border_floating
     else
         client.border_width = beautiful.border_width_tiling
-    end
-end
-
-local function applyRoundedShape(client)
-    -- Make rounded borders around clients
-    client.shape = function(cr, w, h)
-        gears.shape.rounded_rect(cr, w, h, 10)
     end
 end
 
@@ -55,8 +87,10 @@ end
 -- Signals {{{1
 
 -- manage {{{2
+
 -- Signal function to execute when a new client appears
 client.connect_signal("manage", function (c)
+    if not c.valid then return end
     -- Set the windows at the slave,
     -- i.e. put it at the end of others instead of setting it master.
     -- if not awesome.startup then awful.client.setslave(c) end
@@ -69,12 +103,18 @@ client.connect_signal("manage", function (c)
     end
 
     -- Show titlebar only on floating windows
-    setTitlebar(c, c.floating or (c.first_tag ~= nil and c.first_tag.layout == awful.layout.suit.floating))
+    setTitlebar(c, wantsFloatingSettings(c))
+
+    -- Delay a tiny bit to ensure the client is fully added to the tag
+    gears.timer.delayed_call(function()
+        updateTagGap(c.first_tag)
+    end)
 end)
 
 -- request::titlebars {{{2
 -- Add a titlebar if titlebars_enabled is set to true in the rules
 client.connect_signal("request::titlebars", function(c)
+    if not c.valid then return end
     -- Buttons for the titlebar
     local buttons = gears.table.join(
         awful.button({ }, 1, function()
@@ -112,61 +152,108 @@ end)
 -- mouse::enter {{{2
 -- Enable sloppy focus, so that focus follows mouse.
 client.connect_signal("mouse::enter", function(c)
+    if not c.valid then return end
     c:emit_signal("request::activate", "mouse_enter", {raise = false})
 end)
 
 -- focus / unfocus {{{2
 client.connect_signal("focus", function(c)
+    if not c.valid then return end
     updateBorder(c)
 
     -- Only change border color when tiling
     -- On floating windows the title name changes color instead, to highlight the window
-    if (c.floating or c.first_tag ~= nil and c.first_tag.layout == awful.layout.suit.floating) then
-        c.border_color = beautiful.border_normal
+    if wantsFloatingSettings(c) then
+        c.border_color = beautiful.border_floating
     else
         c.border_color = beautiful.border_focus
     end
 end)
 
 client.connect_signal("unfocus", function(c)
+    if not c.valid then return end
     updateBorder(c)
-    c.border_color = beautiful.border_normal
+
+    if wantsFloatingSettings(c) then
+        c.border_color = beautiful.border_floating
+    else
+        c.border_color = beautiful.border_normal
+    end
 end)
 
 -- property::layout {{{2
+-- Called when the layout of a tag changes (floating, tiled, etc.)
 tag.connect_signal("property::layout", function(t)
     -- Show titlebars on tags with the floating layout
     for _, c in pairs(t:clients()) do
-        if ((t.layout == awful.layout.suit.floating or c.floating)) and not c.requests_no_titlebar and not c.fullscreen then
-            setTitlebar(c, true)
-
-            gears.timer.delayed_call(function()
-                applyRoundedShape(c)
-            end)
+        if ((t.layout == awful.layout.suit.floating or c.floating)) and not c.fullscreen then
+            setTitlebar(c, not c.requests_no_titlebar)
         else
             setTitlebar(c, false)
         end
         updateBorder(c)
     end
+
+    updateTagGap(t)
 end)
 
 -- property::size {{{2
 client.connect_signal("property::size", function (c)
-    if (c.floating or (c.first_tag ~= nil and c.first_tag.layout == awful.layout.suit.floating)) and not c.requests_no_titlebar and not c.fullscreen then
-        gears.timer.delayed_call(function()
-            -- Show titlebar
-            setTitlebar(c, true)
+    if not c.valid then return end
 
-            applyRoundedShape(c)
-            updateBorder(c)
-        end)
-    else
-        gears.timer.delayed_call(function()
+    gears.timer.delayed_call(function()
+        if not c.valid then return end
+
+        if wantsFloatingSettings(c) then
+            -- Show titlebar
+            setTitlebar(c, not c.requests_no_titlebar)
+        else
             -- Hide titlebar
             setTitlebar(c, false)
-            updateBorder(c)
-        end)
-    end
+        end
+
+        updateBorder(c)
+        updateTagGap(c.first_tag)
+    end)
+end)
+
+-- property::tags {{{2
+-- When a client is moved to a different tag (or set of tags)
+client.connect_signal("property::tags", function(c)
+    if not c.valid then return end
+    updateAllTagGaps()
+end)
+
+
+-- property::floating {{{2
+awesome.register_xproperty("_AWESOME_FLOATING", "boolean")
+
+client.connect_signal("property::floating", function(c)
+    if not c.valid then return end
+    gears.timer.delayed_call(function()
+        if not c.valid then return end
+        setTitlebar(c, c.floating)
+        updateBorder(c)
+        updateTagGap(c.first_tag)
+
+        c:set_xproperty("_AWESOME_FLOATING", c.floating)
+
+        if c.floating then
+            c:raise()
+        end
+    end)
+end)
+
+-- property::maximized {{{2
+client.connect_signal("property::maximized", function(c)
+    if not c.valid then return end
+    updateTagGap(c.first_tag)
+end)
+
+-- property::fullscreen {{{2
+client.connect_signal("property::fullscreen", function(c)
+    if not c.valid then return end
+    updateTagGap(c.first_tag)
 end)
 
 -- Listen for screen rotation change {{{2
