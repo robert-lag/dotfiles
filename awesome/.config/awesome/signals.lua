@@ -1,5 +1,7 @@
 -- Helper functions {{{1
 
+awesome.register_xproperty("_AWESOME_SOLE_TILING_CLIENT", "boolean")
+
 -- Update gap for a single tag based on number of tiled clients
 local function updateTagGap(t)
     if not t then return end
@@ -44,6 +46,8 @@ local function updateBorder(client)
     -- but iterate over clients instead of tiled_clients as tiled_clients doesn't include maximized windows
     local s = client.screen
     local only_one = #s.tiled_clients == 1
+
+    client:set_xproperty("_AWESOME_SOLE_TILING_CLIENT", only_one)
 
     -- A client should have a border only if it isn't floating and if at least
     -- one other non-floating client is shown next to it
@@ -164,7 +168,7 @@ client.connect_signal("focus", function(c)
     -- Only change border color when tiling
     -- On floating windows the title name changes color instead, to highlight the window
     if wantsFloatingSettings(c) then
-        c.border_color = beautiful.border_floating
+        c.border_color = beautiful.border_focus_floating
     else
         c.border_color = beautiful.border_focus
     end
