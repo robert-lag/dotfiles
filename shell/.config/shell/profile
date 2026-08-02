@@ -117,6 +117,9 @@ export FREEPLANE_JAVA_HOME="/usr/lib/jvm/java-21-openjdk"
 # Difftastic settings
 export DFT_TAB_WIDTH=4
 
+# nmtui colorscheme
+export NEWT_COLORS=$(<~/.config/nmtui/colors)
+
 # Make it possible to change Qt settings through qt6ct
 # export QT_QPA_PLATFORMTHEME="qt6ct"
 # Use GTK style for QT applications
