@@ -30,6 +30,14 @@ cmd open ${{
 		*.zip|*.rar|*.tar.gz|*.tar.bz2|*.tar.xz|*.tar) lf -remote "send $id unarchive" ;;
 		*) open-file "$f" ;;
 	esac
+
+    # We need to wait until lf has pushed another element on the window title stack using CSI 22.
+    # Otherwise we will overwrite the wrong element in the window title stack causing the
+    # window title to be wrong when exiting lf.
+    (
+        sleep 0.05
+        title-to-pwd
+    ) &
 }}
 
 cmd open-alternative ${{
@@ -251,13 +259,15 @@ cmd link %{{
 }}
 
 # Change window title to current directory {{{2
+cmd on-init &{{
+    title-to-pwd
+}}
+
 cmd on-cd &{{
     # '&' commands run silently in background (which is what we want here),
     # but are not connected to stdout.
-    # To make sure our escape sequence still reaches stdout we pipe it to /dev/tty
-	printf "\033]0; $(pwd | sed "s|$HOME|~|")\007" > /dev/tty
+    title-to-pwd
 }}
-on-cd
 
 # Vim-like commands {{{2
 cmd q quit
