@@ -35,6 +35,10 @@ set wildmode=longest,list,full
 " Splits open at the bottom and right instead of at the top
 set splitbelow splitright
 
+" Set window title to file name
+set title
+set titlestring=%F
+
 " }}}1
 
 " --------------------------------------------------------------------------
