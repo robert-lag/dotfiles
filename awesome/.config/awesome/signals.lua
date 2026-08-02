@@ -90,7 +90,7 @@ end
 
 -- Signals {{{1
 
--- manage {{{2
+-- client - manage {{{2
 
 -- Signal function to execute when a new client appears
 client.connect_signal("manage", function (c)
@@ -115,7 +115,7 @@ client.connect_signal("manage", function (c)
     end)
 end)
 
--- request::titlebars {{{2
+-- client - request::titlebars {{{2
 -- Add a titlebar if titlebars_enabled is set to true in the rules
 client.connect_signal("request::titlebars", function(c)
     if not c.valid then return end
@@ -153,14 +153,24 @@ client.connect_signal("request::titlebars", function(c)
     }
 end)
 
--- mouse::enter {{{2
+-- client - mouse::enter {{{2
 -- Enable sloppy focus, so that focus follows mouse.
 client.connect_signal("mouse::enter", function(c)
     if not c.valid then return end
-    c:emit_signal("request::activate", "mouse_enter", {raise = false})
+    c:emit_signal("request::activate", "mouse_enter", {raise = true})
 end)
 
--- focus / unfocus {{{2
+-- client - mouse::move {{{2
+-- A client should only be focussed when the mouse moves; If the user only uses the keyboard the mouse is irrelevant
+local has_changed_tags = false
+client.connect_signal("mouse::move", function(c)
+    if not c.valid then return end
+    if has_changed_tags then
+        c:emit_signal("request::activate", "mouse_enter", {raise = true})
+    end
+end)
+
+-- client - focus / unfocus {{{2
 client.connect_signal("focus", function(c)
     if not c.valid then return end
     updateBorder(c)
@@ -185,7 +195,7 @@ client.connect_signal("unfocus", function(c)
     end
 end)
 
--- property::layout {{{2
+-- tag - property::layout {{{2
 -- Called when the layout of a tag changes (floating, tiled, etc.)
 tag.connect_signal("property::layout", function(t)
     -- Show titlebars on tags with the floating layout
@@ -201,7 +211,13 @@ tag.connect_signal("property::layout", function(t)
     updateTagGap(t)
 end)
 
--- property::size {{{2
+-- tag - property::selected {{{2
+-- Called when the selected tag changes
+tag.connect_signal("property::selected", function(t)
+    has_changed_tags = true
+end)
+
+-- client - property::size {{{2
 client.connect_signal("property::size", function (c)
     if not c.valid then return end
 
@@ -221,7 +237,7 @@ client.connect_signal("property::size", function (c)
     end)
 end)
 
--- property::tags {{{2
+-- client - property::tags {{{2
 -- When a client is moved to a different tag (or set of tags)
 client.connect_signal("property::tags", function(c)
     if not c.valid then return end
@@ -229,7 +245,7 @@ client.connect_signal("property::tags", function(c)
 end)
 
 
--- property::floating {{{2
+-- client - property::floating {{{2
 awesome.register_xproperty("_AWESOME_FLOATING", "boolean")
 
 client.connect_signal("property::floating", function(c)
@@ -248,13 +264,13 @@ client.connect_signal("property::floating", function(c)
     end)
 end)
 
--- property::maximized {{{2
+-- client - property::maximized {{{2
 client.connect_signal("property::maximized", function(c)
     if not c.valid then return end
     updateTagGap(c.first_tag)
 end)
 
--- property::fullscreen {{{2
+-- client - property::fullscreen {{{2
 client.connect_signal("property::fullscreen", function(c)
     if not c.valid then return end
     updateTagGap(c.first_tag)
