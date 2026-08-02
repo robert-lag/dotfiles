@@ -1,0 +1,5 @@
+disabledbutton=white,red
+checkbox=white,gray
+plainlabel=magenta,magenta
+badlabel=cyan,cyan
+textboxWithBackground=white,lightgray
