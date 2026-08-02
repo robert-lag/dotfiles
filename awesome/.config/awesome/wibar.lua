@@ -456,7 +456,7 @@ local ram_widget = wibox.widget {
                 ram_popup:move_next_to(mouse.current_widget_geometry)
             end
         end),
-        awful.button({ }, 3, function() awful.spawn(string.format("%s -e htop", terminal)) end)
+        awful.button({ }, 3, function() awful.spawn(string.format("%s -e btop", terminal)) end)
     )
 }
 
@@ -1497,7 +1497,8 @@ local bluetooth_widget = wibox.widget {
                     bluetooth_popup:move_next_to(mouse.current_widget_geometry)
                 end
             end),
-            awful.button({ "Shift" }, 1, function() awful.spawn("dmenu-bluetooth-scanner") end)
+            awful.button({ "Shift" }, 1, function() awful.spawn("dmenu-bluetooth-scanner") end),
+            awful.button({ }, 3, function() awful.spawn(string.format("%s -e %s -c 'bluetui'", terminal, shell)) end)
     )
 }
 
