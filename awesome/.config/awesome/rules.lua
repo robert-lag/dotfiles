@@ -89,6 +89,16 @@ awful.rules.rules = {
             ontop = true,
             sticky = true,
             floating = true,
+            width = 608,
+            height = 342,
+            placement = function(c)
+                awful.placement.bottom_right(c, {
+                    margins = {
+                        right = 20,
+                        bottom = 20,
+                    },
+                })
+            end,
         },
         callback = function(c)
             c:connect_signal("property::fullscreen", function()
