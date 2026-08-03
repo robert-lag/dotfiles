@@ -32,7 +32,7 @@ HISTFILE="${XDG_CACHE_HOME:-$HOME/.cache}/zsh/history"
 HISTCONTROL=ignoreboth          # Consecutive duplicates & commands starting with space are not saved
 
 # Setup $LS_COLORS
-eval "$(dircolors -b)"
+eval "$(dircolors ${XDG_CONFIG_HOME:-$HOME/.config}/dircolors)"
 
 # Load aliases if existent
 [ -f "${XDG_CONFIG_HOME:-$HOME/.config}/shell/aliasrc" ] && source "${XDG_CONFIG_HOME:-$HOME/.config}/shell/aliasrc"
