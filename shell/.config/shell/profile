@@ -76,6 +76,10 @@ export REDISCLI_RCFILE="$XDG_CONFIG_HOME/redis/redisclirc"
 export AWS_SHARED_CREDENTIALS_FILE="$XDG_CONFIG_HOME/aws/credentials"
 export AWS_CONFIG_FILE="$XDG_CONFIG_HOME/aws/config"
 export DOCKER_CONFIG="$XDG_CONFIG_HOME/docker"
+export TEXMFHOME="$XDG_DATA_HOME/texmf"
+export TEXMFVAR="$XDG_CACHE_HOME/texlive/texmf-var"
+export TEXMFCONFIG="$XDG_CONFIG_HOME/texlive/texmf-config"
+export ELAN_HOME="$XDG_DATA_HOME/elan"
 
 # custom variables called in ~/.config/shell/.aliasrc
 export FREEPLANE_DATA_HOME="$XDG_DATA_HOME/freeplane"
