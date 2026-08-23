@@ -1628,7 +1628,79 @@ styles.weekend = {
     bg_color = beautiful.tasklist_bg_raised,
 }
 
+local calendar;
+
+local function change_month(offset)
+    local old = calendar.date
+
+    local date = os.date("*t", os.time {
+        year  = old.year,
+        month = old.month + offset,
+        day   = 1,
+    })
+
+    -- Normalize month overflow/underflow
+    if date.month > 12 then
+        date.month = 1
+        date.year = date.year + 1
+    elseif date.month < 1 then
+        date.month = 12
+        date.year = date.year - 1
+    end
+
+    calendar.date = date
+end
+
 local function decorate_cell(widget, flag, date)
+    if flag == 'header' then
+        -- Build our own header: < August 2026 >
+        local header = wibox.widget {
+            {
+                {
+                    text = ' ‹ ',
+                    align = 'left',
+                    valign = 'center',
+                    font = 'Monospace 18',
+                    widget = wibox.widget.textbox,
+                },
+                {
+                    markup = '<b>' .. os.date('%B %Y', os.time(date)) .. '</b>',
+                    align = 'center',
+                    valign = 'center',
+                    font = 'Monospace 10',
+                    forced_width = 110,
+                    widget = wibox.widget.textbox,
+                },
+                {
+                    text = ' › ',
+                    align = 'right',
+                    valign = 'center',
+                    font = 'Monospace 18',
+                    widget = wibox.widget.textbox,
+                },
+                spacing = 10,
+                layout = wibox.layout.align.horizontal,
+            },
+            fg = beautiful.tasklist_datetime,
+            widget = wibox.container.background,
+        }
+
+        -- Click the left/right sides
+        header.children[1].children[1]:buttons(
+            awful.button({}, 1, function()
+                change_month(-1)
+            end)
+        )
+
+        header.children[1].children[3]:buttons(
+            awful.button({}, 1, function()
+                change_month(1)
+            end)
+        )
+
+        return header
+    end
+
     -- Replace flag 'monthheader' with 'header'
     if flag=='monthheader' and not styles.monthheader then
         flag = 'header'
@@ -1694,7 +1766,18 @@ local function decorate_cell(widget, flag, date)
     return ret
 end
 
-local calendar_popup = awful.popup {
+calendar = wibox.widget {
+    id = 'calendar',
+    date = os.date('*t'),
+    week_numbers = true,
+    spacing = 10,
+    fn_embed = decorate_cell,
+    widget = wibox.widget.calendar.month
+};
+
+local calendar_popup;
+
+calendar_popup = awful.popup {
     widget = {
         {
             {
@@ -1719,19 +1802,20 @@ local calendar_popup = awful.popup {
                 color = beautiful.tasklist_fg_seperator,
                 widget = wibox.widget.separator
             },
-            {
-                id = 'calendar',
-                date = os.date('*t'),
-                week_numbers = true,
-                spacing = 10,
-                fn_embed = decorate_cell,
-                widget = wibox.widget.calendar.month
-            },
+            calendar,
+
             id = 'inner',
             layout = wibox.layout.fixed.vertical,
         },
         margins = 10,
-        widget  = wibox.container.margin
+        widget  = wibox.container.margin,
+        buttons = gears.table.join(
+            awful.button({ }, 3, function()
+                if calendar_popup.visible then
+                    calendar_popup.visible = false
+                end
+            end)
+        )
     },
     border_color = beautiful.tasklist_border_color,
     border_width = 2,
@@ -1741,9 +1825,9 @@ local calendar_popup = awful.popup {
     end,
     visible      = false,
     ontop        = true,
-    hide_on_right_click = true,
     opacity      = beautiful.tasklist_popup_opacity,
     fg = beautiful.tasklist_datetime,
+    -- hide_on_right_click = true,
 }
 
 -- Widget {{{2
@@ -1774,6 +1858,7 @@ local textclock = wibox.widget {
                 calendar_popup.visible = false
             else
                 hide_popups()
+                calendar.date = os.date('*t')
                 calendar_popup:move_next_to(mouse.current_widget_geometry)
             end
         end)
@@ -1802,7 +1887,6 @@ calendar_popup.widget.inner.icon.text = get_clock_icon(textclock.inner.clock.tex
 textclock.inner.icon.text = get_clock_icon(textclock.inner.clock.text)
 
 textclock.inner.clock:connect_signal("widget::redraw_needed", function()
-    calendar_popup.widget.inner.calendar.date = os.date('*t')
     calendar_popup.widget.inner.icon.text = get_clock_icon(textclock.inner.clock.text)
     textclock.inner.icon.text = get_clock_icon(textclock.inner.clock.text)
 end)
