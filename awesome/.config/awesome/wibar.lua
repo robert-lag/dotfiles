@@ -1,5 +1,6 @@
-local battery_widget = require("battery-widget")
-local virtual_keyboard = require("virtual_keyboard")
+local battery_widget = require("widgets.battery-widget")
+local virtual_keyboard = require("widgets.virtual-keyboard")
+local json = require("lib.dkjson")
 
 -- CPU Widget {{{1
 
@@ -504,9 +505,11 @@ ram_widget_timer:start()
 -- Volume Widget {{{1
 
 -- Popup {{{2
+
 local slider_height = 12
 local volume_popup_width = 250
-local volume_popup = awful.popup {
+local volume_popup
+volume_popup = awful.popup {
     widget = {
         {
             {
@@ -514,6 +517,35 @@ local volume_popup = awful.popup {
                     {
                         id = 'icon',
                         text = '󰕾',
+                        align = 'left',
+                        valign = 'center',
+                        font = "Monospace 20",
+                        forced_width = 30,
+                        widget = wibox.widget.textbox,
+                    },
+                    {
+                        text = 'Audio',
+                        align = 'left',
+                        valign = 'center',
+                        font = 'Monospace Bold 15',
+                        widget = wibox.widget.textbox,
+                    },
+                    widget = wibox.layout.fixed.horizontal,
+                },
+                fg = beautiful.tasklist_sound,
+                widget = wibox.container.background,
+            },
+            {
+                opacity = 0,
+                forced_width = 0,
+                forced_height = 10,
+                widget = wibox.widget.separator
+            },
+            {
+                {
+                    {
+                        id = 'icon',
+                        text = '󰍬',
                         align = 'center',
                         valign = 'center',
                         font = 'Monospace 15',
@@ -525,34 +557,48 @@ local volume_popup = awful.popup {
                     widget = wibox.container.margin
                 },
                 {
-                    id = 'slider',
-                    bar_shape = function(cr, width, height)
-                        gears.shape.rounded_rect(cr, width, height, 2)
-                    end,
-                    bar_color = beautiful.tasklist_bg_raised,
-                    bar_active_color = beautiful.tasklist_sound,
-                    bar_height = 4,
-                    handle_shape = gears.shape.circle,
-                    handle_color = beautiful.tasklist_sound,
-                    handle_width = slider_height,
-                    forced_height = slider_height,
-                    widget = wibox.widget.slider,
-                },
-                {
-                    id = 'value',
-                    markup = ' 0%',
-                    align = 'right',
+                    id = 'text',
+                    text = '',
+                    align = 'left',
                     valign = 'center',
+                    forced_width = 25,
                     widget = wibox.widget.textbox,
                 },
-                id = 'volume',
+                id = 'source',
                 forced_width = volume_popup_width,
                 widget = wibox.layout.align.horizontal
             },
             {
-                opacity = 0,
+                {
+                    {
+                        id = 'icon',
+                        text = '󰓃',
+                        align = 'center',
+                        valign = 'center',
+                        font = 'Monospace 15',
+                        forced_width = 25,
+                        widget = wibox.widget.textbox,
+                    },
+                    id = 'margins',
+                    right = 10,
+                    widget = wibox.container.margin
+                },
+                {
+                    id = 'text',
+                    text = '',
+                    align = 'left',
+                    valign = 'center',
+                    forced_width = 25,
+                    widget = wibox.widget.textbox,
+                },
+                id = 'sink',
+                forced_width = volume_popup_width,
+                widget = wibox.layout.align.horizontal
+            },
+            {
                 forced_width = 0,
-                forced_height = 8,
+                forced_height = 20,
+                color = beautiful.tasklist_fg_seperator,
                 widget = wibox.widget.separator
             },
             {
@@ -595,11 +641,64 @@ local volume_popup = awful.popup {
                 forced_width = volume_popup_width,
                 widget = wibox.layout.align.horizontal
             },
+            {
+                opacity = 0,
+                forced_width = 0,
+                forced_height = 8,
+                widget = wibox.widget.separator
+            },
+            {
+                {
+                    {
+                        id = 'icon',
+                        text = '󰕾',
+                        align = 'center',
+                        valign = 'center',
+                        font = 'Monospace 15',
+                        forced_width = 25,
+                        widget = wibox.widget.textbox,
+                    },
+                    id = 'margins',
+                    right = 10,
+                    widget = wibox.container.margin
+                },
+                {
+                    id = 'slider',
+                    bar_shape = function(cr, width, height)
+                        gears.shape.rounded_rect(cr, width, height, 2)
+                    end,
+                    bar_color = beautiful.tasklist_bg_raised,
+                    bar_active_color = beautiful.tasklist_sound,
+                    bar_height = 4,
+                    handle_shape = gears.shape.circle,
+                    handle_color = beautiful.tasklist_sound,
+                    handle_width = slider_height,
+                    forced_height = slider_height,
+                    widget = wibox.widget.slider,
+                },
+                {
+                    id = 'value',
+                    markup = ' 0%',
+                    align = 'right',
+                    valign = 'center',
+                    widget = wibox.widget.textbox,
+                },
+                id = 'volume',
+                forced_width = volume_popup_width,
+                widget = wibox.layout.align.horizontal
+            },
             id = 'inner',
             layout = wibox.layout.fixed.vertical,
         },
         margins = 10,
-        widget  = wibox.container.margin
+        widget  = wibox.container.margin,
+        buttons = gears.table.join(
+            awful.button({ }, 3, function()
+                if volume_popup.visible then
+                    volume_popup.visible = false
+                end
+            end)
+        )
     },
     border_color = beautiful.tasklist_border_color,
     border_width = 2,
@@ -645,11 +744,59 @@ local volume_widget = wibox.widget {
                 hide_popups()
                 volume_popup:move_next_to(mouse.current_widget_geometry)
             end
-        end)
+        end),
+        awful.button({ }, 3, function() awful.spawn(string.format("%s -e %s -c 'wiremix'", terminal, shell)) end)
     )
 }
 
 -- Update widget {{{2
+
+local function update_audio_devices()
+    awful.spawn.easy_async_with_shell(
+        'pactl -f json list sources',
+        function(out)
+            local sources = json.decode(out)
+
+            awful.spawn.easy_async_with_shell(
+                'pactl get-default-source',
+                function(default_source_name)
+                    default_source_name = default_source_name:gsub('%s+$', '')
+
+                    for _, source in ipairs(sources) do
+                        if source.name == default_source_name then
+                            volume_popup.widget.inner.source.text.text =
+                                source.description or source.name
+                            break
+                        end
+                    end
+                end
+            )
+        end
+    )
+
+    awful.spawn.easy_async_with_shell(
+        'pactl -f json list sinks',
+        function(out)
+            local sinks = json.decode(out)
+
+            awful.spawn.easy_async_with_shell(
+                'pactl get-default-sink',
+                function(default_sink_name)
+                    default_sink_name = default_sink_name:gsub('%s+$', '')
+            
+                    for _, sink in ipairs(sinks) do
+                        if sink.name == default_sink_name then
+                            volume_popup.widget.inner.sink.text.text =
+                                sink.description or sink.name
+                            break
+                        end
+                    end
+                end
+            )
+        end
+    )
+end
+
 local volume_slider_initialized = false
 local microphone_slider_initialized = false
 function update_volume_widget()
@@ -719,6 +866,7 @@ function set_volume_sliders()
     end)
 end
 
+update_audio_devices()
 update_volume_widget()
 set_volume_sliders()
 
@@ -762,7 +910,10 @@ volume_popup.widget.inner.microphone.margins.icon:connect_signal("button::press"
 end)
 
 volume_widget_timer = timer({ timeout = 10.0 })
-volume_widget_timer:connect_signal("timeout", update_volume_widget)
+volume_widget_timer:connect_signal("timeout", function()
+    update_audio_devices()
+    update_volume_widget()
+end)
 volume_widget_timer:start()
 -- }}}2
 
