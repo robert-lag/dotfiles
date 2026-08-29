@@ -543,25 +543,10 @@ volume_popup = awful.popup {
             },
             {
                 {
-                    {
-                        id = 'icon',
-                        text = '󰍬',
-                        align = 'center',
-                        valign = 'center',
-                        font = 'Monospace 15',
-                        forced_width = 25,
-                        widget = wibox.widget.textbox,
-                    },
-                    id = 'margins',
-                    right = 10,
-                    widget = wibox.container.margin
-                },
-                {
                     id = 'text',
                     text = '',
                     align = 'left',
                     valign = 'center',
-                    forced_width = 25,
                     widget = wibox.widget.textbox,
                 },
                 id = 'source',
@@ -569,36 +554,9 @@ volume_popup = awful.popup {
                 widget = wibox.layout.align.horizontal
             },
             {
-                {
-                    {
-                        id = 'icon',
-                        text = '󰓃',
-                        align = 'center',
-                        valign = 'center',
-                        font = 'Monospace 15',
-                        forced_width = 25,
-                        widget = wibox.widget.textbox,
-                    },
-                    id = 'margins',
-                    right = 10,
-                    widget = wibox.container.margin
-                },
-                {
-                    id = 'text',
-                    text = '',
-                    align = 'left',
-                    valign = 'center',
-                    forced_width = 25,
-                    widget = wibox.widget.textbox,
-                },
-                id = 'sink',
-                forced_width = volume_popup_width,
-                widget = wibox.layout.align.horizontal
-            },
-            {
+                opacity = 0,
                 forced_width = 0,
-                forced_height = 20,
-                color = beautiful.tasklist_fg_seperator,
+                forced_height = 5,
                 widget = wibox.widget.separator
             },
             {
@@ -642,9 +600,32 @@ volume_popup = awful.popup {
                 widget = wibox.layout.align.horizontal
             },
             {
+                {
+                    forced_width = 0,
+                    forced_height = 20,
+                    color = beautiful.tasklist_fg_seperator,
+                    widget = wibox.widget.separator
+                },
+                top = 10,
+                bottom = 10,
+                widget = wibox.container.margin
+            },
+            {
+                {
+                    id = 'text',
+                    text = '',
+                    align = 'left',
+                    valign = 'center',
+                    widget = wibox.widget.textbox,
+                },
+                id = 'sink',
+                forced_width = volume_popup_width,
+                widget = wibox.layout.align.horizontal
+            },
+            {
                 opacity = 0,
                 forced_width = 0,
-                forced_height = 8,
+                forced_height = 5,
                 widget = wibox.widget.separator
             },
             {
@@ -765,7 +746,7 @@ local function update_audio_devices()
                     for _, source in ipairs(sources) do
                         if source.name == default_source_name then
                             volume_popup.widget.inner.source.text.text =
-                                source.description or source.name
+                                truncate_with_ellipsis(source.description or source.name, 30)
                             break
                         end
                     end
@@ -787,7 +768,7 @@ local function update_audio_devices()
                     for _, sink in ipairs(sinks) do
                         if sink.name == default_sink_name then
                             volume_popup.widget.inner.sink.text.text =
-                                sink.description or sink.name
+                                truncate_with_ellipsis(sink.description or sink.name, 30)
                             break
                         end
                     end

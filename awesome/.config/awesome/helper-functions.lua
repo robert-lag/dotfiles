@@ -25,3 +25,11 @@ function rtrim(str)
     return str:match'^(.*%S)%s*$'
 end
 
+function truncate_with_ellipsis(text, max_chars)
+    if #text <= max_chars then
+        return text
+    end
+
+    return text:sub(1, max_chars - 3) .. "..."
+end
+
