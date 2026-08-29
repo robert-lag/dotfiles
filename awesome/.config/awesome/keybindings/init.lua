@@ -229,6 +229,9 @@ globalkeys = gears.table.join(
     -- Color Picker {{{2
     awful.key({ modkey }, "c", function() awful.spawn("color-picker") end,
               {description = "copy a color to the clipboard", group = "other"}),
+    -- Emoji Picker {{{2
+    awful.key({ modkey }, "e", function() awful.spawn("dmenu-emoji-picker") end,
+              {description = "copy an emoji to the clipboard", group = "other"}),
 
     -- Scratchpads {{{2
     awful.key({ modkey }, ",", function ()
