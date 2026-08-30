@@ -2,6 +2,22 @@ local battery_widget = require("widgets.battery-widget")
 local virtual_keyboard = require("widgets.virtual-keyboard")
 local json = require("lib.dkjson")
 
+local function get_widget_geometry(searched_widget)
+    local mgeo = mouse.current_widget_geometry
+    local mywibox = mouse.screen.mywibox
+
+    for _, item in ipairs(mywibox:find_widgets(mgeo.x, mgeo.y)) do
+        if item.widget == searched_widget then
+            return {
+                x = mywibox.x + item.x,
+                y = mywibox.y + item.y,
+                width = item.width,
+                height = item.height,
+            }
+        end
+    end
+end
+
 -- CPU Widget {{{1
 
 -- Popup {{{2
@@ -192,11 +208,15 @@ local cpu_popup = awful.popup {
     visible      = false,
     ontop        = true,
     hide_on_right_click = true,
+    preferred_positions = {"bottom"},
+    preferred_anchors = {"back"},
     opacity      = beautiful.tasklist_popup_opacity,
 }
 
 -- Widget {{{2
-local cpu_widget = wibox.widget {
+
+local cpu_widget
+cpu_widget = wibox.widget {
     {
         {
             id = 'icon',
@@ -226,7 +246,7 @@ local cpu_widget = wibox.widget {
                 cpu_popup.visible = false
             else
                 hide_popups()
-                cpu_popup:move_next_to(mouse.current_widget_geometry)
+                cpu_popup:move_next_to(get_widget_geometry(cpu_widget))
             end
         end),
         awful.button({ }, 3, function() awful.spawn(string.format("%s -e btop", terminal)) end)
@@ -420,11 +440,14 @@ local ram_popup = awful.popup {
     visible      = false,
     ontop        = true,
     hide_on_right_click = true,
+    preferred_positions = {"bottom"},
+    preferred_anchors = {"back"},
     opacity      = beautiful.tasklist_popup_opacity,
 }
 
 -- Widget {{{2
-local ram_widget = wibox.widget {
+local ram_widget
+ram_widget = wibox.widget {
     {
         {
             id = 'icon',
@@ -454,7 +477,7 @@ local ram_widget = wibox.widget {
                 ram_popup.visible = false
             else
                 hide_popups()
-                ram_popup:move_next_to(mouse.current_widget_geometry)
+                ram_popup:move_next_to(get_widget_geometry(ram_widget))
             end
         end),
         awful.button({ }, 3, function() awful.spawn(string.format("%s -e btop", terminal)) end)
@@ -689,11 +712,14 @@ volume_popup = awful.popup {
     end,
     visible      = false,
     ontop        = true,
+    preferred_positions = {"bottom"},
+    preferred_anchors = {"back"},
     opacity      = beautiful.tasklist_popup_opacity,
 }
 
 -- Widget {{{2
-local volume_widget = wibox.widget {
+local volume_widget
+volume_widget = wibox.widget {
     {
         {
             id = 'icon',
@@ -723,7 +749,7 @@ local volume_widget = wibox.widget {
                 volume_popup.visible = false
             else
                 hide_popups()
-                volume_popup:move_next_to(mouse.current_widget_geometry)
+                volume_popup:move_next_to(get_widget_geometry(volume_widget))
             end
         end),
         awful.button({ }, 3, function() awful.spawn(string.format("%s -e %s -c 'wiremix'", terminal, shell)) end)
@@ -990,11 +1016,14 @@ local battery_popup = awful.popup {
     visible      = false,
     ontop        = true,
     hide_on_right_click = true,
+    preferred_positions = {"bottom"},
+    preferred_anchors = {"back"},
     opacity      = beautiful.tasklist_popup_opacity,
 }
 
 -- Widget {{{2
-local battery_widget_ui = wibox.widget {
+local battery_widget_ui
+battery_widget_ui = wibox.widget {
     {
         {
             id = 'icon',
@@ -1022,7 +1051,7 @@ local battery_widget_ui = wibox.widget {
                 battery_popup.visible = false
             else
                 hide_popups()
-                battery_popup:move_next_to(mouse.current_widget_geometry)
+                battery_popup:move_next_to(get_widget_geometry(battery_widget_ui))
             end
         end)
     )
@@ -1316,13 +1345,16 @@ local wifi_popup = awful.popup {
     visible      = false,
     ontop        = true,
     hide_on_right_click = true,
+    preferred_positions = {"bottom"},
+    preferred_anchors = {"back"},
     opacity      = beautiful.tasklist_popup_opacity,
 }
 
 -- Widget {{{2
 local connected_to_ethernet = false
 local wifi_ui_collapsed = false
-local wifi_widget = wibox.widget {
+local wifi_widget
+wifi_widget = wibox.widget {
     {
         {
             id = 'icon',
@@ -1347,16 +1379,16 @@ local wifi_widget = wibox.widget {
     fg = beautiful.tasklist_wifi_not_connected,
     widget = wibox.container.background,
     buttons = gears.table.join(
-            awful.button({ }, 1, function()
-                if wifi_popup.visible then
-                    wifi_popup.visible = false
-                else
-                    hide_popups()
-                    wifi_popup:move_next_to(mouse.current_widget_geometry)
-                end
-            end),
-            awful.button({ "Shift" }, 1, function() awful.spawn("dmenu-wlan-scanner") end),
-            awful.button({ }, 3, function() awful.spawn(string.format("%s -e %s -c 'nmtui'", terminal, shell)) end)
+        awful.button({ }, 1, function()
+            if wifi_popup.visible then
+                wifi_popup.visible = false
+            else
+                hide_popups()
+                wifi_popup:move_next_to(get_widget_geometry(wifi_widget))
+            end
+        end),
+        awful.button({ "Shift" }, 1, function() awful.spawn("dmenu-wlan-scanner") end),
+        awful.button({ }, 3, function() awful.spawn(string.format("%s -e %s -c 'nmtui'", terminal, shell)) end)
     )
 }
 
@@ -1592,11 +1624,14 @@ local bluetooth_popup = awful.popup {
     visible      = false,
     ontop        = true,
     hide_on_right_click = true,
+    preferred_positions = {"bottom"},
+    preferred_anchors = {"back"},
     opacity      = beautiful.tasklist_popup_opacity,
 }
 
 -- Widget {{{2
-local bluetooth_widget = wibox.widget {
+local bluetooth_widget
+bluetooth_widget = wibox.widget {
     {
         {
             id = 'icon',
@@ -1626,7 +1661,7 @@ local bluetooth_widget = wibox.widget {
                     bluetooth_popup.visible = false
                 else
                     hide_popups()
-                    bluetooth_popup:move_next_to(mouse.current_widget_geometry)
+                    bluetooth_popup:move_next_to(get_widget_geometry(bluetooth_widget))
                 end
             end),
             awful.button({ "Shift" }, 1, function() awful.spawn("dmenu-bluetooth-scanner") end),
@@ -1957,13 +1992,16 @@ calendar_popup = awful.popup {
     end,
     visible      = false,
     ontop        = true,
-    opacity      = beautiful.tasklist_popup_opacity,
-    fg = beautiful.tasklist_datetime,
     -- hide_on_right_click = true,
+    preferred_positions = {"bottom"},
+    preferred_anchors = {"back"},
+    opacity      = beautiful.tasklist_popup_opacity,
+    fg           = beautiful.tasklist_datetime,
 }
 
 -- Widget {{{2
-local textclock = wibox.widget {
+local calendar_widget
+calendar_widget = wibox.widget {
     {
         {
             id = "icon",
@@ -1991,7 +2029,7 @@ local textclock = wibox.widget {
             else
                 hide_popups()
                 calendar.date = os.date('*t')
-                calendar_popup:move_next_to(mouse.current_widget_geometry)
+                calendar_popup:move_next_to(get_widget_geometry(calendar_widget))
             end
         end)
     )
@@ -2015,16 +2053,16 @@ local function get_clock_icon(time)
     return hexdecode(string.format("%x",textclock_icon))
 end
 
-calendar_popup.widget.inner.icon.text = get_clock_icon(textclock.inner.clock.text)
-textclock.inner.icon.text = get_clock_icon(textclock.inner.clock.text)
+calendar_popup.widget.inner.icon.text = get_clock_icon(calendar_widget.inner.clock.text)
+calendar_widget.inner.icon.text = get_clock_icon(calendar_widget.inner.clock.text)
 
-textclock.inner.clock:connect_signal("widget::redraw_needed", function()
-    calendar_popup.widget.inner.icon.text = get_clock_icon(textclock.inner.clock.text)
-    textclock.inner.icon.text = get_clock_icon(textclock.inner.clock.text)
+calendar_widget.inner.clock:connect_signal("widget::redraw_needed", function()
+    calendar_popup.widget.inner.icon.text = get_clock_icon(calendar_widget.inner.clock.text)
+    calendar_widget.inner.icon.text = get_clock_icon(calendar_widget.inner.clock.text)
 end)
 
-textclock.inner.clock:connect_signal("button::press", function()
-    textclock.inner.clock:force_update()
+calendar_widget.inner.clock:connect_signal("button::press", function()
+    calendar_widget.inner.clock:force_update()
 end)
 -- }}}2
 
@@ -2253,7 +2291,7 @@ awful.screen.connect_for_each_screen(function(s)
                     ram_widget,
                     volume_widget,
                     battery_widget_to_show,
-                    textclock,
+                    calendar_widget,
                     {
                         {
                             widget = wibox.widget.systray(),
