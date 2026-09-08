@@ -1397,7 +1397,6 @@ awful.widget.watch(
     "sh -c 'nmcli -t -f IN-USE,SSID,SIGNAL,RATE,SECURITY device wifi list | grep \'^*\''", 5,
     function(widget, stdout, stderr, exitreason, exitcode)
         if connected_to_ethernet == true then
-            awful.spawn("notify-send 'connected to ethernet'")
             return
         end
 
