@@ -273,6 +273,16 @@ end)
 -- client - property::fullscreen {{{2
 client.connect_signal("property::fullscreen", function(c)
     if not c.valid then return end
+
+    if c.fullscreen then
+        -- Make absolutely sure the titlebar isn't contributing
+        -- to the client's geometry before fullscreen arrangement.
+        setTitlebar(c, false)
+    else
+        -- Restore titlebar according to the normal floating rules.
+        setTitlebar(c, wantsFloatingSettings(c))
+    end
+
     updateTagGap(c.first_tag)
 end)
 
